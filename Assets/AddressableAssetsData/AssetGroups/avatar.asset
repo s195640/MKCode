@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: avatar
+  m_EditorClassIdentifier: 
+  m_GroupName: avatar
+  m_Data:
+    m_SerializedData: []
+  m_GUID: a14c02f1f3559b443a78bb1624171a2b
+  m_SerializeEntries:
+  - m_GUID: 519bb966f263568469bf4a3c3f6a4bbc
+    m_Address: Assets/Images/avatar/meeple/meeple_arythea.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a063e98eccf36f840a2ea37e3a825ea8
+    m_Address: Assets/Images/avatar/meeple/meeple_goldyx.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a623ca2d93f5f344092e0935908e22a9
+    m_Address: Assets/Images/avatar/meeple/meeple_norowas.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2cb2b790b0284e448a3e40ac9eb8f219
+    m_Address: Assets/Images/avatar/meeple/meeple_tovak.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6d6f89d21df2c44459b666ea01713c65
+    m_Address: Assets/Images/avatar/meeple/meeple_wolfhawk.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e30f8f020e0c9a2449bacd65aff24a39
+    m_Address: Assets/Images/avatar/shield/shield_blue_tovak.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 90aa9ea9c18afd44ab2ebe66143ee736
+    m_Address: Assets/Images/avatar/shield/shield_green_goldyx.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 447bb421f3d1f844f8c4dc51b237596e
+    m_Address: Assets/Images/avatar/shield/shield_red_arythea.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d1260693c9b7fcc4ea5f8af906b96e1a
+    m_Address: Assets/Images/avatar/shield/shield_white_norowas.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 55f030479b8cdca4490fa553de2ae7ac, type: 2}
+    - {fileID: 11400000, guid: b82ac86789d66a541849b013b7fdc288, type: 2}

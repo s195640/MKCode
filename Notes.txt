@@ -1,0 +1,31 @@
+ActionValid_00 <-- use for simple actions NO additional dialog
+ActionPaymentComplete_00 <-- use if you need to have additiona dialog, MUST then call ar.FinishCallback()
+ActionFinish_00 <-- NEVER CALL DIRECTLY use ar.FinishCallback()
+
+
+OnClick_ActionAdvancedButton
+OnClick_ActionButton
+checkAllowedToUse
+PayForAction
+OnClick_PaymentAccept [OnClick_PaymentCancel]
+ActionPaymentComplete_00 <--- SelectSingleCard
+ActionValid_00						|
+ActionFinish_00   <------------------
+ProcessActionResultVO
+
+
+ActionResultVO <-- [ActionEngine]
+ 1) Clone Game
+ 2) All Changes should be do via ActionEngine ONLY (not direct on GO)
+    * do direct update
+	* update UI
+ 3) Cancel <-- revert Cloned data changes
+ 4) Complete
+    * send data 
+	
+https://alexandreasen09.medium.com/hosting-a-unity-webgl-game-for-free-f69ec70bcb30#:~:text=The%20hosting%20for%20the%20Unity%20WebGL%20project%20is%20free%20though.&text=Click%20either%20%E2%80%9CCreate%E2%80%9D%20followed%20by,should%20be%20able%20to%20access.
+
+	
+https://github.com/s195640/MageKnight
+ - PROD build of the static website
+https://s195640.github.io/MageKnight/

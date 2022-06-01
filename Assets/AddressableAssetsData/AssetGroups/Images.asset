@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Images
+  m_EditorClassIdentifier: 
+  m_GroupName: Images
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 3f1ef2fa5190b8340ad26e67f7337f31
+  m_SerializeEntries:
+  - m_GUID: ad1fed3e8784e6a4cad810ba3e3527b3
+    m_Address: LOGO_001
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: eae26783941523d4c87df252f055e84a
+    m_Address: LOGO_002
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: da708e1f624e3e545b5cef4468b7e89a
+    m_Address: UTILITY_BORDER_001
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b6a504eb6092e044d8473e0c8409b7eb
+    m_Address: UTILITY_MASK_001
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: bd531c1bff72e58478e3b72b47ca9878
+    m_Address: A_MEEPLE_RANDOM
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2842d9cd463914d408d0b4efbcb256da
+    m_Address: NA
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6cefd327dfaf6824d96fcf3838744275, type: 2}
+    - {fileID: 11400000, guid: ee7064ca8a4858549920455f3aeefc6d, type: 2}

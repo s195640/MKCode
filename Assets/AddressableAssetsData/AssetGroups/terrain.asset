@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: terrain
+  m_EditorClassIdentifier: 
+  m_GroupName: terrain
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 0e6bc234fb5ab684e9cf749a649f2820
+  m_SerializeEntries:
+  - m_GUID: 6534b63ad74dce746b3dbdfb48f636c0
+    m_Address: Assets/Images/terrain/TH_YellowHex.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8999353ce3a1712419b36811c85639a0
+    m_Address: Assets/Images/terrain/TH_Wasteland.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b2062fb32178d4a4782618b02dbfdf27
+    m_Address: Assets/Images/terrain/TH_UnexploredBasic.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 433917f0164278c40916087460ac9f5f
+    m_Address: Assets/Images/terrain/TH_UnexploredAdvanced.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: be4eafad872a3244791835163aa05d1e
+    m_Address: Assets/Images/terrain/TH_Swamp.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 75680869a30caae42835bcf7d27636eb
+    m_Address: Assets/Images/terrain/TH_Plains.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ce4229c038091ea40bb0fad1993c1691
+    m_Address: Assets/Images/terrain/TH_Mountain.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d6244c4726edbab43adbe7f8e23361bf
+    m_Address: Assets/Images/terrain/TH_Lake.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ee2cbf6a053f0174599a8320a957030a
+    m_Address: Assets/Images/terrain/TH_Invalid.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7329aa01d2b4f1542af7874486315c79
+    m_Address: Assets/Images/terrain/TH_Hill.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9e2045383761b2e478144d70646cbc77
+    m_Address: Assets/Images/terrain/TH_Forest.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: dbd594e8dbd6c554ab25e6034c494032
+    m_Address: Assets/Images/terrain/TH_Desert.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 89ddfdcf2868bf74c9e37057f138a531
+    m_Address: Assets/Images/terrain/TH_Boarder.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7eb0a06f4f95f5e43b1f9c9deab56ba0
+    m_Address: Assets/Images/terrain/TH_Black.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 824a6c398699ecb429ff7086c7e7196d, type: 2}
+    - {fileID: 11400000, guid: d38b1c53fb4ec0945bea501ca599ee18, type: 2}

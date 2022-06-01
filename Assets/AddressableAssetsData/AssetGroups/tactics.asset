@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: tactics
+  m_EditorClassIdentifier: 
+  m_GroupName: tactics
+  m_Data:
+    m_SerializedData: []
+  m_GUID: ece3f671386ce8e40bdc7197db94197d
+  m_SerializeEntries:
+  - m_GUID: 7110ab0b9b6cd42438a81a740a8b7863
+    m_Address: Assets/Images/card/tactics/tactics_day_1.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 04458ee7065d3ce4b89a23e473ed516e
+    m_Address: Assets/Images/card/tactics/tactics_day_2.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 27d1fb3b05ad8114198093257116e1ff
+    m_Address: Assets/Images/card/tactics/tactics_day_3.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0e4f4cc29d0be08439d4ced55cc8bccc
+    m_Address: Assets/Images/card/tactics/tactics_day_4.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0467fb3a969bfa64d8b46257d210b43a
+    m_Address: Assets/Images/card/tactics/tactics_day_5.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 986724f82b0ba354c95ea69d259cd32b
+    m_Address: Assets/Images/card/tactics/tactics_day_6.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e8c66059f3577cb41a06b082bbb67347
+    m_Address: Assets/Images/card/tactics/tactics_night_1.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 416da046d0e3c6a40aad3b4804ce1f4a
+    m_Address: Assets/Images/card/tactics/tactics_night_2.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 56a03849f7e74794b8e9f192705cea7c
+    m_Address: Assets/Images/card/tactics/tactics_night_3.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0e19ad15e67be114f8869cb27b7a403e
+    m_Address: Assets/Images/card/tactics/tactics_night_4.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 548e4fca236b607479c7e3deda87722f
+    m_Address: Assets/Images/card/tactics/tactics_night_5.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 94f7d4a916fd5c7478b31a91ec9f904b
+    m_Address: Assets/Images/card/tactics/tactics_night_6.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: c044688983993a640b0545d6bb37c712, type: 2}
+    - {fileID: 11400000, guid: 7106bb08087d08c44910bf6e6670a5b9, type: 2}

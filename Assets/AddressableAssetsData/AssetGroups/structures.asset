@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: structures
+  m_EditorClassIdentifier: 
+  m_GroupName: structures
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 3b7b885596a17364c945493898d1108c
+  m_SerializeEntries:
+  - m_GUID: 36e4608c4d37fc9408592dcf581c695a
+    m_Address: Assets/Images/structure/AncientRuins.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c6b708f198591bd4db61a3574ba4645e
+    m_Address: Assets/Images/structure/City_Blue.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 449e99f4bae40e44c928735638672d03
+    m_Address: Assets/Images/structure/City_Green.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d64fa3bb7f9451f469501c14a875683e
+    m_Address: Assets/Images/structure/City_Red.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 41f737c383bf77d42a8e73c52cddf76c
+    m_Address: Assets/Images/structure/City_White.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 09cfa515f880ec649ae1e61ce50f1ffb
+    m_Address: Assets/Images/structure/CrystalMines_Blue.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 077872bfd02da0841873ed9107efabf3
+    m_Address: Assets/Images/structure/CrystalMines_Green.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 554b97da1676d2f499715023f7dcc37d
+    m_Address: Assets/Images/structure/CrystalMines_Red.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 37bd050a2b1cab7439cd2bd1b34750c3
+    m_Address: Assets/Images/structure/CrystalMines_White.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e1e271570a82ada4ca65ea3ec8136c23
+    m_Address: Assets/Images/structure/Draconum.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8e59771154e69bf4180ed289bb48433a
+    m_Address: Assets/Images/structure/Dungeon.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a433a94cc758fb24da544ed443f897b6
+    m_Address: Assets/Images/structure/MageTower.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 86ec4f9c7e575474cb3f506130e7785c
+    m_Address: Assets/Images/structure/Keep.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 71e5a2efcd4f33a4d91bdcba89d4f724
+    m_Address: Assets/Images/structure/MagicGlade.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 543bd88b11c1b0d4e8c20ae8b8e4d161
+    m_Address: Assets/Images/structure/MaraudingOrcs.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: be5df2bc5459d544bbfe19f411a10b5f
+    m_Address: Assets/Images/structure/Monastery.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ba6c101da24717b41a181aca4183081b
+    m_Address: Assets/Images/structure/MonsterDen.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2b5310a902640bc4b9b6779a97839d53
+    m_Address: Assets/Images/structure/SpawningGround.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1b9086b064de81e4991b7893227ba926
+    m_Address: Assets/Images/structure/StartShrine.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d4371a50d080ab94cbb285191d684280
+    m_Address: Assets/Images/structure/Tomb.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 743c89b2942c1914c86ea57b6f78fcb2
+    m_Address: Assets/Images/structure/Village.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 243c6b9075b55a94fbee71244a58242b, type: 2}
+    - {fileID: 11400000, guid: b702ff4e7f5ca744896d0ca123e8351e, type: 2}

@@ -1,0 +1,201 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: skills
+  m_EditorClassIdentifier: 
+  m_GroupName: skills
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 66996ed499e05b04a9b36f7e4d37b8e6
+  m_SerializeEntries:
+  - m_GUID: 7e1021d2d4301484aa595a4a83f803b5
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_healing_ritual.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e3faf7f07aba9554cbe0821702a0332b
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_motivation.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 64427f5af53537245ad66772af4e278a
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_polarization.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3924d8a924c790d43a3a09cbf9f2463a
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_invocation.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 80ded0c75b6a91d4093fc3d55a609adf
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_power_of_pain.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9776d9ba9f4b2fd47901c941c9e5e21d
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_dark_negotiation.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b1b3e401db065c2428328acfc9af80a3
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_i_feel_no_pain.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7d8e0867c78ef1b4a9e61fa8849a209f
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_resistance_break.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8a8afb455957630439fbf41911c8ffa4
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d6e07cc68f82a2f42b3b4d4099c45c85
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_universal_power.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7e7ece903bef5d64f8d299709b1d2f13
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_hot_swordsmanship.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d25418d8dbc789d44b18816098caaf34
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_flight.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f1c383864ceae3a43a1279e39ee7c199
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_leadership.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c79f9a17ab7c1e648af9bb6adc37022c
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_mana_exploit.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4d065f16037f86147b6de3d6b69d90d7
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_day_sharpshooting.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 006871c4f971d5f48995e04eea79b6c7
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_whisper_in_the_treetops.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c38d7be5e03197148875bf7ef68fecc7
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_freezing_power.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4fec2812dab9cdc468059e97ae185d60
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_green_crystal_craft.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b902eb8995e622c43af76c0863b25282
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_forward_march.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 79785ca8cc158ec4b968f8e01f05c354
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 923f40c565b47ed4c85b0f609618d00b
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_shield_mastery.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c7a1aa80686991240aeac94110ab5d94
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_motivation.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 644859777e78c9946a7fbd110b46178f
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_glittering_fortune.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7958c4302b3909440a301c3d9c04e566
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_white_crystal_craft.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f725fa6376a62614295f226cfb3fad37
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 842b3da078074e04fbffaf0f4551633e
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_red_crystal_craft.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 73f62180378634746b0bccf911722fff
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_leaves_in_the_wind.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 94580339e72131e41bb5fb7997e6882f
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_prayer_of_weather.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 14689e0e0e0d951419aa35fb518159cd
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_motivation.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0bb19e75c2c6d5d4dbcb0b5add408e70
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_who_needs_magic.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7c61ff16583e2494f8a3b031a712e368
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_night_shooting.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: dba7a8e032422af4ab64611ac8e53ace
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_i_dont_give_a_damn.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8de27b999d1a8c046a39795d81e4d7e3
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_potion_making.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4c6cb17a581e69a4195bd547ce5fcc09
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_bright_negotiation.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d24c60290e6e9c44aa2f851bff1b5ab3
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_dark_paths.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2bf384bd74fdba347ac03c07049a1962
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_motivation.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 617c12e8657fb934da57a12920fee5b5
+    m_Address: Assets/Images/card/skill/Green - Goldyx/skill_goldyx_source_freeze.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7a1ec04330820954dbce380829694450
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_dark_fire_magic.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 00a3f0325e6b46a41ae9850b3dd33112
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_inspiration.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0c3fd4bd96c860e48a9f73d19e6070ea
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_cold_swordsmanship.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 19cd7ad0c2a76f44cbe23bd6f67b1caa
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_bonds_of_loyalty.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4c013af0194f90243b47217d85573088
+    m_Address: Assets/Images/card/skill/White - Norowas/skill_norowas_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ac011b2ec46fcb749ad1d3d382431581
+    m_Address: Assets/Images/card/skill/Red - Arythea/skill_arythea_burning_power.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1b982b06b2432d748a16301d56986a16
+    m_Address: Assets/Images/card/skill/Blue - Tovak/skill_tovak_double_time.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 962dbe5f5a8292b45b28126a4a25623f, type: 2}
+    - {fileID: 11400000, guid: 9d4c8876e16116847aca2433fe50043c, type: 2}

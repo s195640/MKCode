@@ -1,0 +1,25 @@
+﻿namespace cna.poo {
+    public enum CardHolder_Enum {
+        NA,
+        PlayerHand,
+        PlayerUnitHand,
+        UnitOffering,
+        AdvancedOffering,
+        SpellOffering,
+        BoardHex,
+        SkillOffering,
+        PlayerSkillHand,
+        TacticsOffering,
+        TacticsBoard,
+        //TacticsNight5,
+        DiscardDeck,
+        PlayersUnitContent,
+        MonsterConformationHand,
+        MonsterBattleHand,
+        AssignDamageContent,
+        GameEffect,
+        Rewards,
+        LevelUp,
+        Info,
+    }
+}

@@ -1,0 +1,169 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: monsters
+  m_EditorClassIdentifier: 
+  m_GroupName: monsters
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 6d0150db487a0fd439ba0e91a5d57982
+  m_SerializeEntries:
+  - m_GUID: f22572a8de0a4cc458340565be500d3d
+    m_Address: Assets/Images/card/monster/enemy_dungeon_werewolf_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a36f96b8d5811264e85c2de59eb5d71d
+    m_Address: Assets/Images/card/monster/enemy_marauding_orcs_orc_summoners_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 633b96e9997238440a4f02173fdc203f
+    m_Address: Assets/Images/card/monster/enemy_keeps_swordsmen_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e0fb8243b6241d54d9c097bcc67e2396
+    m_Address: Assets/Images/card/monster/enemy_marauding_orcs_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 383f501052939d745b4057afb8cc60eb
+    m_Address: Assets/Images/card/monster/enemy_draconum_fire_dragon_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7fd045a44e94213498d723faf54bedde
+    m_Address: Assets/Images/card/monster/enemy_cities_altem_guardians_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2a9a08baba3d9ba43a73ed2fe93a4bd5
+    m_Address: Assets/Images/card/monster/enemy_dungeon_minotaur_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 969a705053b15314b87b8d89f2ec91b0
+    m_Address: Assets/Images/card/monster/enemy_draconum_swamp_dragon_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 40fb578ff48621b4193d932198f56a11
+    m_Address: Assets/Images/card/monster/enemy_marauding_orcs_diggers_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9decd5134d42598478e4449a3b7dd992
+    m_Address: Assets/Images/card/monster/enemy_cities_freezers_x3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4a06b0f5d11d34148b66135facecf9a6
+    m_Address: Assets/Images/card/monster/enemy_marauding_orcs_wolf_riders_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 568e907827e89be47b95e4d292a3eec8
+    m_Address: Assets/Images/card/monster/enemy_dungeon_medusa_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e7047555a82f62d4e96629e3a9992ad5
+    m_Address: Assets/Images/card/monster/enemy_mage_towers_ice_golems_x1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f93f30228c661394eaac14b63dc5df05
+    m_Address: Assets/Images/card/monster/enemy_mage_towers_fire_golems_x1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: de5f6a98735128b4aadcdfdeb506cad9
+    m_Address: Assets/Images/card/monster/enemy_marauding_orcs_prowlers_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4b363040d040abd4f9e960e94756ca52
+    m_Address: Assets/Images/card/monster/enemy_keeps_crossbowmen_x3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 362f4eb1bd33acc4eb8272e00282fe51
+    m_Address: Assets/Images/card/monster/enemy_keeps_guardsmen_x3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9da17b587b85983438e310993bc2ed77
+    m_Address: Assets/Images/card/monster/enemy_draconum_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0ff0b1ed949f61148b6a6e7d96a55a32
+    m_Address: Assets/Images/card/monster/enemy_mage_towers_monks_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 849c04f7f756fdd42a4582c4603cbdb2
+    m_Address: Assets/Images/card/monster/enemy_dungeon_crypt_worm_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d8aa4138cbcd9b24587830e8cd4ebb9c
+    m_Address: Assets/Images/card/monster/enemy_dungeon_gargoyle_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 785937a20c830534fba8790d690cdd45
+    m_Address: Assets/Images/card/monster/enemy_cities_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b9d1210a5b3133844b80615ad8979527
+    m_Address: Assets/Images/card/monster/enemy_keeps_golems_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5379ed747d11a0b4b80628ac3f5e251e
+    m_Address: Assets/Images/card/monster/enemy_cities_gunners_x3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5452dbd7070e5cf458033e97220e91a2
+    m_Address: Assets/Images/card/monster/enemy_mage_towers_ice_mages_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1b0dda7e63fa6ad4c8110e1f815024e5
+    m_Address: Assets/Images/card/monster/enemy_marauding_orcs_cursed_hags_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8e7f670893efd5d418735f718453bbfc
+    m_Address: Assets/Images/card/monster/enemy_dungeon_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 341ba247dff8c974f8d6d756d4bc6c2e
+    m_Address: Assets/Images/card/monster/enemy_cities_altem_guardsmen_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5555f87bed056b1429d6c922822fde55
+    m_Address: Assets/Images/card/monster/enemy_keeps_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c02763685bec85c47addb5624c20280b
+    m_Address: Assets/Images/card/monster/enemy_draconum_high_dragon_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 42641d5e635cc8b4ea8342811635fbb9
+    m_Address: Assets/Images/card/monster/enemy_mage_towers_back.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3421ae038d2ee804fb6862441d0af695
+    m_Address: Assets/Images/card/monster/enemy_mage_towers_illusionists_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d929f6f69d12edf43aafa050cf8320e7
+    m_Address: Assets/Images/card/monster/enemy_draconum_ice_dragon_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6574d80ed5e34814fb928e0373ce52d3
+    m_Address: Assets/Images/card/monster/enemy_cities_altem_mages_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ef4fa25082e3b8b4d89c02319174c926
+    m_Address: Assets/Images/card/monster/enemy_mage_towers_fire_mages_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9d080cfe7f7363b49a7439dd9142e9b8
+    m_Address: Assets/Images/card/monster/enemy_marauding_orcs_ironclads_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: bdbeda3fc414643409ac93b22aa268e4, type: 2}
+    - {fileID: 11400000, guid: 980b8a0f01167374e8ea033f09bbfc40, type: 2}

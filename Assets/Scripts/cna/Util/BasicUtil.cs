@@ -1,0 +1,484 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using cna.poo;
+using UnityEngine;
+using UnityEngine.Tilemaps;
+
+namespace cna {
+    public static class BasicUtil {
+
+        public static byte[] toByteArray<T>(T obj) {
+            BinaryFormatter bf = new BinaryFormatter();
+            using (var ms = new MemoryStream()) {
+                bf.Serialize(ms, obj);
+                return ms.ToArray();
+            }
+        }
+
+        public static T byteArrayToData<T>(byte[] data) {
+            using (var memStream = new MemoryStream()) {
+                var binForm = new BinaryFormatter();
+                memStream.Write(data, 0, data.Length);
+                memStream.Seek(0, SeekOrigin.Begin);
+                var obj = (T)binForm.Deserialize(memStream);
+                return obj;
+            }
+        }
+
+        public static bool IsAdjacent(V2IntVO pt1, V2IntVO pt2) {
+            return GetAdjacentPoints(pt1).Contains(pt2);
+        }
+
+        public static int Distance(V2IntVO start, V2IntVO dest) {
+            int d1 = Math.Abs(dest.Y - start.Y);
+            int d2 = Math.Abs((int)Math.Ceiling((float)dest.Y / -2) + dest.X - (int)Math.Ceiling((float)start.Y / -2) - start.X);
+            int d3 = Math.Abs(-dest.Y - (int)Math.Ceiling((float)dest.Y / -2) - dest.X + start.Y + (int)Math.Ceiling((float)start.Y / -2) + start.X);
+            int distance = Math.Max(Math.Max(d1, d2), d3);
+            return distance;
+        }
+
+        public static List<V2IntVO> GetAdjacentPoints(V2IntVO pt) {
+            List<V2IntVO> pts = new List<V2IntVO>();
+            bool left = pt.Y % 2 == 0;
+            //  TOP     [{pt.x-1, pt.x, pt.x+1}]
+            if (left) pts.Add(new V2IntVO(pt.X + -1, pt.Y + 1));
+            pts.Add(new V2IntVO(pt.X, pt.Y + 1));
+            if (!left) pts.Add(new V2IntVO(pt.X + +1, pt.Y + 1));
+            //  CENTER  [{pt.x-1, pt.x, pt.x+1}]
+            pts.Add(new V2IntVO(pt.X + -1, pt.Y));
+            pts.Add(new V2IntVO(pt.X + +1, pt.Y));
+            //  BOTTOM  [{pt.x-1, pt.x, pt.x+1}]
+            if (left) pts.Add(new V2IntVO(pt.X + -1, pt.Y - 1));
+            pts.Add(new V2IntVO(pt.X, pt.Y - 1));
+            if (!left) pts.Add(new V2IntVO(pt.X + +1, pt.Y - 1));
+            return pts;
+        }
+
+        public static void ShuffleDeck<T>(this IList<T> deck) {
+            int n = deck.Count;
+            while (n > 1) {
+                n--;
+                int k = UnityEngine.Random.Range(0, n + 1);
+                T value = deck[k];
+                deck[k] = deck[n];
+                deck[n] = value;
+            }
+        }
+
+        public static T Random<T>(this IList<T> deck) {
+            return deck[UnityEngine.Random.Range(0, deck.Count)];
+        }
+
+        public static T DrawCard<T>(this IList<T> deck) {
+            if (deck.Count > 0) {
+                T _card = deck[0];
+                deck.RemoveAt(0);
+                return _card;
+            }
+            return default(T);
+        }
+
+
+        public static Image_Enum GetTilemapId(V2IntVO gameGridPos, Tilemap map) {
+            Image_Enum id = Image_Enum.NA;
+            CNATile tile = (CNATile)map.GetTile(gameGridPos.Vector3Int);
+            if (tile != null) {
+                id = tile.TileId;
+            }
+            return id;
+        }
+
+        public static int GetPlayerLevel(int fame) {
+            int lvl = 0;
+            if (fame < 3)
+                lvl = 1;
+            else if (fame < 8)
+                lvl = 2;
+            else if (fame < 15)
+                lvl = 3;
+            else if (fame < 24)
+                lvl = 4;
+            else if (fame < 35)
+                lvl = 5;
+            else if (fame < 48)
+                lvl = 6;
+            else if (fame < 63)
+                lvl = 7;
+            else if (fame < 80)
+                lvl = 8;
+            else if (fame < 99)
+                lvl = 9;
+            else if (fame < 120)
+                lvl = 10;
+            else
+                lvl = 11;
+            return lvl;
+        }
+        public static int GetFameForLevel(int level) {
+            int fame = 0;
+            if (level == 1) fame = 0;
+            else if (level == 2) fame = 3;
+            else if (level == 3) fame = 8;
+            else if (level == 4) fame = 15;
+            else if (level == 5) fame = 24;
+            else if (level == 6) fame = 35;
+            else if (level == 7) fame = 48;
+            else if (level == 8) fame = 63;
+            else if (level == 9) fame = 80;
+            else if (level == 10) fame = 99;
+            else if (level == 11) fame = 120;
+            return fame;
+        }
+
+        public static int GetRepForLevel(int level) {
+            switch (level) {
+                case -7: return -99;
+                case -6: return -5;
+                case -5: return -3;
+                case -4: return -2;
+                case -3: return -1;
+                case -2: return -1;
+                case -1: return 0;
+                case 0: return 0;
+                case 1: return 0;
+                case 2: return 1;
+                case 3: return 1;
+                case 4: return 2;
+                case 5: return 2;
+                case 6: return 3;
+                case 7: return 5;
+            }
+            return 0;
+        }
+
+        public static int GetArmorFromFame(int fame) {
+            if (fame < 8) {
+                return 2;
+            } else if (fame < 48) {
+                return 3;
+            } else {
+                return 4;
+            }
+        }
+
+        public static int GetHandLimitFromFame(int fame) {
+            if (fame < 24) {
+                return 5;
+            } else if (fame < 80) {
+                return 6;
+            } else {
+                return 7;
+            }
+        }
+
+        public static int GetUnitHandLimitFromFame(int fame) {
+            if (fame < 8) {
+                return 1;
+            } else if (fame < 24) {
+                return 2;
+            } else if (fame < 48) {
+                return 3;
+            } else if (fame < 80) {
+                return 4;
+            } else {
+                return 5;
+            }
+        }
+
+        public static Image_Enum Convert_CrystalToCrystalImageId(Crystal_Enum index) {
+            switch (index) {
+                case Crystal_Enum.Black: { return Image_Enum.I_crystal_black; }
+                case Crystal_Enum.Gold: { return Image_Enum.I_crystal_yellow; }
+                case Crystal_Enum.Blue: { return Image_Enum.I_crystal_blue; }
+                case Crystal_Enum.Red: { return Image_Enum.I_crystal_red; }
+                case Crystal_Enum.Green: { return Image_Enum.I_crystal_green; }
+                case Crystal_Enum.White: { return Image_Enum.I_crystal_white; }
+            }
+            return Image_Enum.NA;
+        }
+        public static Image_Enum Convert_CrystalToManaImageId(Crystal_Enum index) {
+            switch (index) {
+                case Crystal_Enum.Black: { return Image_Enum.I_mana_black; }
+                case Crystal_Enum.Gold: { return Image_Enum.I_mana_gold; }
+                case Crystal_Enum.Blue: { return Image_Enum.I_mana_blue; }
+                case Crystal_Enum.Red: { return Image_Enum.I_mana_red; }
+                case Crystal_Enum.Green: { return Image_Enum.I_mana_green; }
+                case Crystal_Enum.White: { return Image_Enum.I_mana_white; }
+            }
+            return Image_Enum.NA;
+        }
+        public static Image_Enum Convert_CrystalToManaDieImageId(Crystal_Enum index) {
+            switch (index) {
+                case Crystal_Enum.Black: { return Image_Enum.I_die_black; }
+                case Crystal_Enum.Gold: { return Image_Enum.I_die_gold; }
+                case Crystal_Enum.Blue: { return Image_Enum.I_die_blue; }
+                case Crystal_Enum.Red: { return Image_Enum.I_die_red; }
+                case Crystal_Enum.Green: { return Image_Enum.I_die_green; }
+                case Crystal_Enum.White: { return Image_Enum.I_die_white; }
+            }
+            return Image_Enum.NA;
+        }
+
+        public static Crystal_Enum Convert_ManaDieToCrystalId(Image_Enum index) {
+            switch (index) {
+                case Image_Enum.I_die_black: { return Crystal_Enum.Black; }
+                case Image_Enum.I_die_gold: { return Crystal_Enum.Gold; }
+                case Image_Enum.I_die_blue: { return Crystal_Enum.Blue; }
+                case Image_Enum.I_die_red: { return Crystal_Enum.Red; }
+                case Image_Enum.I_die_green: { return Crystal_Enum.Green; }
+                case Image_Enum.I_die_white: { return Crystal_Enum.White; }
+            }
+            return Crystal_Enum.NA;
+        }
+
+        public static Crystal_Enum Convert_ColorIdToCrystalId(CardColor_Enum index) {
+            switch (index) {
+                case CardColor_Enum.Blue: { return Crystal_Enum.Blue; }
+                case CardColor_Enum.Green: { return Crystal_Enum.Green; }
+                case CardColor_Enum.Red: { return Crystal_Enum.Red; }
+                case CardColor_Enum.White: { return Crystal_Enum.White; }
+            }
+            return Crystal_Enum.NA;
+        }
+        public static string SAVED_GAME_FILE_PATH = "./SavedGames/";
+
+        public static void SaveGameToFile(GameData gd) {
+            string gameid = gd.GameId;
+            string turnCounter = "" + gd.TurnCounter;
+            string playerName = gd.Players[gd.PlayerTurnIndex].Name;
+            string SAVED_GAME_PATH = SAVED_GAME_FILE_PATH + gameid + "/";
+            string fileName = string.Format("{0}_{1}.gd", turnCounter.PadLeft(4, '0'), playerName);
+            DirectoryInfo info = Directory.CreateDirectory(SAVED_GAME_PATH);
+            File.WriteAllText(SAVED_GAME_PATH + fileName, JsonUtility.ToJson(gd));
+        }
+
+        public static GameData LoadGameFromFile(string path) {
+            string data = File.ReadAllText(path);
+            GameData gd = JsonUtility.FromJson<GameData>(data);
+            return gd;
+        }
+
+        public static DirectoryInfo[] LoadGameList() {
+            DirectoryInfo info = new DirectoryInfo(SAVED_GAME_FILE_PATH);
+            return info.GetDirectories().OrderByDescending(p => p.CreationTime).ToArray();
+        }
+
+        public static FileInfo[] LoadGameBookmarks(string gameid) {
+            DirectoryInfo info = new DirectoryInfo(SAVED_GAME_FILE_PATH + gameid);
+            return info.GetFiles().OrderByDescending(p => p.Name).ToArray();
+        }
+
+        public static Image_Enum GetStructureAtLoc(V2IntVO loc) {
+            int mapIndex = D.Scenario.ConvertWorldToIndex(loc);
+            int locIndex = D.Scenario.ConvertWorldToLocIndex(loc);
+            MapHexId_Enum mapHexId_Enum = D.G.Board.CurrentMap[mapIndex];
+            MapHexVO mapHex = D.HexMap[mapHexId_Enum];
+            return mapHex.StructureList[locIndex];
+        }
+
+        public static void UpdateMovementGameEffects(PlayerData pd) {
+            Image_Enum AvatarShieldId = D.AvatarMetaDataMap[pd.Avatar].AvatarShieldId;
+            Image_Enum Structure = GetStructureAtLoc(pd.CurrentGridLoc);
+            List<V2IntVO> adj = GetAdjacentPoints(pd.CurrentGridLoc);
+            //  Check to reveal mage/keep
+            bool amuletOfSun = pd.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfTheSun);
+            if (D.Scenario.isDay || amuletOfSun) {
+                adj.ForEach(pos => {
+                    if (D.G.Monsters.Map.ContainsKey(pos)) {
+                        List<int> monsters = D.G.Monsters.Map[pos].Values;
+                        if (monsters.Count > 0) {
+                            Image_Enum structure = GetStructureAtLoc(pos);
+                            if (structure == Image_Enum.SH_Keep || structure == Image_Enum.SH_MageTower) {
+                                monsters.ForEach(m => {
+                                    if (!pd.VisableMonsters.Contains(m)) {
+                                        pd.VisableMonsters.Add(m);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+            //  Check to reveal ruins
+            if (!D.Scenario.isDay && Structure == Image_Enum.SH_AncientRuins) {
+                if (D.G.Monsters.Map.ContainsKey(pd.CurrentGridLoc)) {
+                    List<int> monsters = D.G.Monsters.Map[pd.CurrentGridLoc].Values;
+                    if (monsters.Count > 0) {
+                        monsters.ForEach(m => {
+                            if (D.Cards[m].CardType != CardType_Enum.Monster) {
+                                if (!pd.VisableMonsters.Contains(m)) {
+                                    pd.VisableMonsters.Add(m);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            //  Mines & Glade
+            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Blue);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Red);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Green);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_White);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_MagicGlade);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_Keep_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Blue_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Red_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Green_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_White_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Own);
+            adj.ForEach(pos => {
+                if (D.G.Monsters.Shield.ContainsKey(pos) && !D.G.Monsters.Map.ContainsKey(pos)) {
+                    if (D.G.Monsters.Shield[pos].Contains(D.AvatarMetaDataMap[pd.Avatar].AvatarShieldId)) {
+                        Image_Enum structure = GetStructureAtLoc(pos);
+                        switch (structure) {
+                            case Image_Enum.SH_Keep: { pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own); break; }
+                            case Image_Enum.SH_City_Blue:
+                            case Image_Enum.SH_City_Red:
+                            case Image_Enum.SH_City_Green:
+                            case Image_Enum.SH_City_White: { pd.AddGameEffect(GameEffect_Enum.SH_City_Own); break; }
+                        }
+                    }
+                }
+            });
+
+            switch (Structure) {
+                case Image_Enum.SH_CrystalMines_Blue: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Blue); break; }
+                case Image_Enum.SH_CrystalMines_Red: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Red); break; }
+                case Image_Enum.SH_CrystalMines_Green: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Green); break; }
+                case Image_Enum.SH_CrystalMines_White: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_White); break; }
+                case Image_Enum.SH_MagicGlade: { pd.AddGameEffect(GameEffect_Enum.SH_MagicGlade); break; }
+                case Image_Enum.SH_Keep: {
+                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
+                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
+                            pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own);
+                        }
+                    }
+                    break;
+                }
+                case Image_Enum.SH_City_Blue: {
+                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
+                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
+                            pd.AddGameEffect(GameEffect_Enum.SH_City_Blue_Own);
+                        }
+                    }
+                    break;
+                }
+                case Image_Enum.SH_City_Red: {
+                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
+                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
+                            pd.AddGameEffect(GameEffect_Enum.SH_City_Red_Own);
+                        }
+                    }
+                    break;
+                }
+                case Image_Enum.SH_City_Green: {
+                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
+                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
+                            pd.AddGameEffect(GameEffect_Enum.SH_City_Green_Own);
+                        }
+                    }
+                    break;
+                }
+                case Image_Enum.SH_City_White: {
+                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
+                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
+                            pd.AddGameEffect(GameEffect_Enum.SH_City_White_Own);
+                        }
+                    }
+                    break;
+                }
+            }
+            CalculatePlayerHandBonus(pd);
+        }
+        public static void CalculatePlayerHandBonus(PlayerData pd) {
+            Image_Enum AvatarShieldId = D.AvatarMetaDataMap[pd.Avatar].AvatarShieldId;
+            int keepBonus = KeepBonus(pd, AvatarShieldId);
+            int cityBonus = CityBonus(pd, AvatarShieldId);
+            int totalBonus = Math.Max(keepBonus, cityBonus);
+            if (pd.GameEffects.ContainsKey(GameEffect_Enum.CS_Meditation)) {
+                totalBonus += 2;
+            }
+            if (pd.GameEffects.ContainsKey(GameEffect_Enum.CS_Trance)) {
+                totalBonus += 4;
+            }
+            pd.Deck.HandSize.Y = totalBonus;
+        }
+
+        private static int KeepBonus(PlayerData pd, Image_Enum AvatarShieldId) {
+            int keepBonus = 0;
+            if (pd.GameEffects.ContainsKey(GameEffect_Enum.SH_Keep_Own)) {
+                D.G.Monsters.Shield.Keys.ForEach(pos => {
+                    Image_Enum structure = GetStructureAtLoc(pos);
+                    if (structure == Image_Enum.SH_Keep) {
+                        if (D.G.Monsters.Shield[pos].Contains(AvatarShieldId)) { keepBonus++; }
+                    }
+                });
+            }
+            return keepBonus;
+        }
+
+        private static int CityBonus(PlayerData pd, Image_Enum AvatarShieldId) {
+            int cityBonus = 0;
+            if (pd.GameEffects.ContainsKeyAny(GameEffect_Enum.SH_City_Own, GameEffect_Enum.SH_City_Blue_Own, GameEffect_Enum.SH_City_Red_Own, GameEffect_Enum.SH_City_Green_Own, GameEffect_Enum.SH_City_White_Own)) {
+                V2IntVO cityLoc = V2IntVO.zero;
+                if (pd.GameEffects.ContainsKey(GameEffect_Enum.SH_Keep_Own)) {
+                    List<V2IntVO> adj = GetAdjacentPoints(pd.CurrentGridLoc);
+                    adj.ForEach(pos => {
+                        Image_Enum structure = GetStructureAtLoc(pos);
+                        if (structure == Image_Enum.SH_City_Blue || structure == Image_Enum.SH_City_Red || structure == Image_Enum.SH_City_Green || structure == Image_Enum.SH_City_White) {
+                            cityLoc = pos;
+                        }
+                    });
+                } else {
+                    cityLoc = pd.CurrentGridLoc;
+                }
+                SortedDictionary<Image_Enum, int> cityLeader = new SortedDictionary<Image_Enum, int>();
+
+                D.G.Monsters.Shield[cityLoc].Values.ForEach(a => {
+                    if (!cityLeader.ContainsKey(a)) {
+                        cityLeader.Add(a, 1);
+                    } else {
+                        cityLeader[a]++;
+                    }
+                });
+                int highestTokens = 0;
+                Image_Enum leader = Image_Enum.NA;
+                foreach (Image_Enum i in cityLeader.Keys) {
+                    if (cityLeader[i] > highestTokens) {
+                        highestTokens = cityLeader[i];
+                        leader = i;
+                    }
+                }
+                List<Image_Enum> tied = new List<Image_Enum>();
+                foreach (Image_Enum i in cityLeader.Keys) {
+                    if (cityLeader[i] == highestTokens) {
+                        tied.Add(i);
+                    }
+                }
+                leader = tied[0];
+                cityBonus = leader.Equals(AvatarShieldId) ? 2 : 1;
+            }
+            return cityBonus;
+        }
+
+        public static void AddShieldToken(V2IntVO pos, Image_Enum avatar) {
+            if (!D.G.Monsters.Shield.ContainsKey(pos)) {
+                D.G.Monsters.Shield.Add(pos, new WrapList<Image_Enum>());
+            }
+            D.G.Monsters.Shield[pos].Add(D.AvatarMetaDataMap[avatar].AvatarShieldId);
+        }
+
+        public static int Draw(List<int> deck, ref int index) {
+            int card = 0;
+            if (index < deck.Count) {
+                card = deck[index];
+                index++;
+            }
+            return card;
+        }
+    }
+}

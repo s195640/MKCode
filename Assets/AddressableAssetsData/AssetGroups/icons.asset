@@ -1,0 +1,309 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: icons
+  m_EditorClassIdentifier: 
+  m_GroupName: icons
+  m_Data:
+    m_SerializedData: []
+  m_GUID: c8c9da119ffeef548b692618299aca68
+  m_SerializeEntries:
+  - m_GUID: a618e9a96758821408827431ce8b1e7c
+    m_Address: Assets/Images/Icon/unitvillage.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ac98dadabf6a83247a5c251514630220
+    m_Address: Assets/Images/Icon/unitmage.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c4694ece510e3e9498b68d1091bf0466
+    m_Address: Assets/Images/Icon/unitkeep.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7dc66cc19560a4d49aeb069df35c8dfc
+    m_Address: Assets/Images/Icon/unitcity.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c1f26e34c101a494b90d1b9cc46b7c57
+    m_Address: Assets/Images/Icon/unitbanner.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3fd29d37810662743bdddb8ea82de7a3
+    m_Address: Assets/Images/Icon/sun.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: bb90697e45aef4d42a7a00334cac9c62
+    m_Address: Assets/Images/Icon/smile.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7e7cdb47fd5eb6c4281fc0189fba2508
+    m_Address: Assets/Images/Icon/shield.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 03344e0ed282ed54f90234b9193ce985
+    m_Address: Assets/Images/Icon/search.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d791225e08083474f80b9ce77232e4a2
+    m_Address: Assets/Images/Icon/resistphysical.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7d67a0e899d12314790fa577d2ba649e
+    m_Address: Assets/Images/Icon/resistice.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f6593e16a7adc0849bf4c82ace8128d2
+    m_Address: Assets/Images/Icon/resistfire.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fbf1b2ad3f1cfe7448f135721f8274d9
+    m_Address: Assets/Images/Icon/moon.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0de18640dec7a6e4785da096ef30e173
+    m_Address: Assets/Images/Icon/monsterswift.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 28cf2b9ab1220ac49970b9bac9bb5a80
+    m_Address: Assets/Images/Icon/monsterselect.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9bf01f7d5d09128489623d8abe1e4800
+    m_Address: Assets/Images/Icon/monsterpoison.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 91f527f8d3d5717489d594e53a4eb75b
+    m_Address: Assets/Images/Icon/monsterparalyze.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1f99c2fef84c413468c37dc159ce317c
+    m_Address: Assets/Images/Icon/monsterfortified.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2b375b10a2a4ba4459fb10d99e7da460
+    m_Address: Assets/Images/Icon/monsterfame.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: eee2c81b921c07d4fa9e160a92e8e293
+    m_Address: Assets/Images/Icon/monsterbrutal.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 003da1ca6b286ab4d8c885b85a0e7be0
+    m_Address: Assets/Images/Icon/monsterarmor.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 55e9f5b7c53ccf042b296d8cf780005d
+    m_Address: Assets/Images/Icon/mana_white.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 002a3dfb0b95ce14ba6e55f684a3e408
+    m_Address: Assets/Images/Icon/mana_red.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3c47393b583dcbf4ab034bf4b1ae61eb
+    m_Address: Assets/Images/Icon/mana_green.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: dc5982b536e85c74e90c98c925644b80
+    m_Address: Assets/Images/Icon/mana_gold.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c00475dc9ba57b447a88346ce3ebaef4
+    m_Address: Assets/Images/Icon/mana_blue.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 21889408e48005b4c8a8d6a01c237131
+    m_Address: Assets/Images/Icon/mana_black.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 43bffba04dc08dd4888c0872e543753e
+    m_Address: Assets/Images/Icon/influencegrey.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0fd997812adba234286c535acdf02a42
+    m_Address: Assets/Images/Icon/influencegold.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 31fbdee6c6620be438db166e4145b4bd
+    m_Address: Assets/Images/Icon/influence.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c09466ed926f8974c86bcd5169bb0988
+    m_Address: Assets/Images/Icon/hourglass.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3d6724d637a2c5d43a8cdfb55a5d081b
+    m_Address: Assets/Images/Icon/healHand.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d40820e5a30d10847b22793237511dc9
+    m_Address: Assets/Images/Icon/fame.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ef4d164c96e91d440b3f8db709ad858b
+    m_Address: Assets/Images/Icon/disable.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 45c2b24477b70754d83d1842f1462e16
+    m_Address: Assets/Images/Icon/crystal_yellow.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 18cc33ff64ba6c04da4d09ea82edb960
+    m_Address: Assets/Images/Icon/crystal_white.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c54de20b04b773e44ab3cc7f040c31e4
+    m_Address: Assets/Images/Icon/crystal_red.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 33c4e18136f04e047bdbf2c0281ea154
+    m_Address: Assets/Images/Icon/crystal_green.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c19c2fbf949a4274ca87055de7fb92e0
+    m_Address: Assets/Images/Icon/crystal_blue.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5ebda878ebb11b64e9e98a8fb2758683
+    m_Address: Assets/Images/Icon/crystal_black.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2c2b6771c01fbd241972f4d0a2c13c5f
+    m_Address: Assets/Images/Icon/coretile_small.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 61abf8f3e74683f4db94be3bb75e192a
+    m_Address: Assets/Images/Icon/catapult.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5d0673fab46f2f34d9441120e716dad1
+    m_Address: Assets/Images/Icon/cardBackRounded.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9cf0ab83840bc4f459aba818cf2f0157
+    m_Address: Assets/Images/Icon/bow.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 89e49e1971f5b594db176b71b4870c62
+    m_Address: Assets/Images/Icon/boots.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 29e9d045ceaf0ed48ac42168fa4ec011
+    m_Address: Assets/Images/Icon/basictile_small.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 80656465dd763834a944a46837990628
+    m_Address: Assets/Images/Icon/attack_normal.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6c51b390387121d4381c26a1f483f5c3
+    m_Address: Assets/Images/Icon/attack_fire.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4ab83854b8e06a84e8916b9be6fb61f7
+    m_Address: Assets/Images/Icon/attack_coldfire.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 69314368b2bbd2a48a59f5921d2d2766
+    m_Address: Assets/Images/Icon/attack_cold.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4398327a4d07c0f4ab853a54e96c32a5
+    m_Address: Assets/Images/Icon/attack.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4085ae884f0166b4596b001da60c4675
+    m_Address: Assets/Images/Icon/armor.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 306ebf18e4b277c478e98dadd2d33a22
+    m_Address: Assets/Images/Icon/angry.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 15c0e7bcbf402a14c820753108a7b201
+    m_Address: Assets/Images/Icon/x.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6cedcbde912cc8b4295c4b011a04fb3f
+    m_Address: Assets/Images/Icon/rip.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a2d34af2a665a4943b05ef9a1b607407
+    m_Address: Assets/Images/Icon/arrow_right.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: dfde8419c5378fe41a18da6bcb733be4
+    m_Address: Assets/Images/Icon/blood.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d03201024e539444683056048c906bd7
+    m_Address: Assets/Images/Icon/dizzy.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6808a1d46c27b3c47970ebba6026fab9
+    m_Address: Assets/Images/Icon/rest.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 67b30a12a2c60f643b56d327e7ad165f
+    m_Address: Assets/Images/Icon/die_black.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a53ca998119f790448ecca063f1f0327
+    m_Address: Assets/Images/Icon/die_blue.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 76e03d85cf08e354cb9841c9c4daa95b
+    m_Address: Assets/Images/Icon/die_gold.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5f70107da2b13c14a81b46c1d30a6d98
+    m_Address: Assets/Images/Icon/die_green.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d1c8d14b31536174b880e366b3b50cdd
+    m_Address: Assets/Images/Icon/die_red.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 792a8a79363a497418ce634716fe12ac
+    m_Address: Assets/Images/Icon/die_white.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ae3081f0d034c8e49b5e400763a88a61
+    m_Address: Assets/Images/Icon/unitmonastery.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 57b3877965bdaa74fa5deba3d5ceddc2
+    m_Address: Assets/Images/Icon/bootfly.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 23cd5c7d9f31ce345a52bbaab19ed44f
+    m_Address: Assets/Images/Icon/cogwheel.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7a43cc0d8de3ed040905e3b4405571c7
+    m_Address: Assets/Images/Icon/trophy.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6d4649342e6f61141955d23981c0dfc5
+    m_Address: Assets/Images/Icon/info.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2d9a2bc3e6b8a3d43a1537446888ebf8
+    m_Address: Assets/Images/Icon/check.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 88fd0818abac7044c80566e8ad67bb81, type: 2}
+    - {fileID: 11400000, guid: 29011ad2a8f4ecc45b05ca77a70593f2, type: 2}

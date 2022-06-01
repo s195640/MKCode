@@ -1,0 +1,17 @@
+{
+    "name": "cna.connector",
+    "rootNamespace": "cna.connector",
+    "references": [
+        "GUID:fb67349a848e7b14fb8711a4a5a8f2ce",
+        "GUID:d02bd96c9afc1ec4b81dd6d032fdc9d2"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

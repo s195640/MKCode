@@ -1,0 +1,357 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: cards
+  m_EditorClassIdentifier: 
+  m_GroupName: cards
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 1085b1aa3c9ce2146ba68c705d41443e
+  m_SerializeEntries:
+  - m_GUID: 64613051f7b7d8742bb8ce53a965cb78
+    m_Address: Assets/Images/card/deed_back.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 41de7a8f27bd5f941896a27620e5c3e9
+    m_Address: Assets/Images/card/wound.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a7eb2a85f4a749440bb162528d79ee9b
+    m_Address: Assets/Images/card/basic/deed_basic_battle_tranquility.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b69ac55b547fe924f8cb295374eda4ba
+    m_Address: Assets/Images/card/basic/deed_basic_battle_versatility.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c716b53b4907da74681ff2b9c7164ffe
+    m_Address: Assets/Images/card/basic/deed_basic_cold_toughness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f73255e761dd42545840bf2a45e18ea1
+    m_Address: Assets/Images/card/basic/deed_basic_concentration.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a9d481f1114db3945890eb353b1a6f92
+    m_Address: Assets/Images/card/basic/deed_basic_crystallize.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3a82e02aab9e21a4f81dd5733bb0c8ae
+    m_Address: Assets/Images/card/basic/deed_basic_determination.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c030016d9338ead4d87d4fae5a1821e7
+    m_Address: Assets/Images/card/basic/deed_basic_improvisation.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 82c6af34eecb46b4b88e2c8044c3fc32
+    m_Address: Assets/Images/card/basic/deed_basic_mana_draw.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8826f9fb497599040931f01c37685957
+    m_Address: Assets/Images/card/basic/deed_basic_march.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a24bf0f347d77db47b54e895b7ca043d
+    m_Address: Assets/Images/card/basic/deed_basic_noble_manners.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8d1ca978a070f294f8820c7e3200abbe
+    m_Address: Assets/Images/card/basic/deed_basic_promise.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ab93a78a6731b5f4ba71693cead441e0
+    m_Address: Assets/Images/card/basic/deed_basic_rage.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: da9f9338344a0aa458e10c83e8ef230b
+    m_Address: Assets/Images/card/basic/deed_basic_stamina.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 333259f0ea6da1f4aadf063b34a95f49
+    m_Address: Assets/Images/card/basic/deed_basic_swiftness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e22fe18da75d0814289872e1c6066519
+    m_Address: Assets/Images/card/basic/deed_basic_threaten.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2fe25114a5ca43646a92e835b1a399e5
+    m_Address: Assets/Images/card/basic/deed_basic_tranquility.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e10b15cf988167e47a4821f0ba9857cb
+    m_Address: Assets/Images/card/basic/deed_basic_will_focus.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2ce92ab69d6426f4eb74cd7cfa93e376
+    m_Address: Assets/Images/card/artifact/artifact_amulet_of_darkness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f3dee426a2bf17840b6557c30252b897
+    m_Address: Assets/Images/card/artifact/artifact_amulet_of_sun.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9c94158b1ca3f584d8f27bdd25a4bc40
+    m_Address: Assets/Images/card/artifact/artifact_banner_of_courage.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 78bca88e17654db4cbe8733d3e8f2e13
+    m_Address: Assets/Images/card/artifact/artifact_banner_of_fear.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 608c8e12ce672be40adc4b57c4bd5b20
+    m_Address: Assets/Images/card/artifact/artifact_banner_of_glory.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: bee4b8a8d8c586547ab6cef449e8bb79
+    m_Address: Assets/Images/card/artifact/artifact_banner_of_protection.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 95f9c82d3d4eca544a1a31dc13a948da
+    m_Address: Assets/Images/card/artifact/artifact_book_of_wisdom.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6635c5ad3293c9c4887de4b0484d10ba
+    m_Address: Assets/Images/card/artifact/artifact_diamond_ring.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c6d9947d51802b54d9621f45897a6448
+    m_Address: Assets/Images/card/artifact/artifact_emerald_ring.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 97ab54757a4fcee40985b6d774469a57
+    m_Address: Assets/Images/card/artifact/artifact_endless_bag_of_gold.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f201defed5de5f64cabdae0f0c619bf0
+    m_Address: Assets/Images/card/artifact/artifact_endless_gem_pouch.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: eab4b5330c43b2e49bc232df2939ff76
+    m_Address: Assets/Images/card/artifact/artifact_golden_grail.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a3073758aea9bc646b1204c22b094fd4
+    m_Address: Assets/Images/card/artifact/artifact_horn_of_wrath.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 47cb8a4dd12989c45b2486f1d9e9e152
+    m_Address: Assets/Images/card/artifact/artifact_ruby_ring.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 38f1de069228bd848a76631fbb56d234
+    m_Address: Assets/Images/card/artifact/artifact_sapphire_ring.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1e1fbd8fee1c5ff48bbb988feecbb160
+    m_Address: Assets/Images/card/artifact/artifact_sword_of_justice.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 35a5657ed304acd49a727c3453072278
+    m_Address: Assets/Images/card/advanced/adv_action_agility.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fa6cc0ca261415341826cee772a6e8d5
+    m_Address: Assets/Images/card/advanced/adv_action_ambush.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3d9b35b7516d2b645b7cd9b718f904dd
+    m_Address: Assets/Images/card/advanced/adv_action_blood_rage.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5e3bd98917ab8094d9a8a1e6d3386fbd
+    m_Address: Assets/Images/card/advanced/adv_action_blood_ritual.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9f50eb06ebd35984480b99d47519bf6d
+    m_Address: Assets/Images/card/advanced/adv_action_crushing_bolt.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c35edceeaa2b6804e9467e6d58373625
+    m_Address: Assets/Images/card/advanced/adv_action_crystal_mastery.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c4681634be2ff9f48a778b2f1c4c0580
+    m_Address: Assets/Images/card/advanced/adv_action_decompose.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 26e58407446ef264594d37beb3be0eaa
+    m_Address: Assets/Images/card/advanced/adv_action_diplomacy.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b6c747a2c4968fa418b09a866ee81c9e
+    m_Address: Assets/Images/card/advanced/adv_action_fire_bolt.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8c33eb4a125714c48a943f0a0e2cd247
+    m_Address: Assets/Images/card/advanced/adv_action_frost_bridge.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 730b3f5ddc0c3d1429932618684479b9
+    m_Address: Assets/Images/card/advanced/adv_action_heroic_tale.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4863944c3d3b3044e93a17a862334c03
+    m_Address: Assets/Images/card/advanced/adv_action_ice_bolt.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3b17c12124c6c684e846caea802a8a69
+    m_Address: Assets/Images/card/advanced/adv_action_ice_shield.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: be80df57fa4c37c4d96725919db62007
+    m_Address: Assets/Images/card/advanced/adv_action_in_need.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1004ff02651e0724bbc94cc672e9ea39
+    m_Address: Assets/Images/card/advanced/adv_action_intimidate.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fa02b25f1cdbfff4a984f56910a062bb
+    m_Address: Assets/Images/card/advanced/adv_action_into_the_heat.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 76ee51fa219ce0543b7b1ee718816d0e
+    m_Address: Assets/Images/card/advanced/adv_action_learning.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e232dc8627921af40853131272921e42
+    m_Address: Assets/Images/card/advanced/adv_action_magic_talent.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d2849a39ef9fbb543bdf8b298090bd0e
+    m_Address: Assets/Images/card/advanced/adv_action_mana_storm.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: cc679e31083693f459c1a12528e2bfe6
+    m_Address: Assets/Images/card/advanced/adv_action_maximal_effect.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1f2de87f3fb7e46448e97c6c5f1ddace
+    m_Address: Assets/Images/card/advanced/adv_action_path_finding.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c34f4d810cad26f4ea9b3acbd5c6dfcf
+    m_Address: Assets/Images/card/advanced/adv_action_pure_magic.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: be1c2ddd03c615c428c77012c6068d86
+    m_Address: Assets/Images/card/advanced/adv_action_refreshing_walk.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c672fe7a9a033d24fabceaed110f9f40
+    m_Address: Assets/Images/card/advanced/adv_action_regeneration.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2fb2410e348271542991b207752e3741
+    m_Address: Assets/Images/card/advanced/adv_action_song_of_wind.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 86fec2ef697b5bb438d301924b0c24ba
+    m_Address: Assets/Images/card/advanced/adv_action_steady_tempo.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1f5dec903d0c989438e6da3aa07f5d44
+    m_Address: Assets/Images/card/advanced/adv_action_swift_bolt.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 672f09cfc42afb943865f87acd4efcd5
+    m_Address: Assets/Images/card/advanced/adv_action_training.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2efb135c694ea2c4da7c97e2b94ada1d
+    m_Address: Assets/Images/card/unit/regular_utem_swordsmen_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3ca525e59b999004ab024dc6189840b4
+    m_Address: Assets/Images/card/unit/regular_utem_guardsmen_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7bacb782995437748a1256aa8eb3a1f0
+    m_Address: Assets/Images/card/unit/regular_utem_crossbowmen_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: dcb1e2c9119ddd94eb0546ae9d33c504
+    m_Address: Assets/Images/card/unit/regular_savage_monks.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d6e024f246aea294c848eb649eee7b91
+    m_Address: Assets/Images/card/unit/regular_red_cape_monks.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b849b0977725aae4fa795039aa3726c4
+    m_Address: Assets/Images/card/unit/regular_peasants_x3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5715c2ab8f9f5314aae5da3f1d96fcb5
+    m_Address: Assets/Images/card/unit/regular_northern_monks.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5b8a86b3e50cb3141b356860c269ca48
+    m_Address: Assets/Images/card/unit/regular_illusionists_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ef050fef8752f1146a999f181db5d606
+    m_Address: Assets/Images/card/unit/regular_herbalists_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 968e96719d32e944e8c0995df49ca3ea
+    m_Address: Assets/Images/card/unit/regular_guardian_golems_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1890bc27ef8cd6c4f9e1cef7170dfc79
+    m_Address: Assets/Images/card/unit/regular_foresters_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4fedac7d192e9d94fb9dd15f4de3feb3
+    m_Address: Assets/Images/card/unit/elite_ice_mages_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 25fd54b11cdc4f64aa80a6cc398d2ae8
+    m_Address: Assets/Images/card/unit/elite_ice_golems_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b9e5c583d3275ad439cb4c7cd9472df2
+    m_Address: Assets/Images/card/unit/elite_fire_mages_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6123b281a49f89e4fabe10e5c0886660
+    m_Address: Assets/Images/card/unit/elite_fire_golems_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fe2c1287c90a370439f698d374136ed8
+    m_Address: Assets/Images/card/unit/elite_catapults_x3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 76eab88c1b8ac9a45af943b8b7fe544a
+    m_Address: Assets/Images/card/unit/elite_amotep_gunners_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c50340f64d23dec448fded7c62801eb6
+    m_Address: Assets/Images/card/unit/elite_amotep_freezers_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d1b6f6e413d2e9f4f86c833baa0d786b
+    m_Address: Assets/Images/card/unit/elite_altem_mages_x2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 059cb72859bc9794ea3167511edb2e28
+    m_Address: Assets/Images/card/unit/elite_altem_guardians_x3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 600ec7ca52c48064da5b6c6bf12cd758, type: 2}
+    - {fileID: 11400000, guid: 67ca5ac23bbe8654f94b43efe56f43dd, type: 2}
