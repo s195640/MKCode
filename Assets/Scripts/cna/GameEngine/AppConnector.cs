@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using cna.connector;
 using cna.poo;
+using UnityEditor;
 using UnityEngine;
 
 namespace cna {
@@ -23,7 +24,7 @@ namespace cna {
                     Debug.Log(m.ToString());
                     switch (m.type) {
                         case mType_Enum.OnConnect: {
-                            D.LocalPlayer.Key = m.intMsg;
+                            D.Connector.Player.Key = m.intMsg;
                             D.ClientState = ClientState_Enum.CONNECTED;
                             Send_RequestGameList();
                             D.A.UpdateUI();
@@ -47,7 +48,7 @@ namespace cna {
                                     break;
                                 }
                                 case ClientState_Enum.CONNECTED_HOST: {
-                                    if (D.G.Gld.Players.RemoveAll(p => p.Key == m.intMsg) > 0) {
+                                    if (D.G.Players.RemoveAll(p => p.Key == m.intMsg) > 0) {
                                         Send_HostSendsGameDataToClients();
                                         D.A.UpdateUI();
                                     }
@@ -94,15 +95,15 @@ namespace cna {
                             if (D.ClientState == ClientState_Enum.CONNECTED_HOST && m.textMsg_02.Equals(D.G.GameId)) {
                                 if (D.G.GameStatus == Game_Enum.New_Game) {
                                     PlayerData playerToAdd = m.getData<PlayerData>();
-                                    if (!D.G.Gld.Players.Exists(p => p.Key == playerToAdd.Key)) {
+                                    if (!D.G.Players.Exists(p => p.Key == playerToAdd.Key)) {
                                         Send_JoinGameRejected(m.sender, D.G.GameId);
                                     } else {
                                         Send_HostSendsGameDataToClients();
                                     }
                                 } else {
                                     PlayerData playerToAdd = m.getData<PlayerData>();
-                                    if (!D.G.Gld.Players.Exists(p => p.Key == playerToAdd.Key)) {
-                                        D.G.Gld.Players.Add(playerToAdd);
+                                    if (!D.G.Players.Exists(p => p.Key == playerToAdd.Key)) {
+                                        D.G.Players.Add(playerToAdd);
                                         D.A.UpdateUI();
                                     }
                                     Send_HostSendsGameDataToClients();
@@ -121,7 +122,7 @@ namespace cna {
                         case mType_Enum.GameData_Request: {
                             if (D.ClientState == ClientState_Enum.CONNECTED_HOST && m.textMsg_02.Equals(D.G.GameId)) {
                                 //  TODO - Check Request
-                                D.G.Update(m.getData<GameData>());
+                                UpdateGameData(m.getData<Data>());
                                 Send_HostSendsGameDataToClients();
                                 D.A.UpdateUI();
                             }
@@ -129,9 +130,18 @@ namespace cna {
                         }
                         case mType_Enum.GameData_Demand: {
                             if (D.ClientState == ClientState_Enum.CONNECTED_HOST && m.textMsg_02.Equals(D.G.GameId)) {
-                                GameData g = m.getData<GameData>();
-                                D.G.Update(g);
+                                Data g = m.getData<Data>();
+                                UpdateGameData(g);
                                 Send_HostSendsGameDataToClients();
+                                D.A.UpdateUI();
+                            }
+                            break;
+                        }
+                        case mType_Enum.PlayerData_ToHost: {
+                            if (D.ClientState == ClientState_Enum.CONNECTED_HOST && m.textMsg_02.Equals(D.G.GameId)) {
+                                PlayerData p = m.getData<PlayerData>();
+                                UpdatePlayerData(p);
+                                Send_HostSendsPlayerDataToClients(p);
                                 D.A.UpdateUI();
                             }
                             break;
@@ -141,7 +151,17 @@ namespace cna {
                                 if (D.ClientState == ClientState_Enum.CONNECTED_JOINING_GAME) {
                                     D.ClientState = ClientState_Enum.CONNECTED_PLAYER;
                                 }
-                                D.G.Update(m.getData<GameData>());
+                                UpdateGameData(m.getData<Data>());
+                                D.A.UpdateUI();
+                            }
+                            break;
+                        }
+                        case mType_Enum.PlayerData_FromHost: {
+                            if (m.textMsg_02.Equals(D.G.GameId)) {
+                                if (D.ClientState == ClientState_Enum.CONNECTED_JOINING_GAME) {
+                                    D.ClientState = ClientState_Enum.CONNECTED_PLAYER;
+                                }
+                                UpdatePlayerData(m.getData<PlayerData>());
                                 D.A.UpdateUI();
                             }
                             break;
@@ -179,9 +199,7 @@ namespace cna {
 
 
         public void CreateNewGame() {
-            Clean();
-            D.G.GameId = Guid.NewGuid().ToString();
-            D.G.Gld = new GameLobbyData(D.LocalPlayer, D.G.GameId);
+            D.G = new Data(Guid.NewGuid().ToString(), D.Connector.Player);
             D.G.GameStatus = Game_Enum.CHAR_CREATION;
         }
 
@@ -205,7 +223,7 @@ namespace cna {
                 }
                 case ClientState_Enum.CONNECTED_PLAYER: {
                     D.ClientState = ClientState_Enum.CONNECTED;
-                    D.G.Gld.Players.RemoveAll(p => p.Key == D.LocalPlayer.Key);
+                    D.G.Players.RemoveAll(p => p.Key == D.LocalPlayerKey);
                     D.C.Send_GameData();
                     D.C.Send_RequestGameList();
                     break;
@@ -214,8 +232,17 @@ namespace cna {
             D.A.UpdateUI();
         }
         public void Clean() {
-            D.A.gameData = new GameData();
+            D.A.New();
             lobbyDataList = new List<LobbyData>();
+        }
+
+        public void UpdateGameData(Data data) {
+            //D.G = gd.Clone();
+            D.G.UpdateData(data);
+            D.Scenario.Check();
+        }
+        public void UpdatePlayerData(PlayerData playerData) {
+            D.G.Players.Find(p => p.Key == playerData.Key).UpdateData(playerData);
         }
 
         #region Messages
@@ -225,46 +252,46 @@ namespace cna {
         }
         public void Send_RequestGameList() {
             wsMsg msg = new wsMsg();
-            msg.d = new wsData(mType_Enum.RequestGameList, D.LocalPlayer.Key);
+            msg.d = new wsData(mType_Enum.RequestGameList, D.Connector.Player.Key);
             Send(msg);
         }
         public void Send_OpenLobbyGame(int requesterKey) {
             wsMsg msg = new wsMsg();
             msg.u.Add(requesterKey);
-            msg.d = new wsData(mType_Enum.LobbyGame, new LobbyData(D.LocalPlayer.Name, D.LocalPlayer.Key, D.G.GameId), D.LocalPlayer.Key);
+            msg.d = new wsData(mType_Enum.LobbyGame, new LobbyData(D.LocalPlayer.Name, D.LocalPlayerKey, D.G.GameId), D.LocalPlayerKey);
             Send(msg);
         }
         public void Send_DestroyGame() {
             wsMsg msg = new wsMsg();
-            msg.d = new wsData(mType_Enum.GameData_Destroy, D.LocalPlayer.Key);
+            msg.d = new wsData(mType_Enum.GameData_Destroy, D.LocalPlayerKey);
             Send(msg);
         }
         public void Send_CreateNewGame() {
             wsMsg msg = new wsMsg();
-            msg.d = new wsData(mType_Enum.LobbyGame, new LobbyData(D.LocalPlayer.Name, D.LocalPlayer.Key, D.G.GameId), D.LocalPlayer.Key);
+            msg.d = new wsData(mType_Enum.LobbyGame, new LobbyData(D.LocalPlayer.Name, D.LocalPlayerKey, D.G.GameId), D.LocalPlayerKey);
             Send(msg);
         }
         public void Send_JoinGame(int gameHostKey, string gameid) {
             wsMsg msg = new wsMsg();
             msg.u.Add(gameHostKey);
-            msg.d = new wsData(mType_Enum.RequestJoinGame, gameid, new PlayerData(D.LocalPlayer.Name, D.LocalPlayer.Key), D.LocalPlayer.Key);
+            msg.d = new wsData(mType_Enum.RequestJoinGame, gameid, D.Connector.Player, D.Connector.Player.Key);
             Send(msg);
         }
         public void Send_JoinGameRejected(int requesterKey, string gameid) {
             wsMsg msg = new wsMsg();
             msg.u.Add(requesterKey);
-            msg.d = new wsData(mType_Enum.RequestJoinGameRejected, gameid, D.LocalPlayer.Key);
+            msg.d = new wsData(mType_Enum.RequestJoinGameRejected, gameid, D.LocalPlayerKey);
             Send(msg);
         }
-        public void Send_GameDataRequest(GameData gdClone, string gameid) {
+        public void Send_GameDataRequest(Data gdClone, string gameid) {
             if (D.isHost) {
-                D.G.Update(gdClone);
+                UpdateGameData(gdClone);
                 Send_HostSendsGameDataToClients();
                 D.A.UpdateUI();
             } else {
                 wsMsg msg = new wsMsg();
-                msg.u.Add(gdClone.Gld.Host.Key);
-                msg.d = new wsData(mType_Enum.GameData_Request, gameid, gdClone, D.LocalPlayer.Key);
+                msg.u.Add(gdClone.GameData.HostKey);
+                msg.d = new wsData(mType_Enum.GameData_Request, gameid, gdClone, D.LocalPlayerKey);
                 Send(msg);
             }
         }
@@ -274,31 +301,31 @@ namespace cna {
             } else {
                 wsMsg msg = new wsMsg();
                 msg.u.Add(D.HostPlayer.Key);
-                msg.d = new wsData(mType_Enum.GameData_Demand, D.G.GameId, D.G, D.LocalPlayer.Key);
+                msg.d = new wsData(mType_Enum.GameData_Demand, D.G.GameId, D.G, D.LocalPlayerKey);
                 Send(msg);
             }
             D.A.UpdateUI();
         }
         private void Send_HostSendsGameDataToClients() {
             wsMsg msg = new wsMsg();
-            D.G.Gld.Players.ForEach(p => {
-                if (p.Key != D.LocalPlayer.Key) {
+            D.G.Players.ForEach(p => {
+                if (p.Key != D.LocalPlayerKey) {
                     msg.u.Add(p.Key);
                 }
             });
-            msg.d = new wsData(mType_Enum.GameData_Host, D.G.GameId, D.G, D.LocalPlayer.Key);
+            msg.d = new wsData(mType_Enum.GameData_Host, D.G.GameId, D.G, D.LocalPlayerKey);
             Send(msg);
         }
 
         public void Send_Chat(ChatItemData cid) {
             wsMsg msg = new wsMsg();
-            msg.d = new wsData(mType_Enum.Chat, cid, D.LocalPlayer.Key);
+            msg.d = new wsData(mType_Enum.Chat, cid, D.LocalPlayerKey);
             Send(msg);
         }
         public void LogMessage(string logMsg) {
             DateTime dt = DateTime.Now;
             long t = dt.Ticks;
-            LogData log = new LogData(D.LocalPlayer.Key, logMsg, t);
+            LogData log = new LogData(D.LocalPlayerKey, logMsg, t);
             Send_GameLog(log);
         }
         public void LogMessageDummy(string logMsg) {
@@ -309,10 +336,37 @@ namespace cna {
         }
         private void Send_GameLog(LogData log) {
             wsMsg msg = new wsMsg();
-            msg.d = new wsData(mType_Enum.GameLog, D.G.GameId, log, D.LocalPlayer.Key);
+            msg.d = new wsData(mType_Enum.GameLog, D.G.GameId, log, D.LocalPlayerKey);
             D.LogQueue.Enqueue(log);
             Send(msg);
         }
+
+        #region send player data
+        public void Send_PlayerData() {
+            PlayerData playerData = D.LocalPlayer;
+            if (D.isHost) {
+                Send_HostSendsPlayerDataToClients(playerData);
+            } else {
+                wsMsg msg = new wsMsg();
+                msg.u.Add(D.HostPlayer.Key);
+                msg.d = new wsData(mType_Enum.PlayerData_ToHost, D.G.GameId, playerData, playerData.Key);
+                Send(msg);
+            }
+            D.A.UpdateUI();
+        }
+        public void Send_HostSendsPlayerDataToClients(PlayerData playerData) {
+            wsMsg msg = new wsMsg();
+            D.G.Players.ForEach(p => {
+                if (p.Key != D.LocalPlayerKey) {
+                    msg.u.Add(p.Key);
+                }
+            });
+            msg.d = new wsData(mType_Enum.PlayerData_FromHost, D.G.GameId, playerData, D.LocalPlayerKey);
+            Send(msg);
+        }
+        #endregion
+
+
         #endregion
 
     }

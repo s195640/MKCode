@@ -9,6 +9,8 @@ namespace cna.ui {
         [SerializeField] private GameObject PlayerPhase;
 
         [SerializeField] private Image[] BackgroundColor;
+        [SerializeField] private GameObject Tactics;
+        [SerializeField] private GameObject TacticsWaiting;
         [SerializeField] private GameObject StartOfTurn;
         [SerializeField] private GameObject Movement;
         [SerializeField] private GameObject Influence;
@@ -45,6 +47,8 @@ namespace cna.ui {
 
         private void UpdateUI_TurnPhase() {
             turnPhase = D.LocalPlayer.PlayerTurnPhase;
+            Tactics.SetActive(false);
+            TacticsWaiting.SetActive(false);
             StartOfTurn.SetActive(false);
             Movement.SetActive(false);
             Influence.SetActive(false);
@@ -54,6 +58,16 @@ namespace cna.ui {
             Exhaustion.SetActive(false);
             NotYourTurn.SetActive(false);
             switch (turnPhase) {
+                case TurnPhase_Enum.TacticsNotTurn:
+                case TurnPhase_Enum.TacticsEnd: {
+                    TacticsWaiting.SetActive(true);
+                    break;
+                }
+                case TurnPhase_Enum.TacticsAction:
+                case TurnPhase_Enum.TacticsSelect: {
+                    Tactics.SetActive(true);
+                    break;
+                }
                 case TurnPhase_Enum.StartTurn: {
                     StartOfTurn.SetActive(true);
                     break;
@@ -90,9 +104,9 @@ namespace cna.ui {
         }
 
         public void OnClick_Influence() {
-            ActionResultVO ar = new ActionResultVO();
+            GameAPI ar = new GameAPI();
             ar.TurnPhase(TurnPhase_Enum.Influence);
-            ar.Push();
+            ar.UpdateUI();
         }
     }
 }

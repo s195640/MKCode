@@ -5,7 +5,7 @@ using UnityEngine;
 namespace cna.poo {
 
     [Serializable]
-    public class LobbyData : Data {
+    public class LobbyData : BaseData {
         [SerializeField] private string gameId;
         [SerializeField] private PlayerData hostPlayer;
         [SerializeField] private bool gameStarted = false;

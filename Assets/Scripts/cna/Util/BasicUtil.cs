@@ -245,7 +245,7 @@ namespace cna {
         }
         public static string SAVED_GAME_FILE_PATH = "./SavedGames/";
 
-        public static void SaveGameToFile(GameData gd) {
+        public static void SaveGameToFile(Data gd) {
             string gameid = gd.GameId;
             string turnCounter = "" + gd.TurnCounter;
             string playerName = gd.Players[gd.PlayerTurnIndex].Name;
@@ -255,9 +255,9 @@ namespace cna {
             File.WriteAllText(SAVED_GAME_PATH + fileName, JsonUtility.ToJson(gd));
         }
 
-        public static GameData LoadGameFromFile(string path) {
+        public static Data LoadGameFromFile(string path) {
             string data = File.ReadAllText(path);
-            GameData gd = JsonUtility.FromJson<GameData>(data);
+            Data gd = JsonUtility.FromJson<Data>(data);
             return gd;
         }
 
@@ -287,8 +287,8 @@ namespace cna {
             bool amuletOfSun = pd.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfTheSun);
             if (D.Scenario.isDay || amuletOfSun) {
                 adj.ForEach(pos => {
-                    if (D.G.Monsters.Map.ContainsKey(pos)) {
-                        List<int> monsters = D.G.Monsters.Map[pos].Values;
+                    if (pd.Board.MonsterData.ContainsKey(pos)) {
+                        List<int> monsters = pd.Board.MonsterData[pos].Values;
                         if (monsters.Count > 0) {
                             Image_Enum structure = GetStructureAtLoc(pos);
                             if (structure == Image_Enum.SH_Keep || structure == Image_Enum.SH_MageTower) {
@@ -304,8 +304,8 @@ namespace cna {
             }
             //  Check to reveal ruins
             if (!D.Scenario.isDay && Structure == Image_Enum.SH_AncientRuins) {
-                if (D.G.Monsters.Map.ContainsKey(pd.CurrentGridLoc)) {
-                    List<int> monsters = D.G.Monsters.Map[pd.CurrentGridLoc].Values;
+                if (pd.Board.MonsterData.ContainsKey(pd.CurrentGridLoc)) {
+                    List<int> monsters = pd.Board.MonsterData[pd.CurrentGridLoc].Values;
                     if (monsters.Count > 0) {
                         monsters.ForEach(m => {
                             if (D.Cards[m].CardType != CardType_Enum.Monster) {
@@ -331,8 +331,8 @@ namespace cna {
             pd.GameEffects.Remove(GameEffect_Enum.SH_City_White_Own);
             pd.GameEffects.Remove(GameEffect_Enum.SH_City_Own);
             adj.ForEach(pos => {
-                if (D.G.Monsters.Shield.ContainsKey(pos) && !D.G.Monsters.Map.ContainsKey(pos)) {
-                    if (D.G.Monsters.Shield[pos].Contains(D.AvatarMetaDataMap[pd.Avatar].AvatarShieldId)) {
+                if (!pd.Board.MonsterData.ContainsKey(pos)) {
+                    if (pd.Shields.Contains(pos)) {
                         Image_Enum structure = GetStructureAtLoc(pos);
                         switch (structure) {
                             case Image_Enum.SH_Keep: { pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own); break; }
@@ -352,43 +352,23 @@ namespace cna {
                 case Image_Enum.SH_CrystalMines_White: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_White); break; }
                 case Image_Enum.SH_MagicGlade: { pd.AddGameEffect(GameEffect_Enum.SH_MagicGlade); break; }
                 case Image_Enum.SH_Keep: {
-                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
-                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
-                            pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own);
-                        }
-                    }
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own); }
                     break;
                 }
                 case Image_Enum.SH_City_Blue: {
-                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
-                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
-                            pd.AddGameEffect(GameEffect_Enum.SH_City_Blue_Own);
-                        }
-                    }
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Blue_Own); }
                     break;
                 }
                 case Image_Enum.SH_City_Red: {
-                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
-                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
-                            pd.AddGameEffect(GameEffect_Enum.SH_City_Red_Own);
-                        }
-                    }
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Red_Own); }
                     break;
                 }
                 case Image_Enum.SH_City_Green: {
-                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
-                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
-                            pd.AddGameEffect(GameEffect_Enum.SH_City_Green_Own);
-                        }
-                    }
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Green_Own); }
                     break;
                 }
                 case Image_Enum.SH_City_White: {
-                    if (D.G.Monsters.Shield.ContainsKey(pd.CurrentGridLoc)) {
-                        if (D.G.Monsters.Shield[pd.CurrentGridLoc].Contains(AvatarShieldId)) {
-                            pd.AddGameEffect(GameEffect_Enum.SH_City_White_Own);
-                        }
-                    }
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_White_Own); }
                     break;
                 }
             }
@@ -396,8 +376,8 @@ namespace cna {
         }
         public static void CalculatePlayerHandBonus(PlayerData pd) {
             Image_Enum AvatarShieldId = D.AvatarMetaDataMap[pd.Avatar].AvatarShieldId;
-            int keepBonus = KeepBonus(pd, AvatarShieldId);
-            int cityBonus = CityBonus(pd, AvatarShieldId);
+            int keepBonus = KeepBonus(pd);
+            int cityBonus = CityBonus(pd);
             int totalBonus = Math.Max(keepBonus, cityBonus);
             if (pd.GameEffects.ContainsKey(GameEffect_Enum.CS_Meditation)) {
                 totalBonus += 2;
@@ -408,20 +388,21 @@ namespace cna {
             pd.Deck.HandSize.Y = totalBonus;
         }
 
-        private static int KeepBonus(PlayerData pd, Image_Enum AvatarShieldId) {
+        private static int KeepBonus(PlayerData pd) {
             int keepBonus = 0;
             if (pd.GameEffects.ContainsKey(GameEffect_Enum.SH_Keep_Own)) {
-                D.G.Monsters.Shield.Keys.ForEach(pos => {
+                pd.Shields.ForEach(pos => {
                     Image_Enum structure = GetStructureAtLoc(pos);
                     if (structure == Image_Enum.SH_Keep) {
-                        if (D.G.Monsters.Shield[pos].Contains(AvatarShieldId)) { keepBonus++; }
+                        keepBonus++;
                     }
                 });
             }
             return keepBonus;
         }
 
-        private static int CityBonus(PlayerData pd, Image_Enum AvatarShieldId) {
+        private static int CityBonus(PlayerData pd) {
+            //  due to everyone playing at once, tie is considered the leader
             int cityBonus = 0;
             if (pd.GameEffects.ContainsKeyAny(GameEffect_Enum.SH_City_Own, GameEffect_Enum.SH_City_Blue_Own, GameEffect_Enum.SH_City_Red_Own, GameEffect_Enum.SH_City_Green_Own, GameEffect_Enum.SH_City_White_Own)) {
                 V2IntVO cityLoc = V2IntVO.zero;
@@ -436,49 +417,52 @@ namespace cna {
                 } else {
                     cityLoc = pd.CurrentGridLoc;
                 }
-                SortedDictionary<Image_Enum, int> cityLeader = new SortedDictionary<Image_Enum, int>();
-
-                D.G.Monsters.Shield[cityLoc].Values.ForEach(a => {
-                    if (!cityLeader.ContainsKey(a)) {
-                        cityLeader.Add(a, 1);
-                    } else {
-                        cityLeader[a]++;
-                    }
-                });
-                int highestTokens = 0;
-                Image_Enum leader = Image_Enum.NA;
-                foreach (Image_Enum i in cityLeader.Keys) {
-                    if (cityLeader[i] > highestTokens) {
-                        highestTokens = cityLeader[i];
-                        leader = i;
+                int currentPlayerTotal = pd.Shields.FindAll(pos => pos.Equals(cityLoc)).Count;
+                if (currentPlayerTotal > 0) {
+                    cityBonus = 1;
+                    if (D.G.Players.Find(p => p.Shields.FindAll(pos => pos.Equals(cityLoc)).Count > currentPlayerTotal) == null) {
+                        cityBonus = 2;
                     }
                 }
-                List<Image_Enum> tied = new List<Image_Enum>();
-                foreach (Image_Enum i in cityLeader.Keys) {
-                    if (cityLeader[i] == highestTokens) {
-                        tied.Add(i);
-                    }
-                }
-                leader = tied[0];
-                cityBonus = leader.Equals(AvatarShieldId) ? 2 : 1;
             }
             return cityBonus;
         }
 
-        public static void AddShieldToken(V2IntVO pos, Image_Enum avatar) {
-            if (!D.G.Monsters.Shield.ContainsKey(pos)) {
-                D.G.Monsters.Shield.Add(pos, new WrapList<Image_Enum>());
-            }
-            D.G.Monsters.Shield[pos].Add(D.AvatarMetaDataMap[avatar].AvatarShieldId);
+        //public static int Draw(List<int> deck, ref int index) {
+        //    int card = 0;
+        //    if (index < deck.Count) {
+        //        card = deck[index];
+        //        index++;
+        //    }
+        //    return card;
+        //}
+
+        public static List<Image_Enum> getAllShieldsAtPos(Data gd, V2IntVO pos) {
+            List<Image_Enum> shields = new List<Image_Enum>();
+            gd.Players.ForEach(pd => {
+                int totalShields = pd.Shields.FindAll(z => z.Equals(pos)).Count;
+                if (totalShields > 0) {
+                    Image_Enum shieldImage = D.AvatarMetaDataMap[pd.Avatar].AvatarShieldId;
+                    for (int i = 0; i < totalShields; i++) {
+                        shields.Add(shieldImage);
+                    }
+                }
+            });
+            return shields;
         }
 
-        public static int Draw(List<int> deck, ref int index) {
-            int card = 0;
-            if (index < deck.Count) {
-                card = deck[index];
-                index++;
-            }
-            return card;
+        public static Dictionary<V2IntVO, List<Image_Enum>> getAllShields(Data gd) {
+            Dictionary<V2IntVO, List<Image_Enum>> shields = new Dictionary<V2IntVO, List<Image_Enum>>();
+            gd.Players.ForEach(pd => {
+                Image_Enum shieldImage = D.AvatarMetaDataMap[pd.Avatar].AvatarShieldId;
+                pd.Shields.ForEach(pos => {
+                    if (!shields.ContainsKey(pos)) {
+                        shields.Add(pos, new List<Image_Enum>());
+                    }
+                    shields[pos].Add(shieldImage);
+                });
+            });
+            return shields;
         }
     }
 }

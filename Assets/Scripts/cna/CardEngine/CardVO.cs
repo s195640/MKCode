@@ -112,21 +112,21 @@ namespace cna {
             return HashCode.Combine(uniqueId);
         }
 
-        public virtual void OnClick_ActionBasicButton(ActionResultVO ar) {
+        public virtual void OnClick_ActionBasicButton(GameAPI ar) {
             ar.ErrorMsg = "Action Not Implemented";
             D.Action.ProcessActionResultVO(ar);
         }
 
-        public virtual void OnClick_ActionButton(ActionResultVO ar) {
+        public virtual void OnClick_ActionButton(GameAPI ar) {
             ar.ErrorMsg = "Action Not Implemented";
             D.Action.ProcessActionResultVO(ar);
         }
 
         #region Updates
 
-        public virtual void ActionFinish_00(ActionResultVO ar) { }
-        public virtual void ActionFinish_01(ActionResultVO ar) { }
-        public virtual void ActionFinish_02(ActionResultVO ar) { }
+        public virtual void ActionFinish_00(GameAPI ar) { }
+        public virtual void ActionFinish_01(GameAPI ar) { }
+        public virtual void ActionFinish_02(GameAPI ar) { }
 
 
 

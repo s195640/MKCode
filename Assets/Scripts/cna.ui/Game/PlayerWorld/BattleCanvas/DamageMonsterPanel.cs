@@ -217,14 +217,14 @@ namespace cna.ui {
             if (avatarWounds > 0) {
                 avatarMsg += " is wounded +" + avatarWounds + " wounds to hand";
                 for (int i = 0; i < avatarWounds; i++) {
-                    deck.Hand.Add(D.Scenario.DrawWound());
+                    //deck.Hand.Add(D.Scenario.DrawWound());
                 }
                 if (avatarPoisoned) {
                     avatarMsg += ", is poisoned +" + avatarWounds + " wounds to discard";
                     for (int i = 0; i < avatarWounds; i++) {
-                        int woundid = D.Scenario.DrawWound();
-                        deck.Hand.Add(woundid);
-                        deck.AddState(woundid, CardState_Enum.Discard);
+                        //int woundid = D.Scenario.DrawWound();
+                        //deck.Hand.Add(woundid);
+                        //deck.AddState(woundid, CardState_Enum.Discard);
                     }
                 }
                 if (avatarParalyzed) {

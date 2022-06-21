@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using cna.poo;
 namespace cna {
     public partial class BannerofCourageVO : CardArtifactVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             ar.SelectSingleCard(acceptCallback_00);
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             ar.AddBanner(ar.SelectedUniqueCardId, ar.UniqueCardId);
             ar.FinishCallback(ar);
         }
 
-        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, ActionResultVO ar) {
+        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, GameAPI ar) {
             string msg = "";
             if (cardHolder != CardHolder_Enum.PlayerUnitHand) {
                 return "You must selet a unit from your hand!";
@@ -20,10 +20,10 @@ namespace cna {
         }
 
 
-        public override ActionResultVO ActionValid_01(ActionResultVO ar) {
+        public override GameAPI ActionValid_01(GameAPI ar) {
             List<int> unitsToReady = new List<int>();
-            ar.LocalPlayer.Deck.State.Keys.ForEach(s => {
-                if (ar.LocalPlayer.Deck.State[s].Contains(CardState_Enum.Unit_Exhausted)) {
+            ar.P.Deck.State.Keys.ForEach(s => {
+                if (ar.P.Deck.State[s].Contains(CardState_Enum.Unit_Exhausted)) {
                     unitsToReady.Add(s);
                 }
             });
@@ -31,20 +31,20 @@ namespace cna {
             return ar;
         }
 
-        public override ActionResultVO ActionValid_02(ActionResultVO ar) {
+        public override GameAPI ActionValid_02(GameAPI ar) {
             ar.RemoveCardState(ar.UniqueCardId, CardState_Enum.Unit_Exhausted);
             ar.AddGameEffect(GameEffect_Enum.CT_BannerOfCourageUsed, ar.UniqueCardId);
             return ar;
         }
 
-        public override ActionResultVO checkAllowedToUse(ActionResultVO ar) {
+        public override GameAPI checkAllowedToUse(GameAPI ar) {
             if (ar.ActionIndex == 2) {
-                bool exhausted = ar.LocalPlayer.Deck.State.ContainsKey(ar.UniqueCardId) && ar.LocalPlayer.Deck.State[ar.UniqueCardId].Contains(CardState_Enum.Unit_Exhausted);
+                bool exhausted = ar.P.Deck.State.ContainsKey(ar.UniqueCardId) && ar.P.Deck.State[ar.UniqueCardId].Contains(CardState_Enum.Unit_Exhausted);
                 if (!exhausted) {
                     ar.ErrorMsg = "Unit must be exhausted to use player this banner";
-                } else if (ar.LocalPlayer.GameEffects.ContainsKey(GameEffect_Enum.CT_BannerOfCourageUsed) && ar.LocalPlayer.GameEffects[GameEffect_Enum.CT_BannerOfCourageUsed].Contains(ar.UniqueCardId)) {
+                } else if (ar.P.GameEffects.ContainsKey(GameEffect_Enum.CT_BannerOfCourageUsed) && ar.P.GameEffects[GameEffect_Enum.CT_BannerOfCourageUsed].Contains(ar.UniqueCardId)) {
                     ar.ErrorMsg = "This banner has already been used this turn.";
-                } else if (ar.LocalPlayer.PlayerTurnPhase == TurnPhase_Enum.Battle) {
+                } else if (ar.P.PlayerTurnPhase == TurnPhase_Enum.Battle) {
                     ar.ErrorMsg = "You can not play this banner during a battle.";
                 }
                 return ar;

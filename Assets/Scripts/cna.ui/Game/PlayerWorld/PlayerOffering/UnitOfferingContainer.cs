@@ -9,8 +9,8 @@ namespace cna.ui {
         [SerializeField] private Transform unitContent;
         [SerializeField] private List<NormalCardSlot> cardSlots = new List<NormalCardSlot>();
 
-        public void UpdateUI() {
-            D.G.Board.UnitOffering.ForEach(c => {
+        public void UpdateUI(PlayerData pd) {
+            pd.Board.UnitOffering.ForEach(c => {
                 NormalCardSlot p = cardSlots.Find(p => p.UniqueCardId == c);
                 if (p == null) {
                     NormalCardSlot normalCardSlot = Instantiate(normalCardSlot_Prefab, Vector3.zero, Quaternion.identity);
@@ -23,7 +23,7 @@ namespace cna.ui {
                 }
             });
             foreach (NormalCardSlot n in cardSlots.ToArray()) {
-                if (!D.G.Board.UnitOffering.Contains(n.UniqueCardId)) {
+                if (!pd.Board.UnitOffering.Contains(n.UniqueCardId)) {
                     if (n.ActionCard.UniqueCardId == n.UniqueCardId) {
                         n.ActionCard.SelectedCardSlot = null;
                     }

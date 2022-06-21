@@ -4,18 +4,18 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public class PlayerData : Data {
+    public class PlayerData : BaseData {
         [SerializeField] protected string playerName;
         [SerializeField] protected int playerKey;
         [SerializeField] private Image_Enum avatar = Image_Enum.A_MEEPLE_RANDOM;
         [SerializeField] private bool playerReady = false;
         [SerializeField] private TurnPhase_Enum playerTurnPhase;
-        [SerializeField] private PlayerDeckData playerDeckData;
+        [SerializeField] private PlayerDeckData playerDeckData = new PlayerDeckData();
         [SerializeField] private int playerMovementCount;
         [SerializeField] private int playerInfluenceCount;
         [SerializeField] private List<V2IntVO> gridLocationHistory = new List<V2IntVO>();
         [SerializeField] private List<int> visableMonsters = new List<int>();
-        [SerializeField] private BattleData battle;
+        [SerializeField] private BattleData battle = new BattleData();
         [SerializeField] private V2IntVO fame = V2IntVO.zero;
         [SerializeField] private int repLevel;
         [SerializeField] private bool actionTaken;
@@ -26,7 +26,10 @@ namespace cna.poo {
         [SerializeField] private int manaPoolAvailable;
         [SerializeField] private bool dummyPlayer;
         [SerializeField] private CNAMap<GameEffect_Enum, WrapList<int>> gameEffects = new CNAMap<GameEffect_Enum, WrapList<int>>();
-
+        [SerializeField] private List<V2IntVO> shields = new List<V2IntVO>();
+        [SerializeField] private List<ManaPoolData> manaPool = new List<ManaPoolData>();
+        [SerializeField] private PlayerBoardData board = new PlayerBoardData();
+        [SerializeField] private bool waitOnServer = false;
 
         public string Name { get => playerName; set => playerName = value; }
         public int Key { get => playerKey; set => playerKey = value; }
@@ -51,6 +54,11 @@ namespace cna.poo {
         public int ManaPoolAvailable { get => manaPoolAvailable; set => manaPoolAvailable = value; }
         public CNAMap<GameEffect_Enum, WrapList<int>> GameEffects { get => gameEffects; set => gameEffects = value; }
         public bool DummyPlayer { get => dummyPlayer; set => dummyPlayer = value; }
+        public List<V2IntVO> Shields { get => shields; set => shields = value; }
+        public List<ManaPoolData> ManaPoolFull { get => manaPool; set => manaPool = value; }
+        public List<ManaPoolData> ManaPool { get => manaPool.FindAll(mp => mp.Status != ManaPool_Enum.NA && mp.Status != ManaPool_Enum.Used && mp.Status != ManaPool_Enum.ManaSteal); }
+        public PlayerBoardData Board { get => board; set => board = value; }
+        public bool WaitOnServer { get => waitOnServer; set => waitOnServer = value; }
 
         public void AddGameEffect(GameEffect_Enum ge, params int[] cards) {
             if (cards.Length == 0) cards = new int[] { 0 };
@@ -76,17 +84,21 @@ namespace cna.poo {
         public PlayerData(string name, int key) {
             Name = name;
             Key = key;
-            Deck = new PlayerDeckData();
-            Battle = new BattleData();
-            Movement = 0;
-            Influence = 0;
-            fame = V2IntVO.zero;
-            repLevel = 0;
-            crystal = new CrystalData(); ;
-            mana = new CrystalData();
-            armor = 2;
-            healpoints = 0;
-            dummyPlayer = false;
+            Clear();
+            //Deck = new PlayerDeckData();
+            //Battle = new BattleData();
+            //Movement = 0;
+            //Influence = 0;
+            //fame = V2IntVO.zero;
+            //repLevel = 0;
+            //crystal = new CrystalData(); ;
+            //mana = new CrystalData();
+            //armor = 2;
+            //healpoints = 0;
+            //dummyPlayer = false;
+            //shields = new List<V2IntVO>();
+            //manaPool = new List<ManaPoolData>();
+            //board = new PlayerBoardData();
         }
 
         public override bool Equals(object obj) {
@@ -114,10 +126,13 @@ namespace cna.poo {
             Healpoints = 0;
             ManaPoolAvailable = 0;
             GameEffects.Clear();
+            shields.Clear();
+            manaPool.Clear();
+            board.Clear();
+            WaitOnServer = false;
         }
 
         public void ClearEndTurn() {
-            PlayerTurnPhase = TurnPhase_Enum.NotTurn;
             ManaPoolAvailable = 1;
             Movement = 0;
             Influence = 0;
@@ -130,6 +145,43 @@ namespace cna.poo {
             Crystal.RemoveExtraCrystals(3);
             Mana.ClearSpent();
             Mana.Clear();
+        }
+
+        public void UpdateData(PlayerData p) {
+            playerName = p.playerName;
+            playerKey = p.playerKey;
+            avatar = p.avatar;
+            playerReady = p.playerReady;
+            playerTurnPhase = p.playerTurnPhase;
+            playerDeckData = p.playerDeckData;
+            playerMovementCount = p.playerMovementCount;
+            playerInfluenceCount = p.playerInfluenceCount;
+            gridLocationHistory = p.gridLocationHistory;
+            visableMonsters = p.visableMonsters;
+            if (battle == null) {
+                battle = p.battle;
+            } else {
+                battle.UpdateData(p.battle);
+            }
+            fame = p.fame;
+            repLevel = p.repLevel;
+            actionTaken = p.actionTaken;
+            crystal = p.crystal;
+            mana = p.mana;
+            armor = p.armor;
+            healpoints = p.healpoints;
+            manaPoolAvailable = p.manaPoolAvailable;
+            dummyPlayer = p.dummyPlayer;
+            gameEffects = p.gameEffects;
+            shields = p.shields;
+            manaPool = p.manaPool;
+            board.UpdateData(p.board);
+            waitOnServer = p.waitOnServer;
+        }
+
+        public PlayerData Clone() {
+            PlayerData pd = JsonUtility.FromJson<PlayerData>(JsonUtility.ToJson(this));
+            return pd;
         }
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using cna.poo;
 namespace cna {
     public partial class BloodRitualVO : CardActionVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             ar.AddWound(1);
             ar.CrystalRed(1);
             ar.SelectOptions(acceptCallback_00,
@@ -15,7 +15,7 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: { ar.ManaBlue(1); break; }
                 case 1: { ar.ManaGreen(1); break; }
@@ -27,7 +27,7 @@ namespace cna {
             ar.FinishCallback(ar);
         }
 
-        public override void ActionPaymentComplete_01(ActionResultVO ar) {
+        public override void ActionPaymentComplete_01(GameAPI ar) {
             ar.AddWound(1);
             ar.SelectOptions(acceptCallback_01,
                 new OptionVO("+1 Blue Mana", Image_Enum.I_mana_blue),
@@ -39,7 +39,7 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: { ar.ManaBlue(1); break; }
                 case 1: { ar.ManaGreen(1); break; }
@@ -58,7 +58,7 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_01a(ActionResultVO ar) {
+        public void acceptCallback_01a(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: { ar.ManaBlue(1); break; }
                 case 1: { ar.ManaGreen(1); break; }
@@ -77,7 +77,7 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_01b(ActionResultVO ar) {
+        public void acceptCallback_01b(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: { ar.ManaBlue(1); break; }
                 case 1: { ar.ManaGreen(1); break; }
@@ -95,7 +95,7 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_01c(ActionResultVO ar) {
+        public void acceptCallback_01c(GameAPI ar) {
             List<Crystal_Enum> cost = new List<Crystal_Enum>();
             switch (ar.SelectedButtonIndex) {
                 case 0: { cost.Add(Crystal_Enum.Blue); break; }
@@ -106,7 +106,7 @@ namespace cna {
             }
             ar.PayForAction(cost, acceptCallback_01d, false);
         }
-        public void acceptCallback_01d(ActionResultVO ar) {
+        public void acceptCallback_01d(GameAPI ar) {
             ar.AddCrystal(ar.Payment[0].ManaUsedAs);
             ar.FinishCallback(ar);
         }

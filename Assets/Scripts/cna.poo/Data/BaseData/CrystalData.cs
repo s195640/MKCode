@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public class CrystalData : Data {
+    public class CrystalData : BaseData {
         public CrystalData() { }
 
         public CrystalData(int blue, int red, int green, int white, int gold, int black) {

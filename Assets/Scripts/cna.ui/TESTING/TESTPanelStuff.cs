@@ -29,9 +29,9 @@ namespace cna.ui {
         public void TEST_BUILD_GAME_DATA() {
             string playerName = "TEST USER";
             D.Connector = new SoloConnector(playerName, (wsData e) => { });
-            D.G = new GameData();
-            D.G.HostId = 0;
-            D.G.GameId = "NEWGAMEID";
+            D.G = new Data();
+            //D.G.HostId = 0;
+            //D.G.GameId = "NEWGAMEID";
             D.G.PlayerTurnOrder = new List<int>() { 0 };
             D.G.PlayerTurnIndex = 0;
             D.G.Players = new List<PlayerData>();
@@ -46,9 +46,9 @@ namespace cna.ui {
             V2IntVO selectCount = new V2IntVO(1, 2);
             List<string> buttonText = new List<string>() { "Accept" };
             List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightGreen };
-            List<Action<ActionResultVO>> buttonActions = new List<Action<ActionResultVO>>() { OnClick_Button01 };
+            List<Action<GameAPI>> buttonActions = new List<Action<GameAPI>>() { OnClick_Button01 };
             List<bool> buttonForce = new List<bool>() { true };
-            ActionResultVO ar = new ActionResultVO(0, CardState_Enum.NA);
+            GameAPI ar = new GameAPI(0, CardState_Enum.NA);
             List<Image_Enum> die = new List<Image_Enum>() { Image_Enum.I_die_blue, Image_Enum.I_die_red, Image_Enum.I_die_green };
             SelectManaPanel.SetupUI(ar, die, title, description, selectCount, Image_Enum.I_check, buttonText, buttonColor, buttonActions, buttonForce);
         }
@@ -66,17 +66,17 @@ namespace cna.ui {
             V2IntVO selectCount = new V2IntVO(1, 2);
             List<string> buttonText = new List<string>() { "Accept", "None" };
             List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightGreen, CNAColor.ColorLightRed };
-            List<Action<ActionResultVO>> buttonActions = new List<Action<ActionResultVO>>() { OnClick_Button01, OnClick_Button02 };
+            List<Action<GameAPI>> buttonActions = new List<Action<GameAPI>>() { OnClick_Button01, OnClick_Button02 };
             List<bool> buttonForce = new List<bool>() { true, false };
-            ActionResultVO ar = new ActionResultVO(0, CardState_Enum.NA);
+            GameAPI ar = new GameAPI(0, CardState_Enum.NA);
             SelectCardsPanel.SetupUI(ar, cards, title, description, selectCount, Image_Enum.I_disable, buttonText, buttonColor, buttonActions, buttonForce);
         }
 
-        public void OnClick_Button01(ActionResultVO ar) {
+        public void OnClick_Button01(GameAPI ar) {
             Debug.Log("Button Clicked 01");
         }
 
-        public void OnClick_Button02(ActionResultVO ar) {
+        public void OnClick_Button02(GameAPI ar) {
             Debug.Log("Button Clicked 02");
         }
     }

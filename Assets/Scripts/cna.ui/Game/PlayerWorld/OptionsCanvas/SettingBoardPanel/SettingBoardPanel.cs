@@ -83,7 +83,21 @@ namespace cna.ui {
 
         public void OnClick_CreateNewGame() {
             SelectedGame = null;
-            D.G.GameId = Guid.NewGuid().ToString();
+            //GameLobbyData gld = D.G.Gld;
+            //PlayerData dummy = gld.Players.Find(p => p.DummyPlayer);
+            //if (dummy != null) {
+            //    gld.Players.Remove(dummy);
+            //}
+            //gld.GameId = Guid.NewGuid().ToString();
+            //D.G = new GameData();
+            //D.G.Gld = gld;
+            //D.G.GameStatus = Game_Enum.CHAR_CREATION;
+            //D.G.GameId = gld.GameId;
+
+            PlayerData dummy = D.G.Players.Find(p => p.DummyPlayer);
+            if (dummy != null) {
+                D.G.Players.Remove(dummy);
+            }
             D.G.GameStatus = Game_Enum.CHAR_CREATION;
             D.C.Send_GameData();
         }

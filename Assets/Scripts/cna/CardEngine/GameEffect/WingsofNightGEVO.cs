@@ -21,11 +21,11 @@ namespace cna {
 
         public int totalMonstersBlocked = 0;
 
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            if (ar.LocalPlayer.Battle.SelectedMonsters.Count == 1) {
-                if (ar.LocalPlayer.Movement >= totalMonstersBlocked) {
-                    int monsterId = ar.LocalPlayer.Battle.SelectedMonsters[0];
-                    ar.LocalPlayer.Battle.Monsters[monsterId].Blocked = true;
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            if (ar.P.Battle.SelectedMonsters.Count == 1) {
+                if (ar.P.Movement >= totalMonstersBlocked) {
+                    int monsterId = ar.P.Battle.SelectedMonsters[0];
+                    ar.P.Battle.Monsters[monsterId].Blocked = true;
                     ar.AddLog(D.Cards[monsterId].CardTitle + " Does not attack.");
                     ar.ActionMovement(-1 * totalMonstersBlocked);
                     totalMonstersBlocked++;

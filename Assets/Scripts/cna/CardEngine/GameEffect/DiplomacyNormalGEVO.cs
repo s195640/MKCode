@@ -19,8 +19,8 @@ namespace cna {
             BattleAllowed = new List<List<BattlePhase_Enum>>() { new List<BattlePhase_Enum>() { BattlePhase_Enum.Block } };
         }
 
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            if (ar.LocalPlayer.Influence > 0) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            if (ar.P.Influence > 0) {
                 ar.ActionInfluence(-1);
                 ar.BattleBlock(new AttackData(1));
             } else {

@@ -36,6 +36,8 @@ namespace cna.poo {
         TH_YellowHex,
         TH_UnexploredAdvanced,
         TH_UnexploredBasic,
+        TH_ExploreInner,
+        TH_ExploreOuter,
 
         //STRUCTURE
         SH_CrystalMines_Blue = 200,

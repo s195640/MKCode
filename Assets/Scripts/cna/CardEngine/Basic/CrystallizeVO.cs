@@ -3,7 +3,7 @@ using cna.poo;
 
 namespace cna {
     public partial class CrystallizeVO : CardActionVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             List<Crystal_Enum> cost = new List<Crystal_Enum>();
             cost.Add(Crystal_Enum.Green);
             cost.Add(Crystal_Enum.Blue);
@@ -12,13 +12,13 @@ namespace cna {
             ar.PayForAction(cost, acceptCallback_00, false);
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             ar.AddCrystal(ar.Payment[0].ManaUsedAs);
             ar.FinishCallback(ar);
         }
 
 
-        public override void ActionPaymentComplete_01(ActionResultVO ar) {
+        public override void ActionPaymentComplete_01(GameAPI ar) {
             ar.SelectOptions(acceptCallback_01,
                 new OptionVO("Blue Crystal", Image_Enum.I_crystal_blue),
                 new OptionVO("Red Crystal", Image_Enum.I_crystal_red),
@@ -27,7 +27,7 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     ar.CrystalBlue(1);

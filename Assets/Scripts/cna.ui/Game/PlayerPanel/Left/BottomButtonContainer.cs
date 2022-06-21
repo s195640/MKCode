@@ -89,7 +89,7 @@ namespace cna.ui {
                         }
                     }
                     if (A.Hex.GridPosition.Equals(localPlayer.CurrentGridLoc)) {
-                        bool cleared = D.G.Monsters.Shield.ContainsKey(A.Hex.PlayerLocation);
+                        bool cleared = BasicUtil.getAllShieldsAtPos(D.G, localPlayer.CurrentGridLoc).Count > 0;
                         if (cleared) {
                             switch (A.Hex.Structure) {
                                 case Image_Enum.SH_City_Red: { B1 = BottomButton_Enum.CityRed_Artifact; break; }

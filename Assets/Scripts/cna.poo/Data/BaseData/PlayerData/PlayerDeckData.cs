@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public class PlayerDeckData : Data {
+    public class PlayerDeckData : BaseData {
 
         [SerializeField] private CNAMap<int, WrapList<CardState_Enum>> state;
         [SerializeField] private CNAMap<int, int> banners;

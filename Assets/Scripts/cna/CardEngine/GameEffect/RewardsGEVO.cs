@@ -75,34 +75,34 @@ namespace cna {
 
         private List<int> rewards = new List<int>();
 
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
-            rewards = ar.LocalPlayer.GameEffects[GameEffect_Enum.Rewards].Values;
+        public override void ActionPaymentComplete_00(GameAPI ar) {
+            rewards = ar.P.GameEffects[GameEffect_Enum.Rewards].Values;
             LevelToken(ar);
             CrystalRewards(ar);
         }
 
-        public void LevelToken(ActionResultVO ar) {
-            int newArmor = BasicUtil.GetArmorFromFame(ar.LocalPlayer.TotalFame);
-            int newHandLimit = BasicUtil.GetHandLimitFromFame(ar.LocalPlayer.TotalFame);
-            int newUnitLimit = BasicUtil.GetUnitHandLimitFromFame(ar.LocalPlayer.TotalFame);
-            if (newArmor > ar.LocalPlayer.Armor) {
+        public void LevelToken(GameAPI ar) {
+            int newArmor = BasicUtil.GetArmorFromFame(ar.P.TotalFame);
+            int newHandLimit = BasicUtil.GetHandLimitFromFame(ar.P.TotalFame);
+            int newUnitLimit = BasicUtil.GetUnitHandLimitFromFame(ar.P.TotalFame);
+            if (newArmor > ar.P.Armor) {
                 ar.change();
-                ar.LocalPlayer.Armor = newArmor;
+                ar.P.Armor = newArmor;
                 ar.AddLog("Your Armor has increaed to " + newArmor);
             }
-            if (newHandLimit > ar.LocalPlayer.Deck.HandSize.X) {
+            if (newHandLimit > ar.P.Deck.HandSize.X) {
                 ar.change();
-                ar.LocalPlayer.Deck.HandSize.X = newHandLimit;
+                ar.P.Deck.HandSize.X = newHandLimit;
                 ar.AddLog("Your Hand limit has increaed to " + newHandLimit);
             }
-            if (newUnitLimit > ar.LocalPlayer.Deck.UnitHandLimit) {
+            if (newUnitLimit > ar.P.Deck.UnitHandLimit) {
                 ar.change();
-                ar.LocalPlayer.Deck.UnitHandLimit = newUnitLimit;
+                ar.P.Deck.UnitHandLimit = newUnitLimit;
                 ar.AddLog("Your Unit Hand limit has increaed to " + newUnitLimit);
             }
         }
 
-        public void CrystalRewards(ActionResultVO ar) {
+        public void CrystalRewards(GameAPI ar) {
             if (rewards[0] > 0 || rewards[1] > 0 || rewards[2] > 0 || rewards[3] > 0 || rewards[4] > 0) {
                 ar.AddLog("Crystal Rewards");
                 if (rewards[0] > 0)
@@ -120,49 +120,46 @@ namespace cna {
             SpellReward(ar);
         }
 
-        public void SpellReward(ActionResultVO ar) {
+        public void SpellReward(GameAPI ar) {
             if (rewards[8] > 0) {
-                List<int> cards = D.G.Board.SpellOffering;
+                List<int> cards = ar.P.Board.SpellOffering;
                 string title = "Spell Reward";
                 string description = "Select the Spell you would like to keep, this card will be added to the TOP of your deck.";
                 V2IntVO selectCount = new V2IntVO(1, 1);
                 Image_Enum selectionImage = Image_Enum.I_check;
                 List<string> buttonText = new List<string>() { "Learn", "None" };
                 List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightBlue, CNAColor.ColorLightRed };
-                List<Action<ActionResultVO>> buttonCallback = new List<Action<ActionResultVO>>() { SpellRewardCallback, SpellRewardNoneCallback };
+                List<Action<GameAPI>> buttonCallback = new List<Action<GameAPI>>() { SpellRewardCallback, SpellRewardNoneCallback };
                 List<bool> buttonForce = new List<bool>() { true, false };
                 ar.SelectCards(cards, title, description, selectCount, selectionImage, buttonText, buttonColor, buttonCallback, buttonForce);
             } else {
                 AdvancedReward(ar);
             }
         }
-        public void SpellRewardCallback(ActionResultVO ar) {
+        public void SpellRewardCallback(GameAPI ar) {
             rewards[8]--;
-            D.G.Board.SpellOffering.Remove(ar.SelectedCardIds[0]);
-            if (D.G.Board.SpellIndex < D.Scenario.SpellDeck.Count) {
-                D.G.Board.SpellOffering.Add(D.Scenario.SpellDeck[D.G.Board.SpellIndex]);
-                D.G.Board.SpellIndex++;
-            }
+            ar.P.Board.SpellOffering.Remove(ar.SelectedCardIds[0]);
+            ar.drawSpellToOffering();
             ar.AddCardToTopOfDeck(ar.SelectedCardIds[0]);
             SpellReward(ar);
         }
 
-        public void SpellRewardNoneCallback(ActionResultVO ar) {
+        public void SpellRewardNoneCallback(GameAPI ar) {
             ar.AddLog("No Spell selected, Spell Reward Skipped!");
             rewards[8] = 0;
             AdvancedReward(ar);
         }
 
-        public void AdvancedReward(ActionResultVO ar) {
+        public void AdvancedReward(GameAPI ar) {
             if (rewards[9] > 0) {
-                List<int> cards = D.G.Board.AdvancedOffering;
+                List<int> cards = ar.P.Board.AdvancedOffering;
                 string title = "Advanced Reward";
                 string description = "Select the Action you would like to keep, this card will be added to the TOP of your deck.";
                 V2IntVO selectCount = new V2IntVO(1, 1);
                 Image_Enum selectionImage = Image_Enum.I_check;
                 List<string> buttonText = new List<string>() { "Train", "None" };
                 List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightBlue, CNAColor.ColorLightRed };
-                List<Action<ActionResultVO>> buttonCallback = new List<Action<ActionResultVO>>() { AdvancedRewardCallback, AdvancedRewardNoneCallback };
+                List<Action<GameAPI>> buttonCallback = new List<Action<GameAPI>>() { AdvancedRewardCallback, AdvancedRewardNoneCallback };
                 List<bool> buttonForce = new List<bool>() { true, false };
                 ar.SelectCards(cards, title, description, selectCount, selectionImage, buttonText, buttonColor, buttonCallback, buttonForce);
             } else {
@@ -170,28 +167,25 @@ namespace cna {
             }
         }
 
-        public void AdvancedRewardCallback(ActionResultVO ar) {
+        public void AdvancedRewardCallback(GameAPI ar) {
             rewards[9]--;
-            D.G.Board.AdvancedOffering.Remove(ar.SelectedCardIds[0]);
-            if (D.G.Board.AdvancedIndex < D.Scenario.AdvancedDeck.Count) {
-                D.G.Board.AdvancedOffering.Add(D.Scenario.AdvancedDeck[D.G.Board.AdvancedIndex]);
-                D.G.Board.AdvancedIndex++;
-            }
+            ar.P.Board.AdvancedOffering.Remove(ar.SelectedCardIds[0]);
+            ar.drawAdvancedToOffering();
             ar.AddCardToTopOfDeck(ar.SelectedCardIds[0]);
             AdvancedReward(ar);
         }
 
-        public void AdvancedRewardNoneCallback(ActionResultVO ar) {
+        public void AdvancedRewardNoneCallback(GameAPI ar) {
             ar.AddLog("No Action selected, Action Reward Skipped!");
             rewards[9] = 0;
             UnitReward(ar);
         }
 
-        public void UnitReward(ActionResultVO ar) {
+        public void UnitReward(GameAPI ar) {
             if (rewards[10] > 0) {
 
                 List<int> cards = new List<int>();
-                D.G.Board.UnitOffering.ForEach(u => {
+                ar.P.Board.UnitOffering.ForEach(u => {
                     CardVO card = D.Cards[u];
                     if (card.CardType == CardType_Enum.Unit_Elite || card.CardType == CardType_Enum.Unit_Normal) {
                         cards.Add(u);
@@ -199,11 +193,11 @@ namespace cna {
                 });
                 if (cards.Count > 0) {
                     bool bondsOfLoyaltyUsed = false;
-                    ar.LocalPlayer.Deck.State.Keys.ForEach(u => {
-                        bondsOfLoyaltyUsed = ar.LocalPlayer.Deck.State[u].ContainsAny(CardState_Enum.Unit_BondsOfLoyalty);
+                    ar.P.Deck.State.Keys.ForEach(u => {
+                        bondsOfLoyaltyUsed = ar.P.Deck.State[u].ContainsAny(CardState_Enum.Unit_BondsOfLoyalty);
                     });
                     bool bondsOfLoyalty = false;
-                    ar.LocalPlayer.Deck.Skill.ForEach(s => {
+                    ar.P.Deck.Skill.ForEach(s => {
                         if (D.Cards[s].CardImage == Image_Enum.SKW_bonds_of_loyalty) {
                             bondsOfLoyalty = true;
                         }
@@ -215,7 +209,7 @@ namespace cna {
                     Image_Enum selectionImage = Image_Enum.I_check;
                     List<string> buttonText = new List<string>() { "Recruit", "None" };
                     List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightBlue, CNAColor.ColorLightRed };
-                    List<Action<ActionResultVO>> buttonCallback = new List<Action<ActionResultVO>>() { UnitRewardCallback, UnitRewardNoneCallback };
+                    List<Action<GameAPI>> buttonCallback = new List<Action<GameAPI>>() { UnitRewardCallback, UnitRewardNoneCallback };
                     List<bool> buttonForce = new List<bool>() { true, false };
                     if (bondsOfLoyalty && !bondsOfLoyaltyUsed) {
                         buttonText.Add("Bond of Loyalty");
@@ -232,24 +226,24 @@ namespace cna {
             }
         }
 
-        public void UnitRewardNoneCallback(ActionResultVO ar) {
+        public void UnitRewardNoneCallback(GameAPI ar) {
             ar.AddLog("No Unit selected, Unit Reward Skipped!");
             rewards[10] = 0;
             UnitReward(ar);
         }
 
-        public void UnitRewardCallback(ActionResultVO ar) {
-            int unitCount = ar.LocalPlayer.Deck.Unit.Count;
+        public void UnitRewardCallback(GameAPI ar) {
+            int unitCount = ar.P.Deck.Unit.Count;
             bool bondsOfLoyaltyUsed = false;
-            ar.LocalPlayer.Deck.State.Keys.ForEach(u => {
-                bondsOfLoyaltyUsed = ar.LocalPlayer.Deck.State[u].ContainsAny(CardState_Enum.Unit_BondsOfLoyalty);
+            ar.P.Deck.State.Keys.ForEach(u => {
+                bondsOfLoyaltyUsed = ar.P.Deck.State[u].ContainsAny(CardState_Enum.Unit_BondsOfLoyalty);
                 if (bondsOfLoyaltyUsed) {
                     unitCount--;
                 }
             });
-            if (unitCount < ar.LocalPlayer.Deck.UnitHandLimit) {
-                D.G.Board.UnitOffering.Remove(ar.SelectedCardIds[0]);
-                ar.LocalPlayer.Deck.Unit.Add(ar.SelectedCardIds[0]);
+            if (unitCount < ar.P.Deck.UnitHandLimit) {
+                ar.P.Board.UnitOffering.Remove(ar.SelectedCardIds[0]);
+                ar.P.Deck.Unit.Add(ar.SelectedCardIds[0]);
                 ar.change();
                 rewards[10]--;
             } else {
@@ -258,21 +252,21 @@ namespace cna {
             UnitReward(ar);
         }
 
-        public void UnitRewardCallback2(ActionResultVO ar) {
-            D.G.Board.UnitOffering.Remove(ar.SelectedCardIds[0]);
-            ar.LocalPlayer.Deck.Unit.Add(ar.SelectedCardIds[0]);
+        public void UnitRewardCallback2(GameAPI ar) {
+            ar.P.Board.UnitOffering.Remove(ar.SelectedCardIds[0]);
+            ar.P.Deck.Unit.Add(ar.SelectedCardIds[0]);
             ar.AddCardState(ar.SelectedCardIds[0], CardState_Enum.Unit_BondsOfLoyalty);
             ar.change();
             rewards[10]--;
             UnitReward(ar);
         }
 
-        public void ArtifactReward(ActionResultVO ar) {
+        public void ArtifactReward(GameAPI ar) {
             if (rewards[7] > 0) {
                 List<int> cards = new List<int>();
                 for (int i = 0; i <= rewards[7]; i++) {
-                    cards.Add(D.Scenario.ArtifactDeck[D.G.Board.ArtifactIndex]);
-                    D.G.Board.ArtifactIndex++;
+                    cards.Add(D.Scenario.ArtifactDeck[ar.P.Board.ArtifactIndex]);
+                    ar.P.Board.ArtifactIndex++;
                 }
                 string title = "Artifact Reward";
                 string description = "Select the Artifacts you would like to keep, these card will be added to the TOP of your deck.";
@@ -280,7 +274,7 @@ namespace cna {
                 Image_Enum selectionImage = Image_Enum.I_check;
                 List<string> buttonText = new List<string>() { "Gain", "None" };
                 List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightBlue, CNAColor.ColorLightRed };
-                List<Action<ActionResultVO>> buttonCallback = new List<Action<ActionResultVO>>() { ArtifactRewardCallback, ArtifactRewardNoneCallback };
+                List<Action<GameAPI>> buttonCallback = new List<Action<GameAPI>>() { ArtifactRewardCallback, ArtifactRewardNoneCallback };
                 List<bool> buttonForce = new List<bool>() { true, false };
                 ar.SelectCards(cards, title, description, selectCount, selectionImage, buttonText, buttonColor, buttonCallback, buttonForce);
 
@@ -289,23 +283,23 @@ namespace cna {
             }
         }
 
-        public void ArtifactRewardCallback(ActionResultVO ar) {
+        public void ArtifactRewardCallback(GameAPI ar) {
             rewards[7] = 0;
             ar.SelectedCardIds.ForEach(a => ar.AddCardToTopOfDeck(a));
             ArtifactReward(ar);
         }
 
-        public void ArtifactRewardNoneCallback(ActionResultVO ar) {
+        public void ArtifactRewardNoneCallback(GameAPI ar) {
             ar.AddLog("No Artifact selected, Artifact Reward Skipped!");
             rewards[7] = 0;
             ArtifactReward(ar);
         }
 
         int totalLevelSkillRewards = 0;
-        public void CalcLevelSkill(ActionResultVO ar) {
+        public void CalcLevelSkill(GameAPI ar) {
             totalLevelSkillRewards = 0;
-            int oldLevel = BasicUtil.GetPlayerLevel(ar.LocalPlayer.Fame.X);
-            int newLevel = BasicUtil.GetPlayerLevel(ar.LocalPlayer.TotalFame);
+            int oldLevel = BasicUtil.GetPlayerLevel(ar.P.Fame.X);
+            int newLevel = BasicUtil.GetPlayerLevel(ar.P.TotalFame);
             if (newLevel > oldLevel) {
                 if (oldLevel % 2 == 1) {
                     totalLevelSkillRewards = (int)Math.Ceiling((newLevel - oldLevel) / 2.0);
@@ -320,71 +314,70 @@ namespace cna {
         List<int> skillOffering = new List<int>();
         List<int> skills = new List<int>();
 
-        public void LevelSkill(ActionResultVO ar) {
+        public void LevelSkill(GameAPI ar) {
             if (totalLevelSkillRewards > 0) {
-                actionOffering = D.G.Board.AdvancedOffering;
-                if (D.Board.DummyPlayer) {
+                actionOffering = ar.P.Board.AdvancedOffering;
+                if (D.GLD.DummyPlayer) {
                     int dummySkillCardId = 0;
-                    dummySkillCardId = BasicUtil.Draw(D.Scenario.BlueSkillDeck, ref D.Board.skillBlueIndex);
                     switch (D.DummyPlayer.Avatar) {
-                        case Image_Enum.A_MEEPLE_BLUE: { dummySkillCardId = BasicUtil.Draw(D.Scenario.BlueSkillDeck, ref D.Board.skillBlueIndex); break; }
-                        case Image_Enum.A_MEEPLE_GREEN: { dummySkillCardId = BasicUtil.Draw(D.Scenario.GreenSkillDeck, ref D.Board.skillGreenIndex); break; }
-                        case Image_Enum.A_MEEPLE_RED: { dummySkillCardId = BasicUtil.Draw(D.Scenario.RedSkillDeck, ref D.Board.skillRedIndex); break; }
-                        case Image_Enum.A_MEEPLE_WHITE: { dummySkillCardId = BasicUtil.Draw(D.Scenario.WhiteSkillDeck, ref D.Board.skillWhiteIndex); break; }
+                        case Image_Enum.A_MEEPLE_BLUE: { dummySkillCardId = ar.DrawBlueSkillCard(); break; }
+                        case Image_Enum.A_MEEPLE_GREEN: { dummySkillCardId = ar.DrawGreenSkillCard(); break; }
+                        case Image_Enum.A_MEEPLE_RED: { dummySkillCardId = ar.DrawRedSkillCard(); break; }
+                        case Image_Enum.A_MEEPLE_WHITE: { dummySkillCardId = ar.DrawWhiteSkillCard(); break; }
                     }
                     if (dummySkillCardId > 0) {
-                        D.Board.SkillOffering.Add(dummySkillCardId);
+                        ar.P.Board.SkillOffering.Add(dummySkillCardId);
                     }
                 }
                 skillOffering.Clear();
                 skillOffering.AddRange(
-                    D.G.Board.SkillOffering.FindAll(c => {
+                    ar.P.Board.SkillOffering.FindAll(c => {
                         CardVO card = D.Cards[c];
-                        return card.Avatar != ar.LocalPlayer.Avatar;
+                        return card.Avatar != ar.P.Avatar;
                     }));
                 skills.Clear();
-                switch (ar.LocalPlayer.Avatar) {
+                switch (ar.P.Avatar) {
                     case Image_Enum.A_MEEPLE_BLUE: {
-                        if (D.G.Board.SkillBlueIndex < D.Scenario.BlueSkillDeck.Count) {
-                            skills.Add(D.Scenario.BlueSkillDeck[D.G.Board.SkillBlueIndex]);
-                            D.G.Board.SkillBlueIndex++;
+                        if (ar.P.Board.SkillBlueIndex < D.Scenario.BlueSkillDeck.Count) {
+                            skills.Add(D.Scenario.BlueSkillDeck[ar.P.Board.SkillBlueIndex]);
+                            ar.P.Board.SkillBlueIndex++;
                         }
-                        if (D.G.Board.SkillBlueIndex < D.Scenario.BlueSkillDeck.Count) {
-                            skills.Add(D.Scenario.BlueSkillDeck[D.G.Board.SkillBlueIndex]);
-                            D.G.Board.SkillBlueIndex++;
+                        if (ar.P.Board.SkillBlueIndex < D.Scenario.BlueSkillDeck.Count) {
+                            skills.Add(D.Scenario.BlueSkillDeck[ar.P.Board.SkillBlueIndex]);
+                            ar.P.Board.SkillBlueIndex++;
                         }
                         break;
                     }
                     case Image_Enum.A_MEEPLE_GREEN: {
-                        if (D.G.Board.SkillGreenIndex < D.Scenario.GreenSkillDeck.Count) {
-                            skills.Add(D.Scenario.GreenSkillDeck[D.G.Board.SkillGreenIndex]);
-                            D.G.Board.SkillGreenIndex++;
+                        if (ar.P.Board.SkillGreenIndex < D.Scenario.GreenSkillDeck.Count) {
+                            skills.Add(D.Scenario.GreenSkillDeck[ar.P.Board.SkillGreenIndex]);
+                            ar.P.Board.SkillGreenIndex++;
                         }
-                        if (D.G.Board.SkillGreenIndex < D.Scenario.GreenSkillDeck.Count) {
-                            skills.Add(D.Scenario.GreenSkillDeck[D.G.Board.SkillGreenIndex]);
-                            D.G.Board.SkillGreenIndex++;
+                        if (ar.P.Board.SkillGreenIndex < D.Scenario.GreenSkillDeck.Count) {
+                            skills.Add(D.Scenario.GreenSkillDeck[ar.P.Board.SkillGreenIndex]);
+                            ar.P.Board.SkillGreenIndex++;
                         }
                         break;
                     }
                     case Image_Enum.A_MEEPLE_RED: {
-                        if (D.G.Board.SkillRedIndex < D.Scenario.RedSkillDeck.Count) {
-                            skills.Add(D.Scenario.RedSkillDeck[D.G.Board.SkillRedIndex]);
-                            D.G.Board.SkillRedIndex++;
+                        if (ar.P.Board.SkillRedIndex < D.Scenario.RedSkillDeck.Count) {
+                            skills.Add(D.Scenario.RedSkillDeck[ar.P.Board.SkillRedIndex]);
+                            ar.P.Board.SkillRedIndex++;
                         }
-                        if (D.G.Board.SkillRedIndex < D.Scenario.RedSkillDeck.Count) {
-                            skills.Add(D.Scenario.RedSkillDeck[D.G.Board.SkillRedIndex]);
-                            D.G.Board.SkillRedIndex++;
+                        if (ar.P.Board.SkillRedIndex < D.Scenario.RedSkillDeck.Count) {
+                            skills.Add(D.Scenario.RedSkillDeck[ar.P.Board.SkillRedIndex]);
+                            ar.P.Board.SkillRedIndex++;
                         }
                         break;
                     }
                     case Image_Enum.A_MEEPLE_WHITE: {
-                        if (D.G.Board.SkillWhiteIndex < D.Scenario.WhiteSkillDeck.Count) {
-                            skills.Add(D.Scenario.WhiteSkillDeck[D.G.Board.SkillWhiteIndex]);
-                            D.G.Board.SkillWhiteIndex++;
+                        if (ar.P.Board.SkillWhiteIndex < D.Scenario.WhiteSkillDeck.Count) {
+                            skills.Add(D.Scenario.WhiteSkillDeck[ar.P.Board.SkillWhiteIndex]);
+                            ar.P.Board.SkillWhiteIndex++;
                         }
-                        if (D.G.Board.SkillWhiteIndex < D.Scenario.WhiteSkillDeck.Count) {
-                            skills.Add(D.Scenario.WhiteSkillDeck[D.G.Board.SkillWhiteIndex]);
-                            D.G.Board.SkillWhiteIndex++;
+                        if (ar.P.Board.SkillWhiteIndex < D.Scenario.WhiteSkillDeck.Count) {
+                            skills.Add(D.Scenario.WhiteSkillDeck[ar.P.Board.SkillWhiteIndex]);
+                            ar.P.Board.SkillWhiteIndex++;
                         }
                         break;
                     }
@@ -395,15 +388,15 @@ namespace cna {
             }
         }
 
-        public void LevelSkillCallback(ActionResultVO ar) {
+        public void LevelSkillCallback(GameAPI ar) {
             int actionCard = ar.UniqueCardId;
             int skillCard = ar.SelectedUniqueCardId;
-            D.G.Board.SkillOffering.AddRange(skills);
-            D.G.Board.SkillOffering.Remove(skillCard);
-            D.G.Board.AdvancedOffering.Remove(actionCard);
-            if (D.G.Board.AdvancedIndex < D.Scenario.AdvancedDeck.Count) {
-                D.G.Board.AdvancedOffering.Add(D.Scenario.AdvancedDeck[D.G.Board.AdvancedIndex]);
-                D.G.Board.AdvancedIndex++;
+            ar.P.Board.SkillOffering.AddRange(skills);
+            ar.P.Board.SkillOffering.Remove(skillCard);
+            ar.P.Board.AdvancedOffering.Remove(actionCard);
+            if (ar.P.Board.AdvancedIndex < D.Scenario.AdvancedDeck.Count) {
+                ar.P.Board.AdvancedOffering.Add(D.Scenario.AdvancedDeck[ar.P.Board.AdvancedIndex]);
+                ar.P.Board.AdvancedIndex++;
             }
             ar.AddCardToTopOfDeck(actionCard);
             ar.AddSkill(skillCard);
@@ -413,7 +406,7 @@ namespace cna {
 
 
 
-        public void EndReward(ActionResultVO ar) {
+        public void EndReward(GameAPI ar) {
             ar.TurnPhase(TurnPhase_Enum.EndTurn);
             ar.FinishCallback(ar);
         }

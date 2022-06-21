@@ -4,24 +4,24 @@ using cna.poo;
 namespace cna {
     public partial class ManaDrawVO : CardActionVO {
 
-        private List<Crystal_Enum> manaDieCalc;
+        private List<ManaPoolData> manaDieCalc;
         private int manaDieIndex = -1;
 
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
             ar.ManaPool(1);
             return ar;
         }
-        public override void ActionPaymentComplete_01(ActionResultVO ar) {
-            manaDieCalc = new List<Crystal_Enum>();
-            ar.G.Board.ManaPool.ForEach(m => manaDieCalc.Add(m));
+        public override void ActionPaymentComplete_01(GameAPI ar) {
+            manaDieCalc = new List<ManaPoolData>();
+            manaDieCalc = ar.P.ManaPool;
             OptionVO[] p = new OptionVO[manaDieCalc.Count];
             for (int i = 0; i < manaDieCalc.Count; i++) {
-                p[i] = new OptionVO("Mana Die", BasicUtil.Convert_CrystalToManaDieImageId(manaDieCalc[i]));
+                p[i] = new OptionVO("Mana Die", BasicUtil.Convert_CrystalToManaDieImageId(manaDieCalc[i].ManaColor));
             }
             ar.SelectOptions(acceptCallback_01, p);
         }
 
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             manaDieIndex = ar.SelectedButtonIndex;
             ar.SelectOptions(acceptCallback_02,
                 new OptionVO("+2 Blue Mana", Image_Enum.I_mana_blue),
@@ -32,7 +32,7 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_02(ActionResultVO ar) {
+        public void acceptCallback_02(GameAPI ar) {
             Crystal_Enum manaDie = Crystal_Enum.NA;
             switch (ar.SelectedButtonIndex) {
                 case 0: {
@@ -61,8 +61,8 @@ namespace cna {
                     break;
                 }
             }
-            ar.G.Board.ManaPool.Remove(manaDieCalc[manaDieIndex]);
-            ar.G.Board.ManaPool.Add(manaDie);
+            manaDieCalc[manaDieIndex].ManaColor = manaDie;
+            manaDieCalc[manaDieIndex].Status = ManaPool_Enum.ManaDraw;
             ar.FinishCallback(ar);
         }
     }

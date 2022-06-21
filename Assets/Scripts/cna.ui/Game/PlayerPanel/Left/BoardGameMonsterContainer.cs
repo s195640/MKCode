@@ -7,7 +7,7 @@ namespace cna.ui {
         [SerializeField] private List<MonsterCardSlot> cardSlots = new List<MonsterCardSlot>();
         public void UpdateUI(HexItemDetail hex) {
             cardSlots.ForEach(c => c.gameObject.SetActive(false));
-            List<int> monsters = D.G.Monsters.Map[hex.GridPosition].Values;
+            List<int> monsters = hex.LocalPlayer.Board.MonsterData[hex.GridPosition].Values;
             for (int i = 0; i < monsters.Count; i++) {
                 RectTransform t = cardSlots[i].GetComponent<RectTransform>();
                 setTransform(t, i, monsters.Count);

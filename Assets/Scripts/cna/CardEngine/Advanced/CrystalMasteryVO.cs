@@ -1,8 +1,8 @@
 using cna.poo;
 namespace cna {
     public partial class CrystalMasteryVO : CardActionVO {
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            CrystalData c = ar.LocalPlayer.Crystal;
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            CrystalData c = ar.P.Crystal;
             if (c.GetTotal() > 0) {
                 if (c.Blue > 0) {
                     ar.CrystalBlue(1);
@@ -21,7 +21,7 @@ namespace cna {
             }
             return ar;
         }
-        public override ActionResultVO ActionValid_01(ActionResultVO ar) {
+        public override GameAPI ActionValid_01(GameAPI ar) {
             ar.AddGameEffect(GameEffect_Enum.AC_CrystalMastery);
             return ar;
         }

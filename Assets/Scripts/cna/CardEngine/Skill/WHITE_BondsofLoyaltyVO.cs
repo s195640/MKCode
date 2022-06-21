@@ -1,6 +1,6 @@
 namespace cna {
     public partial class WHITE_BondsofLoyaltyVO : CardSkillVO {
-        public override ActionResultVO checkAllowedToUse(ActionResultVO ar) {
+        public override GameAPI checkAllowedToUse(GameAPI ar) {
             ar.ErrorMsg = "This Skill is activated when you recruit a unit.";
             return ar;
         }

@@ -15,13 +15,13 @@ namespace cna {
             UnitResistance = resistance;
         }
 
-        public override ActionResultVO checkAllowedToUse(ActionResultVO ar) {
+        public override GameAPI checkAllowedToUse(GameAPI ar) {
             bool bondsOfLoyalty = false;
-            if (ar.LocalPlayer.Deck.State.ContainsKey(ar.UniqueCardId)) {
-                bondsOfLoyalty = ar.LocalPlayer.Deck.State[ar.UniqueCardId].Contains(CardState_Enum.Unit_BondsOfLoyalty);
+            if (ar.P.Deck.State.ContainsKey(ar.UniqueCardId)) {
+                bondsOfLoyalty = ar.P.Deck.State[ar.UniqueCardId].Contains(CardState_Enum.Unit_BondsOfLoyalty);
             }
-            bool noUnits = ar.LocalPlayer.GameEffects.ContainsKeyAny(GameEffect_Enum.SH_Monastery, GameEffect_Enum.SH_Dungeon, GameEffect_Enum.SH_Tomb);
-            if (!bondsOfLoyalty && ar.LocalPlayer.PlayerTurnPhase == TurnPhase_Enum.Battle && noUnits) {
+            bool noUnits = ar.P.GameEffects.ContainsKeyAny(GameEffect_Enum.SH_Monastery, GameEffect_Enum.SH_Dungeon, GameEffect_Enum.SH_Tomb);
+            if (!bondsOfLoyalty && ar.P.PlayerTurnPhase == TurnPhase_Enum.Battle && noUnits) {
                 ar.ErrorMsg = "You can not use Units in this battle!";
                 return ar;
             } else {

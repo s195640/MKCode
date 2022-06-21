@@ -22,5 +22,7 @@ namespace cna.ui {
         //    c.transform.localScale = Vector3.one;
         //    c.SetupUI(u);
         //}
+
+        public override void Clear() { }
     }
 }

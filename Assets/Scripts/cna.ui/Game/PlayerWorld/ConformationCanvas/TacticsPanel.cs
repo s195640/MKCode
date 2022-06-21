@@ -42,7 +42,7 @@ namespace cna.ui {
                     if (!selected) {
                         gameObject.SetActive(false);
                         D.LocalPlayer.Deck.TacticsCardId = cardSlots[index].UniqueCardId;
-                        ActionResultVO ar = new ActionResultVO(cardSlots[index].UniqueCardId, CardState_Enum.NA);
+                        GameAPI ar = new GameAPI(cardSlots[index].UniqueCardId, CardState_Enum.NA);
                         ar.Card.OnClick_ActionButton(ar);
                     } else {
                         ActionCard.Msg("Please Select a tactics card that no one else has already taken!");

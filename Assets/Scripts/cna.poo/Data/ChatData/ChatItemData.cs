@@ -4,7 +4,7 @@ using UnityEngine;
 namespace cna.poo {
 
     [Serializable]
-    public class ChatItemData : Data {
+    public class ChatItemData : BaseData {
         [SerializeField] private string n;
         [SerializeField] private string m;
         [SerializeField] private long t;

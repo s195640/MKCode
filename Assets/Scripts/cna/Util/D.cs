@@ -22,29 +22,17 @@ namespace cna {
         public static void Msg(string msg) { Action.Msg(msg); }
         public static AppEngine A { get { if (appEngine == null) { appEngine = Object.FindObjectOfType<AppEngine>(); } return appEngine; } }
         public static AppConnector C { get { if (appConnector == null) { appConnector = Object.FindObjectOfType<AppConnector>(); } return appConnector; } }
-        public static GameData G { get => A.gameData; set => A.gameData = value; }
+        public static Data G { get => A.masterGameData; set => A.masterGameData = value; }
         public static BattleEngine B { get { if (battleEngine == null) { battleEngine = Resources.FindObjectsOfTypeAll<BattleEngine>()[0]; } return battleEngine; } }
-        public static PlayerData LocalPlayer {
-            get {
-                switch (G.GameStatus) {
-                    case Game_Enum.NA: {
-                        return Connector.Player;
-                    }
-                    case Game_Enum.CHAR_CREATION: {
-                        return G.Gld.Players.Find(p => p.Equals(Connector.Player));
-                    }
-                    default: {
-                        return G.Players.Find(p => p.Equals(Connector.Player));
-                    }
-                }
-            }
-        }
+        public static int LocalPlayerKey { get => Connector.Player.Key; }
+        public static PlayerData LocalPlayer { get { return G.Players.Find(p => p.Key.Equals(LocalPlayerKey)); } }
         public static PlayerData CurrentTurn { get { return G.Players.Find(p => p.Key == G.PlayerTurnOrder[G.PlayerTurnIndex]); } }
         public static PlayerData DummyPlayer { get { return GetPlayerByKey(-999); } }
         public static BoardData Board { get => G.Board; }
+        public static GameData GLD { get => G.GameData; }
         public static ScenarioBase Scenario {
             get {
-                if (!gameid.Equals(G.GameId)) {
+                if (!gameid.Equals(G.GameId) || A.scenario == null) {
                     gameid = G.GameId;
                     A.scenario = ScenarioBase.Create();
                 }
@@ -57,15 +45,18 @@ namespace cna {
             get {
                 if (ClientState == ClientState_Enum.NOT_CONNECTED) {
                     return null;
-                } else if (G.GameStatus == Game_Enum.CHAR_CREATION) {
-                    return G.Gld.Players.Find(p => p.Key == G.Gld.Host.Key);
                 } else {
-                    return G.Players.Find(p => p.Key == G.HostId);
+                    return G.Players.Find(p => p.Key == G.HostPlayerKey);
                 }
             }
         }
-        public static bool isHost { get { return LocalPlayer.Key == G.HostId; } }
-        public static bool isTurn { get => LocalPlayer.Equals(CurrentTurn) && LocalPlayer.PlayerTurnPhase >= TurnPhase_Enum.StartTurn && LocalPlayer.PlayerTurnPhase <= TurnPhase_Enum.EndTurn; }
+        public static bool isHost { get { return LocalPlayerKey == G.HostPlayerKey; } }
+        public static bool isTurn {
+            get {
+                PlayerData l = LocalPlayer;
+                return l.PlayerTurnPhase >= TurnPhase_Enum.StartTurn && l.PlayerTurnPhase < TurnPhase_Enum.EndTurn;
+            }
+        }
         public static bool hasCoreBeenDrawn { get { return false; } }
         public static BaseConnector Connector { get => connector; set => connector = value; }
         public static Queue<ChatItemData> ChatQueue { get => C.chatQueue; set => C.chatQueue = value; }
@@ -79,6 +70,7 @@ namespace cna {
                 if (hexMap == null) {
                     hexMap = new Dictionary<MapHexId_Enum, MapHexVO>();
                     hexMap.Add(MapHexId_Enum.Invalid, new MapHexVO(MapHexId_Enum.Invalid, new Image_Enum[] { Image_Enum.TH_Invalid, Image_Enum.TH_Invalid, Image_Enum.TH_Invalid, Image_Enum.TH_Invalid, Image_Enum.TH_Invalid, Image_Enum.TH_Invalid, Image_Enum.TH_Invalid }, new Image_Enum[] { Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA }));
+                    hexMap.Add(MapHexId_Enum.Explore, new MapHexVO(MapHexId_Enum.Explore, new Image_Enum[] { Image_Enum.TH_ExploreOuter, Image_Enum.TH_ExploreOuter, Image_Enum.TH_ExploreOuter, Image_Enum.TH_ExploreInner, Image_Enum.TH_ExploreOuter, Image_Enum.TH_ExploreOuter, Image_Enum.TH_ExploreOuter }, new Image_Enum[] { Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA }));
                     hexMap.Add(MapHexId_Enum.Basic_Back, new MapHexVO(MapHexId_Enum.Basic_Back, new Image_Enum[] { Image_Enum.TH_UnexploredBasic, Image_Enum.TH_UnexploredBasic, Image_Enum.TH_UnexploredBasic, Image_Enum.TH_UnexploredBasic, Image_Enum.TH_UnexploredBasic, Image_Enum.TH_UnexploredBasic, Image_Enum.TH_UnexploredBasic }, new Image_Enum[] { Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA }));
                     hexMap.Add(MapHexId_Enum.Core_Back, new MapHexVO(MapHexId_Enum.Core_Back, new Image_Enum[] { Image_Enum.TH_UnexploredAdvanced, Image_Enum.TH_UnexploredAdvanced, Image_Enum.TH_UnexploredAdvanced, Image_Enum.TH_UnexploredAdvanced, Image_Enum.TH_UnexploredAdvanced, Image_Enum.TH_UnexploredAdvanced, Image_Enum.TH_UnexploredAdvanced }, new Image_Enum[] { Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA }));
                     hexMap.Add(MapHexId_Enum.Start_A, new MapHexVO(MapHexId_Enum.Start_A, new Image_Enum[] { Image_Enum.TH_Plains, Image_Enum.TH_Forest, Image_Enum.TH_Lake, Image_Enum.TH_Plains, Image_Enum.TH_Plains, Image_Enum.TH_Lake, Image_Enum.TH_Lake }, new Image_Enum[] { Image_Enum.NA, Image_Enum.NA, Image_Enum.NA, Image_Enum.SH_StartShrine, Image_Enum.NA, Image_Enum.NA, Image_Enum.NA }));

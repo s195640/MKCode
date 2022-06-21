@@ -5,6 +5,8 @@
         New_Game = 100,
         New_Round,
         Tactics,
+        Tactics_WaitingOnPlayers,
+        SaveGame,
         Player_Turn,
         TESTING,
     }

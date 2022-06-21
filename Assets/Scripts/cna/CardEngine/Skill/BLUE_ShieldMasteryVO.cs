@@ -1,7 +1,7 @@
 using cna.poo;
 namespace cna {
     public partial class BLUE_ShieldMasteryVO : CardSkillVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             ar.SelectOptions(acceptCallback_00,
                         new OptionVO("Block 3", Image_Enum.I_shield),
                         new OptionVO("Cold Block 2", Image_Enum.I_shield),
@@ -9,7 +9,7 @@ namespace cna {
                         );
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     ar.BattleBlock(new AttackData(3));

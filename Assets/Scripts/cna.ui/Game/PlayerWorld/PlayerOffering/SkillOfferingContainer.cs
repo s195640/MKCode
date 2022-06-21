@@ -8,8 +8,8 @@ namespace cna.ui {
         [SerializeField] private Transform content;
         [SerializeField] private List<SkillCardSlot> slots = new List<SkillCardSlot>();
 
-        public void UpdateUI() {
-            D.G.Board.SkillOffering.ForEach(c => {
+        public void UpdateUI(PlayerData pd) {
+            pd.Board.SkillOffering.ForEach(c => {
                 SkillCardSlot p = slots.Find(p => p.UniqueCardId == c);
                 if (p == null) {
                     SkillCardSlot cardSlot = Instantiate(prefab, Vector3.zero, Quaternion.identity);
@@ -22,7 +22,7 @@ namespace cna.ui {
                 }
             });
             foreach (SkillCardSlot n in slots.ToArray()) {
-                if (!D.G.Board.SkillOffering.Contains(n.UniqueCardId)) {
+                if (!pd.Board.SkillOffering.Contains(n.UniqueCardId)) {
                     if (n.ActionCard.UniqueCardId == n.UniqueCardId) {
                         n.ActionCard.SelectedCardSlot = null;
                     }

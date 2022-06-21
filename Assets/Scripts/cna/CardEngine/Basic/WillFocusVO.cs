@@ -2,7 +2,7 @@
 
 namespace cna {
     public partial class WillFocusVO : CardActionVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             ar.SelectOptions(acceptCallback_00,
                 new OptionVO("Green Crystal", Image_Enum.I_crystal_green),
                 new OptionVO("Blue Mana", Image_Enum.I_mana_blue),
@@ -11,7 +11,7 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     ar.CrystalGreen(1);
@@ -33,22 +33,22 @@ namespace cna {
             ar.FinishCallback(ar);
         }
 
-        public override void ActionPaymentComplete_01(ActionResultVO ar) {
+        public override void ActionPaymentComplete_01(GameAPI ar) {
             ar.SelectSingleCard(acceptCallback_01);
         }
 
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             ar.CardModifier = 3;
             CardActionVO selectedCard = (CardActionVO)D.Cards[ar.SelectedUniqueCardId];
             ar.AddCardState(ar.SelectedUniqueCardId, CardState_Enum.Advanced);
             selectedCard.ActionPaymentComplete_01(ar);
         }
 
-        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, ActionResultVO ar) {
+        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, GameAPI ar) {
             string msg = base.IsSelectionAllowed(card, cardHolder, ar);
             if (msg.Length == 0) {
                 if (card.CardType == CardType_Enum.Basic || card.CardType == CardType_Enum.Advanced) {
-                    ActionResultVO ar2 = new ActionResultVO(card.UniqueId, CardState_Enum.NA, 1);
+                    GameAPI ar2 = new GameAPI(card.UniqueId, CardState_Enum.NA, 1);
                     checkAllowedToUse(ar2);
                     if (!ar2.Status) {
                         return ar2.ErrorMsg;

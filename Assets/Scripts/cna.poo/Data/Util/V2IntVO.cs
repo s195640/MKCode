@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public class V2IntVO : Data {
+    public class V2IntVO : BaseData {
         [SerializeField] private int x;
         [SerializeField] private int y;
         public static V2IntVO zero { get { return new V2IntVO(0, 0); } }

@@ -18,9 +18,10 @@ namespace cna.ui {
         [SerializeField] private List<V2IntVO> provokeMonsterLoc;
 
         public void SetupUI() {
+            PlayerData pd = D.LocalPlayer;
             bool provokeMonstersAvailable = false;
-            provokeMonsterLoc = BasicUtil.GetAdjacentPoints(D.LocalPlayer.CurrentGridLoc);
-            provokeMonsterLoc.Insert(3, D.LocalPlayer.CurrentGridLoc);
+            provokeMonsterLoc = BasicUtil.GetAdjacentPoints(pd.CurrentGridLoc);
+            provokeMonsterLoc.Insert(3, pd.CurrentGridLoc);
             for (int i = 0; i < provokeMonsterLoc.Count; i++) {
                 V2IntVO p = provokeMonsterLoc[i];
                 Image_Enum t = BasicUtil.GetTilemapId(p, TerrainTilemap);
@@ -34,10 +35,10 @@ namespace cna.ui {
                 monsterHexes[i].gameObject.SetActive(false);
                 provokeButtons[i].SetActive(false);
                 provokeSelected[i].SetActive(false);
-                if ((s == Image_Enum.SH_Draconum || s == Image_Enum.SH_MaraudingOrcs) && D.G.Monsters.Map.ContainsKey(p)) {
-                    List<int> mList = D.G.Monsters.Map[p].Values;
+                if ((s == Image_Enum.SH_Draconum || s == Image_Enum.SH_MaraudingOrcs) && pd.Board.MonsterData.ContainsKey(p)) {
+                    List<int> mList = pd.Board.MonsterData[p].Values;
                     if (mList.Count > 0) {
-                        if (!D.LocalPlayer.Battle.Monsters.Keys.Contains(mList[0])) {
+                        if (!pd.Battle.Monsters.Keys.Contains(mList[0])) {
                             provokeMonstersAvailable = true;
                             provokeMonsterIds[i] = mList[0];
                             monsterHexes[i].gameObject.SetActive(true);

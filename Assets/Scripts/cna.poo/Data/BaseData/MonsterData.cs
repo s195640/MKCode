@@ -3,11 +3,10 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public class MonsterData : Data {
+    public class MonsterData : BaseData {
         public MonsterData() { }
 
         [SerializeField] private CNAMap<V2IntVO, WrapList<int>> map = new CNAMap<V2IntVO, WrapList<int>>();
-        [SerializeField] private CNAMap<V2IntVO, WrapList<Image_Enum>> shield = new CNAMap<V2IntVO, WrapList<Image_Enum>>();
         [SerializeField] private int greenIndex = 0;
         [SerializeField] private int greyIndex = 0;
         [SerializeField] private int brownIndex = 0;
@@ -23,7 +22,6 @@ namespace cna.poo {
         public int WhiteIndex { get => whiteIndex; set => whiteIndex = value; }
         public int RedIndex { get => redIndex; set => redIndex = value; }
         public CNAMap<V2IntVO, WrapList<int>> Map { get => map; }
-        public CNAMap<V2IntVO, WrapList<Image_Enum>> Shield { get => shield; set => shield = value; }
         public int RuinIndex { get => ruinIndex; set => ruinIndex = value; }
 
         public void Clear() {
@@ -35,7 +33,23 @@ namespace cna.poo {
             RedIndex = 0;
             ruinIndex = 0;
             Map.Clear();
-            Shield.Clear();
+        }
+
+        public void UpdateData(MonsterData m) {
+            map.Clear();
+            m.map.Keys.ForEach(k => {
+                V2IntVO key = new V2IntVO(k.X, k.Y);
+                WrapList<int> value = new WrapList<int>();
+                m.map[k].Values.ForEach(v => value.Add(v));
+                map.Add(key, value);
+            });
+            greenIndex = m.greenIndex;
+            greyIndex = m.greyIndex;
+            brownIndex = m.brownIndex;
+            violetIndex = m.violetIndex;
+            whiteIndex = m.whiteIndex;
+            redIndex = m.redIndex;
+            ruinIndex = m.ruinIndex;
         }
     }
 }

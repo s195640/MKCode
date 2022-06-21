@@ -1,10 +1,10 @@
 using cna.poo;
 namespace cna {
     public partial class RED_InvocationVO : CardSkillVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             ar.SelectSingleCard(acceptCallback_00);
         }
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             ar.AddCardState(ar.SelectedUniqueCardId, CardState_Enum.Discard);
             CardVO card = D.Cards[ar.SelectedUniqueCardId];
             if (card.CardType == CardType_Enum.Wound) {
@@ -20,7 +20,7 @@ namespace cna {
             }
         }
 
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     ar.ManaRed(1);
@@ -34,7 +34,7 @@ namespace cna {
             ar.FinishCallback(ar);
         }
 
-        public void acceptCallback_02(ActionResultVO ar) {
+        public void acceptCallback_02(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     ar.ManaGreen(1);

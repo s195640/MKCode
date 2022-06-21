@@ -18,17 +18,17 @@ namespace cna.ui {
         [SerializeField] private Transform buttonGroup;
 
 
-        private ActionResultVO ar;
+        private GameAPI ar;
         private List<int> cards;
         private string title;
         private V2IntVO selectCount;
         private List<int> selectedCards;
         private List<CNA_Button> buttonSlots = new List<CNA_Button>();
-        private List<Action<ActionResultVO>> buttonCallback;
+        private List<Action<GameAPI>> buttonCallback;
         private List<bool> buttonForce;
 
 
-        public void SetupUI(ActionResultVO ar, List<int> cards, string title, string description, V2IntVO selectCount, Image_Enum selectionImage, List<string> buttonText, List<Color> buttonColor, List<Action<ActionResultVO>> buttonCallback, List<bool> buttonForce) {
+        public void SetupUI(GameAPI ar, List<int> cards, string title, string description, V2IntVO selectCount, Image_Enum selectionImage, List<string> buttonText, List<Color> buttonColor, List<Action<GameAPI>> buttonCallback, List<bool> buttonForce) {
             gameObject.SetActive(true);
             selectedCards = new List<int>();
             this.ar = ar;

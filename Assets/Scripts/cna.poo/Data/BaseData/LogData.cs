@@ -4,7 +4,7 @@ using UnityEngine;
 namespace cna.poo {
 
     [Serializable]
-    public class LogData : Data {
+    public class LogData : BaseData {
         [SerializeField] private int i;
         [SerializeField] private string m;
         [SerializeField] private long t;

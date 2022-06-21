@@ -4,17 +4,23 @@ using UnityEngine;
 
 namespace cna {
     public abstract class BattleEngine : MonoBehaviour {
-        public PlayerData L { get => D.LocalPlayer; }
+        private GameAPI ar;
+        public PlayerData L { get => AR.P; }
         public BattleData B { get => L.Battle; }
         public Dictionary<int, MonsterDetailsVO> MonsterDetails { get => monsterDetails; set => monsterDetails = value; }
+        public GameAPI AR { get => ar; set => ar = value; }
 
-        [SerializeField] internal GameData gdProvoke;
-        [SerializeField] internal GameData gdRange;
-        [SerializeField] internal GameData gdBlock;
-        [SerializeField] internal GameData gdDamage;
-        [SerializeField] internal GameData gdAttack;
+        [SerializeField] internal PlayerData gdProvoke;
+        [SerializeField] internal PlayerData gdRange;
+        [SerializeField] internal PlayerData gdBlock;
+        [SerializeField] internal PlayerData gdDamage;
+        [SerializeField] internal PlayerData gdAttack;
 
         private Dictionary<int, MonsterDetailsVO> monsterDetails = new Dictionary<int, MonsterDetailsVO>();
+
+        public void SetupUI(GameAPI ar) {
+            this.ar = ar;
+        }
 
         public abstract void UpdateUI();
 
@@ -56,17 +62,12 @@ namespace cna {
         }
 
         #region START BATTLE
-        protected virtual void battleEngine_StartOfBattle() {
+        protected void battleEngine_StartOfBattle() {
             UpdateMonsterDetails();
             List<string> monsterNames = B.Monsters.Keys.ConvertAll(m => ((CardMonsterVO)D.Cards[m]).CardTitle);
-            D.C.LogMessage("[Battle Starts] :: " + string.Join(", ", monsterNames));
-            gdProvoke.GameStatus = Game_Enum.NA;
-            gdRange.GameStatus = Game_Enum.NA;
-            gdBlock.GameStatus = Game_Enum.NA;
-            gdDamage.GameStatus = Game_Enum.NA;
-            gdAttack.GameStatus = Game_Enum.NA;
+            AR.AddLog("[Battle Starts] :: " + string.Join(", ", monsterNames));
             B.BattlePhase = BattlePhase_Enum.SetupProvoke;
-            D.C.Send_GameData();
+            AR.PushForce();
         }
 
         public void UpdateMonsterDetails() {
@@ -77,7 +78,6 @@ namespace cna {
             });
         }
         #endregion
-
 
         #region PROVOKE
         protected virtual void battleEngine_SetupProvokeMonsters() {
@@ -116,55 +116,43 @@ namespace cna {
         #endregion
 
         #region Battle Undo
-        protected void CloneGameData(ref GameData clone) {
-            if (clone.GameStatus == Game_Enum.NA) {
-                clone = D.G.Clone();
-            }
+        protected void CloneGameData(ref PlayerData clone) {
+            clone = AR.P.Clone();
         }
         protected virtual void OnClick_UndoProvoke() {
-            D.C.LogMessage("[Undo - Provoke]");
-            D.G = gdProvoke.Clone();
+            AR.AddLog("[Undo - Provoke]");
+            AR.P.UpdateData(gdProvoke);
             D.Action.Clear();
             UpdateMonsterDetails();
-            gdRange.GameStatus = Game_Enum.NA;
-            gdBlock.GameStatus = Game_Enum.NA;
-            gdDamage.GameStatus = Game_Enum.NA;
-            gdAttack.GameStatus = Game_Enum.NA;
-            D.C.Send_GameData();
+            AR.PushForce();
         }
         protected virtual void OnClick_UndoRange() {
-            D.C.LogMessage("[Undo - Range]");
-            D.G = gdRange.Clone();
+            AR.AddLog("[Undo - Range]");
+            AR.P.UpdateData(gdRange);
             D.Action.Clear();
             UpdateMonsterDetails();
-            gdBlock.GameStatus = Game_Enum.NA;
-            gdDamage.GameStatus = Game_Enum.NA;
-            gdAttack.GameStatus = Game_Enum.NA;
-            D.C.Send_GameData();
+            AR.PushForce();
         }
         protected virtual void OnClick_UndoBlock() {
-            D.C.LogMessage("[Undo - Block]");
-            D.G = gdBlock.Clone();
+            AR.AddLog("[Undo - Block]");
+            AR.P.UpdateData(gdBlock);
             D.Action.Clear();
             UpdateMonsterDetails();
-            gdDamage.GameStatus = Game_Enum.NA;
-            gdAttack.GameStatus = Game_Enum.NA;
-            D.C.Send_GameData();
+            AR.PushForce();
         }
         protected virtual void OnClick_UndoDamage() {
-            D.C.LogMessage("[Undo - Damage]");
-            D.G = gdDamage.Clone();
+            AR.AddLog("[Undo - Damage]");
+            AR.P.UpdateData(gdDamage);
             D.Action.Clear();
             UpdateMonsterDetails();
-            gdAttack.GameStatus = Game_Enum.NA;
-            D.C.Send_GameData();
+            AR.PushForce();
         }
         protected virtual void OnClick_UndoAttack() {
-            D.C.LogMessage("[Undo - Attack]");
-            D.G = gdAttack.Clone();
+            AR.AddLog("[Undo - Attack]");
+            AR.P.UpdateData(gdAttack);
             D.Action.Clear();
             UpdateMonsterDetails();
-            D.C.Send_GameData();
+            AR.PushForce();
         }
         #endregion
     }

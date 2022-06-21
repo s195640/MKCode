@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using cna.poo;
 namespace cna {
     public partial class AltemMagesVO : CardUnitVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             ar.SelectOptions(acceptCallback_00,
                 new OptionVO("Blue Mana", Image_Enum.I_mana_blue),
                 new OptionVO("Red Mana", Image_Enum.I_mana_red),
@@ -11,7 +11,7 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: { ar.ManaBlue(1); break; }
                 case 1: { ar.ManaRed(1); break; }
@@ -26,7 +26,7 @@ namespace cna {
             );
         }
 
-        public void acceptCallback_00a(ActionResultVO ar) {
+        public void acceptCallback_00a(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: { ar.ManaBlue(1); break; }
                 case 1: { ar.ManaRed(1); break; }
@@ -36,7 +36,7 @@ namespace cna {
             ar.FinishCallback(ar);
         }
 
-        public override void ActionPaymentComplete_01(ActionResultVO ar) {
+        public override void ActionPaymentComplete_01(GameAPI ar) {
             ar.SelectOptions(acceptCallback_01,
                 new OptionVO("Cold Fire +5", Image_Enum.I_attack_coldfire),
                 new OptionVO("Cold Fire +7", Image_Enum.I_attack_coldfire),
@@ -44,12 +44,12 @@ namespace cna {
                 );
         }
 
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     AttackData a = new AttackData();
                     a.ColdFire += 5;
-                    if (ar.LocalPlayer.Battle.BattlePhase == BattlePhase_Enum.Block) {
+                    if (ar.P.Battle.BattlePhase == BattlePhase_Enum.Block) {
                         ar.BattleBlock(a);
                     } else {
                         ar.BattleAttack(a);
@@ -74,10 +74,10 @@ namespace cna {
             }
         }
 
-        public void acceptCallback_01a(ActionResultVO ar) {
+        public void acceptCallback_01a(GameAPI ar) {
             AttackData a = new AttackData();
             a.ColdFire += 7;
-            if (ar.LocalPlayer.Battle.BattlePhase == BattlePhase_Enum.Block) {
+            if (ar.P.Battle.BattlePhase == BattlePhase_Enum.Block) {
                 ar.BattleBlock(a);
             } else {
                 ar.BattleAttack(a);
@@ -85,10 +85,10 @@ namespace cna {
             ar.FinishCallback(ar);
         }
 
-        public void acceptCallback_01b(ActionResultVO ar) {
+        public void acceptCallback_01b(GameAPI ar) {
             AttackData a = new AttackData();
             a.ColdFire += 9;
-            if (ar.LocalPlayer.Battle.BattlePhase == BattlePhase_Enum.Block) {
+            if (ar.P.Battle.BattlePhase == BattlePhase_Enum.Block) {
                 ar.BattleBlock(a);
             } else {
                 ar.BattleAttack(a);
@@ -96,7 +96,7 @@ namespace cna {
             ar.FinishCallback(ar);
         }
 
-        public override ActionResultVO ActionValid_02(ActionResultVO ar) {
+        public override GameAPI ActionValid_02(GameAPI ar) {
             ar.AddGameEffect(GameEffect_Enum.CUE_AltemMages01);
             return ar;
         }

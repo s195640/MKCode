@@ -1,31 +1,31 @@
 using cna.poo;
 namespace cna {
     public partial class RegenerationVO : CardActionVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             ar.Healing(1);
             ar.SelectSingleCard(acceptCallback_00, true);
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             if (ar.SelectedUniqueCardId != 0) {
                 ar.RemoveCardState(ar.SelectedUniqueCardId, CardState_Enum.Unit_Exhausted);
             }
             ar.FinishCallback(ar);
         }
 
-        public override void ActionPaymentComplete_01(ActionResultVO ar) {
+        public override void ActionPaymentComplete_01(GameAPI ar) {
             ar.Healing(2);
             ar.SelectSingleCard(acceptCallback_01, true);
         }
 
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             if (ar.SelectedUniqueCardId != 0) {
                 ar.RemoveCardState(ar.SelectedUniqueCardId, CardState_Enum.Unit_Exhausted);
             }
             ar.FinishCallback(ar);
         }
 
-        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, ActionResultVO ar) {
+        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, GameAPI ar) {
             string msg = "";
             if (cardHolder != CardHolder_Enum.PlayerUnitHand) {
                 return "You must selet a unit from your hand!";

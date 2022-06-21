@@ -14,5 +14,7 @@ namespace cna.poo {
         GameData_Destroy,
         Chat,
         GameLog,
+        PlayerData_ToHost,
+        PlayerData_FromHost,
     }
 }

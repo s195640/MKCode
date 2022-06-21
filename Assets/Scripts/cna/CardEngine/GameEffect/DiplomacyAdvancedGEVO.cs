@@ -19,8 +19,8 @@ namespace cna {
             BattleAllowed = new List<List<BattlePhase_Enum>>() { new List<BattlePhase_Enum>() { BattlePhase_Enum.Block } };
         }
 
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
-            if (ar.LocalPlayer.Influence > 1) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
+            if (ar.P.Influence > 1) {
                 ar.SelectOptions(acceptCallback_00,
                 new OptionVO("Block 1", Image_Enum.I_shield),
                 new OptionVO("Fire Block 1", Image_Enum.I_shield),
@@ -30,7 +30,7 @@ namespace cna {
                 ar.ErrorMsg = "You do not have enough influence points";
             }
         }
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             ar.ActionInfluence(-1);
             switch (ar.SelectedButtonIndex) {
                 case 0: {

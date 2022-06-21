@@ -2,8 +2,8 @@
 
 namespace cna {
     public partial class ColdToughnessVO : CardActionVO {
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            if (ar.LocalPlayer.Battle.BattlePhase == BattlePhase_Enum.Attack) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            if (ar.P.Battle.BattlePhase == BattlePhase_Enum.Attack) {
                 AttackData attack = new AttackData();
                 attack.Cold += 2;
                 ar.BattleAttack(attack);
@@ -14,7 +14,7 @@ namespace cna {
             }
             return ar;
         }
-        public override ActionResultVO ActionValid_01(ActionResultVO ar) {
+        public override GameAPI ActionValid_01(GameAPI ar) {
             ar.AddGameEffect(GameEffect_Enum.ColdToughness);
             AttackData attack = new AttackData();
             attack.Cold = 5 + ar.CardModifier;

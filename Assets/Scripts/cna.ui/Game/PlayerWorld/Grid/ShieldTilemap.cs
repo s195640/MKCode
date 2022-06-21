@@ -9,20 +9,21 @@ namespace cna.ui {
         [SerializeField] private List<PlayerShieldTokenPrefab> ShieldList = new List<PlayerShieldTokenPrefab>();
 
         public void UpdateUI() {
-            foreach (V2IntVO pos in D.G.Monsters.Shield.Keys) {
+            Dictionary<V2IntVO, List<Image_Enum>> shields = BasicUtil.getAllShields(D.G);
+            foreach (V2IntVO pos in shields.Keys) {
                 PlayerShieldTokenPrefab t = ShieldList.Find(s => s.Location.Equals(pos));
                 if (t == null) {
                     PlayerShieldTokenPrefab prefab = Instantiate(PlayerShieldTokenPrefab, Vector3.zero, Quaternion.identity);
                     prefab.transform.SetParent(transform);
                     prefab.transform.localScale = Vector3.one;
                     ShieldList.Add(prefab);
-                    prefab.SetupUI(MainGrid, pos, D.G.Monsters.Shield[pos].Values);
+                    prefab.SetupUI(MainGrid, pos, shields[pos]);
                 } else {
-                    t.UpdateUI(D.G.Monsters.Shield[pos].Values);
+                    t.UpdateUI(shields[pos]);
                 }
             }
             foreach (PlayerShieldTokenPrefab t in ShieldList.ToArray()) {
-                if (!D.G.Monsters.Shield.ContainsKey(t.Location)) {
+                if (!shields.ContainsKey(t.Location)) {
                     Destroy(t.gameObject);
                     ShieldList.Remove(t);
                 }

@@ -58,9 +58,10 @@ namespace cna {
         public List<int> TacticsNightDeck { get => tacticsNightDeck; set => tacticsNightDeck = value; }
 
         public static ScenarioBase Create() {
-            UnityEngine.Random.InitState(D.G.Board.Seed);
+            D.A.Clear();
+            UnityEngine.Random.InitState(D.GLD.Seed);
             ScenarioBase map = null;
-            switch (D.Board.GameMapLayout) {
+            switch (D.GLD.GameMapLayout) {
                 case GameMapLayout_Enum.Wedge: {
                     map = new MapWedge();
                     break;
@@ -78,7 +79,7 @@ namespace cna {
                     break;
                 }
             }
-            map.buildMapDeck(D.Board.GameMapLayout == GameMapLayout_Enum.Wedge, D.Board.EasyStart, D.Board.Basic, D.Board.Core, D.Board.City);
+            map.buildMapDeck(D.GLD.GameMapLayout == GameMapLayout_Enum.Wedge, D.GLD.EasyStart, D.GLD.BasicTiles, D.GLD.CoreTiles, D.GLD.CityTiles);
             D.Cards.ForEach(c => {
                 switch (c.CardType) {
                     case CardType_Enum.Monster: {
@@ -268,7 +269,7 @@ namespace cna {
 
 
 
-        public void DrawGameHex(int index) {
+        public MapHexId_Enum DrawGameHex(int index) {
             MapHexId_Enum mapHex = MapDeck[D.Board.MapDeckIndex];
             D.Board.MapDeckIndex++;
             D.Board.CurrentMap[index] = mapHex;
@@ -296,19 +297,19 @@ namespace cna {
                         break;
                     }
                     case Image_Enum.SH_City_Blue: {
-                        monstersToAdd.AddRange(getCityDefenders(Image_Enum.SH_City_Blue, D.G.Board.Level));
+                        monstersToAdd.AddRange(getCityDefenders(Image_Enum.SH_City_Blue, D.GLD.Level));
                         break;
                     }
                     case Image_Enum.SH_City_Green: {
-                        monstersToAdd.AddRange(getCityDefenders(Image_Enum.SH_City_Green, D.G.Board.Level));
+                        monstersToAdd.AddRange(getCityDefenders(Image_Enum.SH_City_Green, D.GLD.Level));
                         break;
                     }
                     case Image_Enum.SH_City_Red: {
-                        monstersToAdd.AddRange(getCityDefenders(Image_Enum.SH_City_Red, D.G.Board.Level));
+                        monstersToAdd.AddRange(getCityDefenders(Image_Enum.SH_City_Red, D.GLD.Level));
                         break;
                     }
                     case Image_Enum.SH_City_White: {
-                        monstersToAdd.AddRange(getCityDefenders(Image_Enum.SH_City_White, D.G.Board.Level));
+                        monstersToAdd.AddRange(getCityDefenders(Image_Enum.SH_City_White, D.GLD.Level));
                         break;
                     }
                     case Image_Enum.SH_SpawningGround: {
@@ -323,13 +324,13 @@ namespace cna {
                         break;
                     }
                     case Image_Enum.SH_Monastery: {
-                        D.G.Board.MonasteryCount++;
-                        if (D.G.GameStatus != Game_Enum.Player_Turn) {
-                            if (D.G.Board.AdvancedIndex < AdvancedDeck.Count) {
-                                D.G.Board.UnitOffering.Add(AdvancedDeck[D.G.Board.AdvancedIndex]);
-                                D.G.Board.AdvancedIndex++;
-                            }
-                        }
+                        //D.G.Board.MonasteryCount++;
+                        //if (D.G.GameStatus != Game_Enum.Player_Turn) {
+                        //    if (D.G.Board.AdvancedIndex < AdvancedDeck.Count) {
+                        //        D.G.Board.UnitOffering.Add(AdvancedDeck[D.G.Board.AdvancedIndex]);
+                        //        D.G.Board.AdvancedIndex++;
+                        //    }
+                        //}
                         break;
                     }
                     case Image_Enum.SH_AncientRuins: {
@@ -347,17 +348,19 @@ namespace cna {
                     AddMonster(monstersToAdd, new V2IntVO(ConvertIndexToWorld(index, loc)), isMonsterVisable);
                 }
             }
-            rebuildCurrentMap();
+            //rebuildCurrentMap();
+            return mapHex;
         }
         public void AddMonster(List<MonsterType_Enum> monsterTypes, V2IntVO pos, bool visable) {
             List<int> monsterCards = new List<int>();
-            if (!D.G.Monsters.Map.ContainsKey(pos)) {
-                D.G.Monsters.Map.Add(pos, new WrapList<int>());
+
+            if (!D.G.Board.MonsterData.ContainsKey(pos)) {
+                D.G.Board.MonsterData.Add(pos, new WrapList<int>());
             }
             foreach (MonsterType_Enum monsterType in monsterTypes) {
                 monsterCards.Add(DrawMonster(monsterType));
             }
-            D.G.Monsters.Map[pos].AddRange(monsterCards);
+            D.G.Board.MonsterData[pos].AddRange(monsterCards);
             if (visable) {
                 D.G.Players.ForEach(p => {
                     if (!p.DummyPlayer) {
@@ -366,47 +369,47 @@ namespace cna {
                 });
             }
         }
-        public int DrawWound() {
-            int woundId = WoundDeck[D.G.Board.WoundIndex];
-            D.G.Board.WoundIndex++;
-            return woundId;
-        }
+        //public int DrawWound() {
+        //    int woundId = WoundDeck[D.G.Board.WoundIndex];
+        //    D.G.Board.WoundIndex++;
+        //    return woundId;
+        //}
         public int DrawMonster(MonsterType_Enum monsterType) {
             int monsterId;
             switch (monsterType) {
                 case MonsterType_Enum.Green: {
-                    monsterId = MonsterGreenDeck[D.G.Monsters.GreenIndex];
-                    D.G.Monsters.GreenIndex++;
+                    monsterId = MonsterGreenDeck[D.G.Board.GreenIndex];
+                    D.G.Board.GreenIndex++;
                     break;
                 }
                 case MonsterType_Enum.Grey: {
-                    monsterId = MonsterGreyDeck[D.G.Monsters.GreyIndex];
-                    D.G.Monsters.GreyIndex++;
+                    monsterId = MonsterGreyDeck[D.G.Board.GreyIndex];
+                    D.G.Board.GreyIndex++;
                     break;
                 }
                 case MonsterType_Enum.Violet: {
-                    monsterId = MonsterVioletDeck[D.G.Monsters.VioletIndex];
-                    D.G.Monsters.VioletIndex++;
+                    monsterId = MonsterVioletDeck[D.G.Board.VioletIndex];
+                    D.G.Board.VioletIndex++;
                     break;
                 }
                 case MonsterType_Enum.Brown: {
-                    monsterId = MonsterBrownDeck[D.G.Monsters.BrownIndex];
-                    D.G.Monsters.BrownIndex++;
+                    monsterId = MonsterBrownDeck[D.G.Board.BrownIndex];
+                    D.G.Board.BrownIndex++;
                     break;
                 }
                 case MonsterType_Enum.White: {
-                    monsterId = MonsterWhiteDeck[D.G.Monsters.WhiteIndex];
-                    D.G.Monsters.WhiteIndex++;
+                    monsterId = MonsterWhiteDeck[D.G.Board.WhiteIndex];
+                    D.G.Board.WhiteIndex++;
                     break;
                 }
                 case MonsterType_Enum.Red: {
-                    monsterId = MonsterRedDeck[D.G.Monsters.RedIndex];
-                    D.G.Monsters.RedIndex++;
+                    monsterId = MonsterRedDeck[D.G.Board.RedIndex];
+                    D.G.Board.RedIndex++;
                     break;
                 }
                 case MonsterType_Enum.Yellow: {
-                    monsterId = RuinDeck[D.G.Monsters.RuinIndex];
-                    D.G.Monsters.RuinIndex++;
+                    monsterId = RuinDeck[D.G.Board.RuinIndex];
+                    D.G.Board.RuinIndex++;
                     break;
                 }
                 default: {
@@ -740,21 +743,21 @@ namespace cna {
                 D.Board.CurrentMap.Add(MapHexId_Enum.Invalid);
             }
             D.Board.MapDeckIndex = 0;
-            int row_1 = D.Board.GameMapLayout == GameMapLayout_Enum.Wedge ? 3 : 4;
+            int row_1 = D.GLD.GameMapLayout == GameMapLayout_Enum.Wedge ? 3 : 4;
             for (int i = 0; i < row_1; i++) {
                 DrawGameHex(i);
             }
         }
-        public void rebuildCurrentMap() {
+        public void rebuildCurrentMap(PlayerData pd) {
             int totalTilesLeft = MapDeck.Count - D.Board.MapDeckIndex;
-            int gameTilesLeft = 1 + (D.Board.Basic + D.Board.Core + D.Board.City) - D.Board.MapDeckIndex;
-            bool nextTileBasic = D.Board.MapDeckIndex <= D.Board.Basic;
-            for (int i = 0; i < D.Board.CurrentMap.Count; i++) {
-                if (D.Board.CurrentMap[i] <= MapHexId_Enum.Core_Back) {
-                    if (recalculateHex(i, D.Board.CurrentMap, totalTilesLeft, gameTilesLeft, nextTileBasic)) {
-                        D.Board.CurrentMap[i] = MapDeck[D.Board.MapDeckIndex] < MapHexId_Enum.Core_01 ? MapHexId_Enum.Basic_Back : MapHexId_Enum.Core_Back;
+            int gameTilesLeft = 1 + (D.GLD.BasicTiles + D.GLD.CoreTiles + D.GLD.CityTiles) - D.Board.MapDeckIndex;
+            bool nextTileBasic = D.Board.MapDeckIndex <= D.GLD.BasicTiles;
+            for (int i = 0; i < pd.Board.PlayerMap.Count; i++) {
+                if (pd.Board.PlayerMap[i] <= MapHexId_Enum.Core_Back) {
+                    if (recalculateHex(i, pd.Board.PlayerMap, totalTilesLeft, gameTilesLeft, nextTileBasic)) {
+                        pd.Board.PlayerMap[i] = MapDeck[D.Board.MapDeckIndex] < MapHexId_Enum.Core_01 ? MapHexId_Enum.Basic_Back : MapHexId_Enum.Core_Back;
                     } else {
-                        D.Board.CurrentMap[i] = MapHexId_Enum.Invalid;
+                        pd.Board.PlayerMap[i] = MapHexId_Enum.Invalid;
                     }
                 }
             }
@@ -784,78 +787,76 @@ namespace cna {
 
 
         #region NewRound Setup
-        public void BuildUnitOfferingDeck() {
-            D.G.Board.UnitOffering.Clear();
-            int totalCards = D.G.Players.Count + 2;
-            if (D.Board.DummyPlayer) {
-                totalCards--;
-            }
+        public void BuildUnitOfferingDeck(Data g, PlayerData pd) {
+            pd.Board.UnitOffering.Clear();
+            int totalCards = g.Players.Count + 2 - (g.GameData.DummyPlayer ? 1 : 0);
             for (int i = 0; i < totalCards; i++) {
                 if (i % 2 == 0) {
-                    D.G.Board.UnitOffering.Add(UnitRegularDeck[D.G.Board.UnitRegularIndex]);
-                    D.G.Board.UnitRegularIndex++;
+                    pd.Board.UnitOffering.Add(UnitRegularDeck[pd.Board.UnitRegularIndex]);
+                    pd.Board.UnitRegularIndex++;
                 } else {
                     if (D.hasCoreBeenDrawn) {
-                        D.G.Board.UnitOffering.Add(UnitEliteDeck[D.G.Board.UnitRegularIndex]);
-                        D.G.Board.UnitEliteIndex++;
+                        pd.Board.UnitOffering.Add(UnitEliteDeck[pd.Board.UnitRegularIndex]);
+                        pd.Board.UnitEliteIndex++;
                     } else {
-                        D.G.Board.UnitOffering.Add(UnitRegularDeck[D.G.Board.UnitRegularIndex]);
-                        D.G.Board.UnitRegularIndex++;
+                        pd.Board.UnitOffering.Add(UnitRegularDeck[pd.Board.UnitRegularIndex]);
+                        pd.Board.UnitRegularIndex++;
                     }
                 }
             }
-            for (int i = 0; i < D.G.Board.MonasteryCount; i++) {
-                if (D.G.Board.AdvancedIndex < AdvancedDeck.Count) {
-                    D.G.Board.UnitOffering.Add(AdvancedDeck[D.G.Board.AdvancedIndex]);
-                    D.G.Board.AdvancedIndex++;
+            for (int i = 0; i < pd.Board.MonasteryCount; i++) {
+                if (pd.Board.AdvancedIndex < AdvancedDeck.Count) {
+                    pd.Board.UnitOffering.Add(AdvancedDeck[pd.Board.AdvancedIndex]);
+                    pd.Board.AdvancedIndex++;
                 }
             }
         }
 
-        public void BuildManaOfferingDeck() {
-            D.G.Board.ManaPool.Clear();
-            int totalDie = D.G.Players.Count + 2;
-            if (D.Board.DummyPlayer) {
-                totalDie--;
-            }
+        public void BuildManaOfferingDeck(Data g, PlayerData pd) {
+            pd.ManaPoolFull.Clear();
+            int totalDie = g.Players.Count + 2 - (g.GameData.DummyPlayer ? 1 : 0);
             for (int i = 0; i < totalDie / 2; i++) {
-                D.G.Board.ManaPool.Add((Crystal_Enum)UnityEngine.Random.Range(1, 7));
+                Crystal_Enum crystal_Enum = (Crystal_Enum)UnityEngine.Random.Range(1, 7);
+                pd.ManaPoolFull.Add(new ManaPoolData(crystal_Enum));
             }
             for (int i = 0; i < totalDie - (totalDie / 2); i++) {
-                D.G.Board.ManaPool.Add((Crystal_Enum)UnityEngine.Random.Range(2, 6));
+                Crystal_Enum crystal_Enum = (Crystal_Enum)UnityEngine.Random.Range(2, 6);
+                pd.ManaPoolFull.Add(new ManaPoolData(crystal_Enum));
             }
         }
 
-        public void BuildSpellOfferingDeck() {
+        public void BuildSpellOfferingDeck(PlayerData pd) {
             //  Lowest = 0 <-- Bottom
-            if (D.G.Board.SpellOffering.Count > 0) {
-                D.G.Board.SpellOffering.RemoveAt(0);
+            if (pd.Board.SpellOffering.Count > 0) {
+                pd.Board.SpellOffering.RemoveAt(0);
             }
-            while (D.G.Board.SpellOffering.Count < 3 && D.G.Board.SpellIndex < SpellDeck.Count) {
-                D.G.Board.SpellOffering.Add(SpellDeck[D.G.Board.SpellIndex]);
-                D.G.Board.SpellIndex++;
+            while (pd.Board.SpellOffering.Count < 3 && pd.Board.SpellIndex < SpellDeck.Count) {
+                pd.Board.SpellOffering.Add(SpellDeck[pd.Board.SpellIndex]);
+                pd.Board.SpellIndex++;
             }
         }
 
-        public void BuildAdvancedOfferingDeck() {
-            //  Lowest = 0 <-- Bottom
-            if (D.G.Board.AdvancedOffering.Count > 0) {
-                if (D.G.Board.DummyPlayer) {
-                    int cardid = D.G.Board.AdvancedOffering[0];
+        public void BuildAdvancedOfferingDeck(PlayerData pd) {
+            //Lowest = 0 < --Bottom
+            if (pd.Board.AdvancedOffering.Count > 0) {
+                if (D.GLD.DummyPlayer) {
+                    int cardid = pd.Board.AdvancedOffering[0];
                     PlayerData dummy = D.GetPlayerByKey(-999);
                     Crystal_Enum crystal = BasicUtil.Convert_ColorIdToCrystalId(D.Cards[cardid].CardColor);
                     dummy.Crystal.AddCrystal(crystal);
                     dummy.Deck.Deck.Add(cardid);
                     D.C.LogMessageDummy("+1 " + crystal + " Crystal");
                 }
-                D.G.Board.AdvancedOffering.RemoveAt(0);
+                pd.Board.AdvancedOffering.RemoveAt(0);
             }
-            while (D.G.Board.AdvancedOffering.Count < 3 && D.G.Board.AdvancedIndex < AdvancedDeck.Count) {
-                D.G.Board.AdvancedOffering.Add(AdvancedDeck[D.G.Board.AdvancedIndex]);
-                D.G.Board.AdvancedIndex++;
+            while (pd.Board.AdvancedOffering.Count < 3 && pd.Board.AdvancedIndex < AdvancedDeck.Count) {
+                pd.Board.AdvancedOffering.Add(AdvancedDeck[pd.Board.AdvancedIndex]);
+                pd.Board.AdvancedIndex++;
             }
         }
 
         #endregion
+
+        public void Check() { }
     }
 }

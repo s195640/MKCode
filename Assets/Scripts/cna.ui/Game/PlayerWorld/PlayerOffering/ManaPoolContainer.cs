@@ -12,9 +12,9 @@ namespace cna.ui {
             for (int i = 0; i < 10; i++) {
                 slots[i].gameObject.SetActive(false);
             }
-            for (int i = 0; i < D.G.Board.ManaPool.Count; i++) {
+            for (int i = 0; i < D.LocalPlayer.ManaPool.Count; i++) {
                 slots[i].gameObject.SetActive(true);
-                slots[i].SetupUI(D.G.Board.ManaPool[i], i);
+                slots[i].SetupUI(D.LocalPlayer.ManaPool[i].ManaColor, i);
             }
             int manaAvailable = D.LocalPlayer.ManaPoolAvailable;
             ManaPoolAvailable.text = "(Available " + manaAvailable + ")";

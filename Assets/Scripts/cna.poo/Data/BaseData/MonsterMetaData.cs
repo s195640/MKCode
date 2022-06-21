@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public class MonsterMetaData : Data {
+    public class MonsterMetaData : BaseData {
         [SerializeField] private int uniqueid;
         [SerializeField] private bool dead = false;
         [SerializeField] private bool blocked = false;

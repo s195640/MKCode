@@ -20,7 +20,7 @@ namespace cna {
             BattleAllowed = new List<List<BattlePhase_Enum>>() { new List<BattlePhase_Enum>() { BattlePhase_Enum.RangeSiege, BattlePhase_Enum.Attack } };
         }
 
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
             ar.BattleSiege(new AttackData(5));
             ar.AddWound(1);
             return ar;

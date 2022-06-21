@@ -4,6 +4,7 @@
         Invalid = 1,
         Basic_Back = 2,
         Core_Back = 3,
+        Explore = 4,
         Start_A = 10,
         Start_B = 11,
         Basic_01 = 101,

@@ -18,7 +18,7 @@ namespace cna.ui {
 
 
         public override void UpdateUI() {
-            if (L.PlayerTurnPhase == TurnPhase_Enum.Battle) {
+            if (AR != null && L.PlayerTurnPhase == TurnPhase_Enum.Battle) {
                 battleOn.SetActive(true);
                 battleOff.SetActive(false);
                 BattleEffectPanel.UpdateUI();
@@ -42,7 +42,7 @@ namespace cna.ui {
             base.battleEngine_SetupProvokeMonsters();
             B.BattlePhase = BattlePhase_Enum.Provoke;
             ProvokeMonsterPanel.SetupUI();
-            D.C.Send_GameData();
+            AR.PushForce();
         }
 
         protected override void battleEngine_ProvokeMonsters() {
@@ -54,17 +54,17 @@ namespace cna.ui {
         public void OnClick_ProvokeMonster(int index) {
             ProvokeMonsterPanel.OnClick_ProvokeMonster(index);
             UpdateMonsterDetails();
-            D.C.Send_GameData();
+            AR.PushForce();
         }
 
         public void OnClick_ProvokeAccept() {
             List<string> monsterNames = ProvokeMonsterPanel.getProvokedMonsters().ConvertAll(m => ((CardMonsterVO)D.Cards[m]).CardTitle);
             if (monsterNames.Count > 0) {
-                D.C.LogMessage("[Provoke] :: " + string.Join(", ", monsterNames));
+                AR.AddLog("[Provoke] :: " + string.Join(", ", monsterNames));
             }
             B.BattlePhase = BattlePhase_Enum.RangeSiege;
             B.SelectedMonsters.Clear();
-            D.C.Send_GameData();
+            AR.PushForce();
         }
         #endregion
 
@@ -88,12 +88,12 @@ namespace cna.ui {
         public void OnClick_RangeKillMonster() {
             List<string> monsterNames = B.SelectedMonsters.ConvertAll(m => { B.Monsters[m].Dead = true; return ((CardMonsterVO)D.Cards[m]).CardTitle; });
             if (monsterNames.Count > 0) {
-                D.C.LogMessage("[Range Kill] :: " + string.Join(", ", monsterNames));
+                AR.AddLog("[Range Kill] :: " + string.Join(", ", monsterNames));
             }
             B.Siege.Clear();
             B.Range.Clear();
             B.SelectedMonsters.Clear();
-            D.C.Send_GameData();
+            AR.PushForce();
         }
 
         public void OnClick_RangeNext() {
@@ -114,7 +114,7 @@ namespace cna.ui {
                 }
             });
             if (monsterNames.Count > 0) {
-                D.C.LogMessage("[Summoned] :: " + string.Join(", ", monsterNames));
+                AR.AddLog("[Summoned] :: " + string.Join(", ", monsterNames));
             }
             summonedMonsters.ForEach(md => {
                 B.Monsters.Add(md.Uniqueid, md);
@@ -125,7 +125,7 @@ namespace cna.ui {
                 });
             });
             UpdateMonsterDetails();
-            D.C.Send_GameData();
+            AR.PushForce();
         }
         #endregion
 
@@ -147,7 +147,7 @@ namespace cna.ui {
         }
 
         public void OnClick_BlockMonster() {
-            D.C.LogMessage("[Block] :: " + ((CardMonsterVO)D.Cards[B.SelectedMonsters[0]]).CardTitle);
+            AR.AddLog("[Block] :: " + ((CardMonsterVO)D.Cards[B.SelectedMonsters[0]]).CardTitle);
             L.GameEffects.Keys.ForEach(ge => {
                 int count = L.GameEffects[ge].Count;
                 switch (ge) {
@@ -177,13 +177,13 @@ namespace cna.ui {
             L.RemoveGameEffect(GameEffect_Enum.CUE_AltemGuardians01);
             L.RemoveGameEffect(GameEffect_Enum.CS_BurningShield);
             L.RemoveGameEffect(GameEffect_Enum.CS_ExplodingShield);
-            D.C.Send_GameData();
+            AR.PushForce();
         }
 
         public void OnClick_BlockNext() {
             B.BattlePhase = BattlePhase_Enum.AssignDamage;
             B.SelectedMonsters.Clear();
-            D.C.Send_GameData();
+            AR.PushForce();
         }
 
         #endregion
@@ -200,7 +200,7 @@ namespace cna.ui {
                 List<MonsterMetaData> l = B.Monsters.Values.FindAll(md => md.Summoned);
                 l.ForEach(md => B.Monsters.Remove(md.Uniqueid));
                 UpdateMonsterDetails();
-                D.C.Send_GameData();
+                AR.PushForce();
             } else {
                 ProvokeMonsterPanel.gameObject.SetActive(false);
                 MonsterSelectionPanel.gameObject.SetActive(true);
@@ -218,8 +218,8 @@ namespace cna.ui {
         public void OnClick_AssignDamage() {
             string msg = DamageMonsterPanel.isAllowedToAssignDamage();
             if (msg.Equals("")) {
-                D.C.LogMessage(DamageMonsterPanel.AssignDamage());
-                D.C.Send_GameData();
+                AR.AddLog(DamageMonsterPanel.AssignDamage());
+                AR.PushForce();
             } else {
                 D.Msg(msg);
             }
@@ -246,18 +246,18 @@ namespace cna.ui {
         public void OnClick_AttackKillMonster() {
             List<string> monsterNames = B.SelectedMonsters.ConvertAll(m => { B.Monsters[m].Dead = true; return ((CardMonsterVO)D.Cards[m]).CardTitle; });
             if (monsterNames.Count > 0) {
-                D.C.LogMessage("[Attack Kill] :: " + string.Join(", ", monsterNames));
+                AR.AddLog("[Attack Kill] :: " + string.Join(", ", monsterNames));
             }
             B.Siege.Clear();
             B.Range.Clear();
             B.Attack.Clear();
             B.SelectedMonsters.Clear();
-            D.C.Send_GameData();
+            AR.PushForce();
         }
 
         public void OnClick_EndBattle() {
             B.BattlePhase = BattlePhase_Enum.EndOfBattle;
-            D.C.Send_GameData();
+            AR.PushForce();
         }
         #endregion
 
@@ -272,13 +272,12 @@ namespace cna.ui {
 
         public void OnClick_ExitBattle() {
             B.BattlePhase = BattlePhase_Enum.NA;
-            L.PlayerTurnPhase = TurnPhase_Enum.AfterBattle;
-            D.C.LogMessage(BattleSummaryPanel.ExitBattle());
+            AR.TurnPhase(TurnPhase_Enum.AfterBattle);
+            BattleSummaryPanel.ExitBattle(AR);
             D.ScreenState = ScreenState_Enum.Map;
-            D.C.Send_GameData();
+            AR.PushForce();
         }
         #endregion
-
 
         public void OnClick_MonsterCard(MonsterCardSlot monsterCardSlot) {
             int mid = monsterCardSlot.MonsterDetails.UniqueId;
@@ -335,34 +334,5 @@ namespace cna.ui {
             }
         }
 
-
-        #region Battle Undo
-
-        protected override void OnClick_UndoProvoke() {
-            if (D.isTurn) {
-                base.OnClick_UndoProvoke();
-            }
-        }
-        protected override void OnClick_UndoRange() {
-            if (D.isTurn) {
-                base.OnClick_UndoRange();
-            }
-        }
-        protected override void OnClick_UndoBlock() {
-            if (D.isTurn) {
-                base.OnClick_UndoBlock();
-            }
-        }
-        protected override void OnClick_UndoDamage() {
-            if (D.isTurn) {
-                base.OnClick_UndoDamage();
-            }
-        }
-        protected override void OnClick_UndoAttack() {
-            if (D.isTurn) {
-                base.OnClick_UndoAttack();
-            }
-        }
-        #endregion
     }
 }

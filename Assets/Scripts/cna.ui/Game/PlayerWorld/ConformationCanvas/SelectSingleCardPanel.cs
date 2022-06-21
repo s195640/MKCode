@@ -14,12 +14,12 @@ namespace cna.ui {
         [SerializeField] private GameObject None;
 
         private CardActionVO card;
-        private Action<ActionResultVO> cancelCallback;
-        private Action<ActionResultVO> acceptCallback;
-        private ActionResultVO ar;
+        private Action<GameAPI> cancelCallback;
+        private Action<GameAPI> acceptCallback;
+        private GameAPI ar;
         private bool allowNone = false;
 
-        public void SetupUI(ActionResultVO ar, Action<ActionResultVO> cancelCallback, Action<ActionResultVO> acceptCallback, bool allowNone = false) {
+        public void SetupUI(GameAPI ar, Action<GameAPI> cancelCallback, Action<GameAPI> acceptCallback, bool allowNone = false) {
             this.allowNone = allowNone;
             None.SetActive(this.allowNone);
             this.cancelCallback = cancelCallback;

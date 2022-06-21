@@ -11,6 +11,8 @@ namespace cna.ui {
         [SerializeField] private MonsterCardSlot prefab;
         [SerializeField] private Transform content;
         [SerializeField] private List<MonsterCardSlot> cardSlots = new List<MonsterCardSlot>();
+        [SerializeField] private BattleCanvas battleCanvas;
+
 
         public void SetupUI(HexItemDetail hex, Action<HexItemDetail> callback) {
             gameObject.SetActive(true);
@@ -32,17 +34,18 @@ namespace cna.ui {
 
         public void CombatConformation_YES() {
             gameObject.SetActive(false);
-            PlayerData pd = D.LocalPlayer;
-            pd.PlayerTurnPhase = TurnPhase_Enum.Battle;
-            pd.Battle.Monsters.Clear();
-            pd.Battle.BattlePhase = BattlePhase_Enum.StartOfBattle;
+            GameAPI ar = new GameAPI();
+            ar.P.PlayerTurnPhase = TurnPhase_Enum.Battle;
+            ar.P.Battle.Monsters.Clear();
+            ar.P.Battle.BattlePhase = BattlePhase_Enum.StartOfBattle;
             HexItemDetail.Monsters.ForEach(m => {
-                pd.Battle.Monsters.Add(m.Uniqueid, m);
-                if (!pd.VisableMonsters.Contains(m.Uniqueid)) {
-                    pd.VisableMonsters.Add(m.Uniqueid);
+                ar.P.Battle.Monsters.Add(m.Uniqueid, m);
+                if (!ar.P.VisableMonsters.Contains(m.Uniqueid)) {
+                    ar.P.VisableMonsters.Add(m.Uniqueid);
                 }
             });
             D.ScreenState = ScreenState_Enum.Combat;
+            battleCanvas.SetupUI(ar);
             Yes_Callback(HexItemDetail);
         }
 

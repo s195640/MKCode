@@ -2,14 +2,14 @@
     public enum TurnPhase_Enum {
         NA = 0,
         NotTurn,
+        //  Tactics
+        TacticsNotTurn,
         TacticsSelect,
         TacticsAction,
-        TacticsHost,
         TacticsEnd,
         //  Player Turn
-        HostSaveGame,
+        PlayerNotTurn,
         SetupTurn,
-        NotifyTurn,
         StartTurn,
         Move,
         Influence,
@@ -18,6 +18,7 @@
         Resting,
         Exhaustion,
         Reward,
-        EndTurn
+        EndTurn,
+        EndOfRound,
     }
 }

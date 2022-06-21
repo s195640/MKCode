@@ -73,6 +73,14 @@ MonoBehaviour:
     m_Address: Assets/Images/terrain/TH_Black.png
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 58469105f93dd4a4b94ab6f7ebacd321
+    m_Address: Assets/Images/terrain/TH_ExploreInner.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c5d9a8a226408944b9d2ef6b12b793cd
+    m_Address: Assets/Images/terrain/TH_ExploreOuter.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
   m_SchemaSet:

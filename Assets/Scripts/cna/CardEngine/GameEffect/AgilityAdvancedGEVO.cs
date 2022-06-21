@@ -19,10 +19,10 @@ namespace cna {
             BattleAllowed = new List<List<BattlePhase_Enum>>() { new List<BattlePhase_Enum>() { BattlePhase_Enum.RangeSiege, BattlePhase_Enum.Attack } };
         }
 
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            switch (ar.LocalPlayer.Battle.BattlePhase) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            switch (ar.P.Battle.BattlePhase) {
                 case BattlePhase_Enum.RangeSiege: {
-                    if (ar.LocalPlayer.Movement > 1) {
+                    if (ar.P.Movement > 1) {
                         ar.ActionMovement(-2);
                         ar.BattleRange(new AttackData(1));
                     } else {
@@ -31,7 +31,7 @@ namespace cna {
                     break;
                 }
                 case BattlePhase_Enum.Attack: {
-                    if (ar.LocalPlayer.Movement > 0) {
+                    if (ar.P.Movement > 0) {
                         ar.ActionMovement(-1);
                         ar.BattleAttack(new AttackData(1));
                     } else {

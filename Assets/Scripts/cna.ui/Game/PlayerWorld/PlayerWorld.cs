@@ -22,7 +22,8 @@ namespace cna.ui {
         public void Clear() {
             notificationCanvas.SetActive(true);
             conformationCanvas.gameObject.SetActive(true);
-            conformationCanvas.Clear();
+            conformationCanvas.Clean();
+            OverlayCanvas.gameObject.SetActive(true);
         }
     }
 }

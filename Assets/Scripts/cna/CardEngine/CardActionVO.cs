@@ -12,7 +12,7 @@ namespace cna {
             CardColor = cardColor;
         }
 
-        public override void OnClick_ActionButton(ActionResultVO ar) {
+        public override void OnClick_ActionButton(GameAPI ar) {
             if (D.Action.CheckTurnAndUI(ar)) {
                 checkAllowedToUse(ar);
                 if (ar.Status) {
@@ -25,14 +25,14 @@ namespace cna {
         }
 
 
-        public virtual ActionResultVO checkAllowedToUse(ActionResultVO ar) {
+        public virtual GameAPI checkAllowedToUse(GameAPI ar) {
             CardVO c = D.Cards[ar.UniqueCardId];
             List<TurnPhase_Enum> actionAllowedPhase = new List<TurnPhase_Enum>();
             actionAllowedPhase.AddRange(c.Allowed[ar.ActionIndex]);
             List<BattlePhase_Enum> actionAllowedBattlePhase = new List<BattlePhase_Enum>();
             actionAllowedBattlePhase.AddRange(c.BattleAllowed[ar.ActionIndex]);
-            TurnPhase_Enum playerPhase = ar.LocalPlayer.PlayerTurnPhase;
-            CNAMap<GameEffect_Enum, WrapList<int>> GameEffects = ar.LocalPlayer.GameEffects;
+            TurnPhase_Enum playerPhase = ar.P.PlayerTurnPhase;
+            CNAMap<GameEffect_Enum, WrapList<int>> GameEffects = ar.P.GameEffects;
             GameEffects.Keys.ForEach(ge => {
                 switch (ge) {
                     case GameEffect_Enum.AC_Agility01: {
@@ -90,7 +90,7 @@ namespace cna {
                 }
                 case TurnPhase_Enum.Battle: {
                     if (actionAllowedPhase.Contains(TurnPhase_Enum.Battle)) {
-                        BattlePhase_Enum playerBattlePhase = ar.LocalPlayer.Battle.BattlePhase;
+                        BattlePhase_Enum playerBattlePhase = ar.P.Battle.BattlePhase;
                         switch (playerBattlePhase) {
                             case BattlePhase_Enum.StartOfBattle: {
                                 if (actionAllowedBattlePhase.Contains(BattlePhase_Enum.StartOfBattle)) { } else {
@@ -165,12 +165,12 @@ namespace cna {
             return ar;
         }
 
-        public virtual void PayForAction(ActionResultVO ar) {
+        public virtual void PayForAction(GameAPI ar) {
             List<Crystal_Enum> cost = calculateCost(ar.ActionIndex);
             if (cost.Count == 0) {
                 OnClick_PaymentAccept(ar);
             } else {
-                ar.Push();
+                ar.UpdateUI();
                 ar.PayForAction(cost, OnClick_PaymentAccept);
             }
         }
@@ -183,7 +183,7 @@ namespace cna {
             return c;
         }
 
-        public virtual void OnClick_PaymentAccept(ActionResultVO ar) {
+        public virtual void OnClick_PaymentAccept(GameAPI ar) {
             switch (ar.ActionIndex) {
                 case 0: { ActionPaymentComplete_00(ar); break; }
                 case 1: { ActionPaymentComplete_01(ar); break; }
@@ -191,23 +191,23 @@ namespace cna {
             }
         }
 
-        public virtual void ActionPaymentComplete_00(ActionResultVO ar) { ar.FinishCallback(ActionValid_00(ar)); }
-        public virtual void ActionPaymentComplete_01(ActionResultVO ar) { ar.FinishCallback(ActionValid_01(ar)); }
-        public virtual void ActionPaymentComplete_02(ActionResultVO ar) { ar.FinishCallback(ActionValid_02(ar)); }
+        public virtual void ActionPaymentComplete_00(GameAPI ar) { ar.FinishCallback(ActionValid_00(ar)); }
+        public virtual void ActionPaymentComplete_01(GameAPI ar) { ar.FinishCallback(ActionValid_01(ar)); }
+        public virtual void ActionPaymentComplete_02(GameAPI ar) { ar.FinishCallback(ActionValid_02(ar)); }
 
-        public virtual ActionResultVO ActionValid_00(ActionResultVO ar) { return ar; }
-        public virtual ActionResultVO ActionValid_01(ActionResultVO ar) { return ar; }
-        public virtual ActionResultVO ActionValid_02(ActionResultVO ar) { return ar; }
+        public virtual GameAPI ActionValid_00(GameAPI ar) { return ar; }
+        public virtual GameAPI ActionValid_01(GameAPI ar) { return ar; }
+        public virtual GameAPI ActionValid_02(GameAPI ar) { return ar; }
 
-        public override void ActionFinish_00(ActionResultVO ar) { ActionFinish(ar); }
-        public override void ActionFinish_01(ActionResultVO ar) { ActionFinish(ar); }
-        public override void ActionFinish_02(ActionResultVO ar) { ActionFinish(ar); }
+        public override void ActionFinish_00(GameAPI ar) { ActionFinish(ar); }
+        public override void ActionFinish_01(GameAPI ar) { ActionFinish(ar); }
+        public override void ActionFinish_02(GameAPI ar) { ActionFinish(ar); }
 
-        public void ActionFinish(ActionResultVO ar) {
+        public void ActionFinish(GameAPI ar) {
             D.Action.ProcessActionResultVO(ar);
         }
 
-        public virtual string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, ActionResultVO ar) {
+        public virtual string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, GameAPI ar) {
             string msg = "";
             if (cardHolder != CardHolder_Enum.PlayerHand) {
                 return "You must select a card from your hand!";

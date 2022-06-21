@@ -2,8 +2,8 @@ using cna.poo;
 namespace cna {
     public partial class FireGolemsVO : CardUnitVO {
 
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            if (ar.LocalPlayer.Battle.BattlePhase == BattlePhase_Enum.Block) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            if (ar.P.Battle.BattlePhase == BattlePhase_Enum.Block) {
                 ar.BattleBlock(new AttackData(3));
             } else {
                 ar.BattleAttack(new AttackData(3));
@@ -11,7 +11,7 @@ namespace cna {
             return ar;
         }
 
-        public override ActionResultVO ActionValid_01(ActionResultVO ar) {
+        public override GameAPI ActionValid_01(GameAPI ar) {
             AttackData a = new AttackData();
             a.Fire = 4;
             ar.BattleRange(a);

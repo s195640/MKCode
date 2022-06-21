@@ -1,7 +1,7 @@
 using cna.poo;
 namespace cna {
     public partial class RED_DarkNegotiationVO : CardSkillVO {
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
             int i = 3;
             if (D.Scenario.isDay) {
                 i = 2;

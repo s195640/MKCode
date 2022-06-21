@@ -60,31 +60,29 @@ namespace cna.ui {
             RepChange.text = "" + rep;
         }
 
-        public string ExitBattle() {
-            List<string> msgList = new List<string>();
-            PlayerData localPlayer = D.LocalPlayer;
-            MonsterData monsterData = D.G.Monsters;
+        public void ExitBattle(GameAPI ar) {
+            CNAMap<V2IntVO, WrapList<int>> monsterData = ar.P.Board.MonsterData;
             //  determine the Conflict Structure Site
             Image_Enum structure = Image_Enum.NA;
-            localPlayer.Battle.Monsters.Values.ForEach(md => {
+            ar.P.Battle.Monsters.Values.ForEach(md => {
                 if (md.Structure != Image_Enum.NA && md.Structure != Image_Enum.SH_MaraudingOrcs && md.Structure != Image_Enum.SH_Draconum) {
                     structure = md.Structure;
                 }
             });
             //  has adventure site been conquered
-            bool alreadyConquered = monsterData.Shield.ContainsKey(localPlayer.CurrentGridLoc);
+            bool alreadyConquered = BasicUtil.getAllShieldsAtPos(D.G, ar.P.CurrentGridLoc).Count > 0;
             //  clear monsters
             bool adventureSiteCleared = true;
-            localPlayer.Battle.Monsters.Values.ForEach(md => {
+            ar.P.Battle.Monsters.Values.ForEach(md => {
                 if (md.Dead) {
                     if (md.CityStructure) {
                         //  City you can add tokens without beating the city
-                        BasicUtil.AddShieldToken(md.Location, localPlayer.Avatar);
+                        ar.AddShieldLocation(md.Location);
                     }
-                    if (monsterData.Map.ContainsKey(md.Location)) {
-                        monsterData.Map[md.Location].Remove(md.Uniqueid);
-                        if (monsterData.Map[md.Location].Count == 0) {
-                            monsterData.Map.Remove(md.Location);
+                    if (monsterData.ContainsKey(md.Location)) {
+                        monsterData[md.Location].Remove(md.Uniqueid);
+                        if (monsterData[md.Location].Count == 0) {
+                            monsterData.Remove(md.Location);
                         }
                     }
                 } else {
@@ -99,44 +97,44 @@ namespace cna.ui {
             if (adventureSiteCleared) {
                 switch (structure) {
                     case Image_Enum.SH_Keep: {
-                        BasicUtil.AddShieldToken(localPlayer.CurrentGridLoc, localPlayer.Avatar);
-                        localPlayer.AddGameEffect(GameEffect_Enum.SH_Keep_Own);
-                        BasicUtil.CalculatePlayerHandBonus(localPlayer);
+                        ar.AddShieldLocation();
+                        ar.AddGameEffect(GameEffect_Enum.SH_Keep_Own);
+                        BasicUtil.CalculatePlayerHandBonus(ar.P);
                         break;
                     }
                     case Image_Enum.SH_City_Blue: {
-                        localPlayer.AddGameEffect(GameEffect_Enum.SH_City_Blue_Own);
-                        BasicUtil.CalculatePlayerHandBonus(localPlayer);
+                        ar.AddGameEffect(GameEffect_Enum.SH_City_Blue_Own);
+                        BasicUtil.CalculatePlayerHandBonus(ar.P);
                         break;
                     }
                     case Image_Enum.SH_City_Red: {
-                        localPlayer.AddGameEffect(GameEffect_Enum.SH_City_Red_Own);
-                        BasicUtil.CalculatePlayerHandBonus(localPlayer);
+                        ar.AddGameEffect(GameEffect_Enum.SH_City_Red_Own);
+                        BasicUtil.CalculatePlayerHandBonus(ar.P);
                         break;
                     }
                     case Image_Enum.SH_City_Green: {
-                        localPlayer.AddGameEffect(GameEffect_Enum.SH_City_Green_Own);
-                        BasicUtil.CalculatePlayerHandBonus(localPlayer);
+                        ar.AddGameEffect(GameEffect_Enum.SH_City_Green_Own);
+                        BasicUtil.CalculatePlayerHandBonus(ar.P);
                         break;
                     }
                     case Image_Enum.SH_City_White: {
-                        localPlayer.AddGameEffect(GameEffect_Enum.SH_City_White_Own);
-                        BasicUtil.CalculatePlayerHandBonus(localPlayer);
+                        ar.AddGameEffect(GameEffect_Enum.SH_City_White_Own);
+                        BasicUtil.CalculatePlayerHandBonus(ar.P);
                         break;
                     }
                 }
                 if (!alreadyConquered) {
                     switch (structure) {
                         case Image_Enum.SH_MageTower: {
-                            BasicUtil.AddShieldToken(localPlayer.CurrentGridLoc, localPlayer.Avatar);
+                            ar.AddShieldLocation();
                             Reward_Spell(1);
-                            msgList.Add("[Reward] +1 Spell");
+                            ar.AddLog("[Reward] +1 Spell");
                             break;
                         }
                         case Image_Enum.SH_AncientRuins: {
-                            BasicUtil.AddShieldToken(localPlayer.CurrentGridLoc, localPlayer.Avatar);
+                            ar.AddShieldLocation();
                             List<string> msg = new List<string>() { "[Reward] " };
-                            D.Cards[monsterData.Map[localPlayer.CurrentGridLoc].Values[0]].Rewards.ForEach(r => {
+                            D.Cards[monsterData[ar.P.CurrentGridLoc].Values[0]].Rewards.ForEach(r => {
                                 switch (r) {
                                     case Reward_Enum.Action: { msg.Add("+1 Action"); Reward_Advanced(1); break; }
                                     case Reward_Enum.Spell: { msg.Add("+1 Spell"); Reward_Spell(1); break; }
@@ -148,80 +146,74 @@ namespace cna.ui {
                                     case Reward_Enum.White: { msg.Add("+1 White Crystal"); Reward_White(1); break; }
                                 }
                             });
-                            msgList.Add(string.Join(", ", msg));
-                            monsterData.Map.Remove(localPlayer.CurrentGridLoc);
+                            ar.AddLog(string.Join(", ", msg));
+                            monsterData.Remove(ar.P.CurrentGridLoc);
                             break;
                         }
                         case Image_Enum.SH_Dungeon: {
-                            BasicUtil.AddShieldToken(localPlayer.CurrentGridLoc, localPlayer.Avatar);
+                            ar.AddShieldLocation();
                             Reward_Artifact(1);
-                            msgList.Add("[Reward] +1 Artifact");
+                            ar.AddLog("[Reward] +1 Artifact");
                             break;
                         }
                         case Image_Enum.SH_Tomb: {
-                            BasicUtil.AddShieldToken(localPlayer.CurrentGridLoc, localPlayer.Avatar);
+                            ar.AddShieldLocation();
                             Reward_Artifact(1);
                             Reward_Spell(1);
-                            msgList.Add("[Reward] +1 Spell, +1 Artifact");
+                            ar.AddLog("[Reward] +1 Spell, +1 Artifact");
                             break;
                         }
                         case Image_Enum.SH_MonsterDen: {
-                            BasicUtil.AddShieldToken(localPlayer.CurrentGridLoc, localPlayer.Avatar);
+                            ar.AddShieldLocation();
                             Reward_Random(2);
-                            msgList.Add("[Reward] +2 Random Crystals");
+                            ar.AddLog("[Reward] +2 Random Crystals");
                             break;
                         }
                         case Image_Enum.SH_SpawningGround: {
-                            BasicUtil.AddShieldToken(localPlayer.CurrentGridLoc, localPlayer.Avatar);
+                            ar.AddShieldLocation();
                             Reward_Random(3);
                             Reward_Artifact(1);
-                            msgList.Add("[Reward] +3 Random Crystals, +1 Artifact");
+                            ar.AddLog("[Reward] +3 Random Crystals, +1 Artifact");
                             break;
                         }
                         case Image_Enum.SH_Monastery: {
-                            BasicUtil.AddShieldToken(localPlayer.CurrentGridLoc, localPlayer.Avatar);
-                            D.G.Board.MonasteryCount--;
+                            ar.AddShieldLocation();
+                            ar.P.Board.MonasteryCount--;
                             Reward_Artifact(1);
-                            msgList.Add("[Reward] +1 Artifact");
+                            ar.AddLog("[Reward] +1 Artifact");
                             break;
                         }
                     }
                 }
             } else {
                 if (structure == Image_Enum.SH_SpawningGround) {
-                    if (monsterData.Map[localPlayer.CurrentGridLoc].Count == 1) {
-                        monsterData.Map[localPlayer.CurrentGridLoc].Add(D.Scenario.DrawMonster(MonsterType_Enum.Brown));
+                    if (monsterData[ar.P.CurrentGridLoc].Count == 1) {
+                        monsterData[ar.P.CurrentGridLoc].Add(D.Scenario.DrawMonster(MonsterType_Enum.Brown));
                     }
                 }
             }
 
             //  determine if one Safe Space or need to force withdraw
             if (structure == Image_Enum.SH_Keep || structure == Image_Enum.SH_MageTower || structure == Image_Enum.SH_City_Blue || structure == Image_Enum.SH_City_Green || structure == Image_Enum.SH_City_White || structure == Image_Enum.SH_City_Red) {
-                if (monsterData.Map.ContainsKey(localPlayer.CurrentGridLoc) && monsterData.Map[localPlayer.CurrentGridLoc].Values.Count > 0) {
-                    localPlayer.GridLocationHistory.RemoveAt(0);
-                    BasicUtil.UpdateMovementGameEffects(localPlayer);
-                    msgList.Add("You were forced to retreat from the space you are on.");
+                if (monsterData.ContainsKey(ar.P.CurrentGridLoc) && monsterData[ar.P.CurrentGridLoc].Values.Count > 0) {
+                    ar.P.GridLocationHistory.RemoveAt(0);
+                    BasicUtil.UpdateMovementGameEffects(ar.P);
+                    ar.AddLog("You were forced to retreat from the space you are on.");
                 }
             }
 
 
             //  Fame
-            localPlayer.Fame.Y += fame;
-            int oldLevel = BasicUtil.GetPlayerLevel(localPlayer.Fame.X);
-            int newLevel = BasicUtil.GetPlayerLevel(localPlayer.TotalFame);
+            ar.Fame(fame);
+            int oldLevel = BasicUtil.GetPlayerLevel(ar.P.Fame.X);
+            int newLevel = BasicUtil.GetPlayerLevel(ar.P.TotalFame);
             if (newLevel > oldLevel) {
                 Reward_LevelUp(1);
             }
             //  Rep
-            localPlayer.RepLevel += rep;
-            msgList.Add(string.Format("[Battle Results] - Total Monsters {0}, Monsters Killed {1}, Fame {2}, Rep {3}.", totalMonsters, dead, fame, rep));
-            return string.Join(", ", msgList);
+            ar.Rep(rep);
+            ar.AddLog(string.Format("[Battle Results] - Total Monsters {0}, Monsters Killed {1}, Fame {2}, Rep {3}.", totalMonsters, dead, fame, rep));
         }
-
-
-
-
-
 
         #region Reward
         public void AddGameEffect(GameEffect_Enum ge, params int[] cards) {

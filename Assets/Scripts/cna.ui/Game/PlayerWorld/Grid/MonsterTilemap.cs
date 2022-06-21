@@ -9,7 +9,7 @@ namespace cna.ui {
         [SerializeField] private List<MonsterPrefab> MonsterList = new List<MonsterPrefab>();
 
         public void UpdateUI() {
-            foreach (V2IntVO mhpos in D.G.Monsters.Map.Keys) {
+            foreach (V2IntVO mhpos in D.LocalPlayer.Board.MonsterData.Keys) {
                 MonsterPrefab m = MonsterList.Find(m => m.Location.Equals(mhpos));
                 if (m == null) {
                     MonsterPrefab monster = Instantiate(MonsterPrefab_Prefab, Vector3.zero, Quaternion.identity);
@@ -24,7 +24,7 @@ namespace cna.ui {
                 }
             }
             foreach (MonsterPrefab m in MonsterList.ToArray()) {
-                if (!D.G.Monsters.Map.ContainsKey(m.Location)) {
+                if (!D.LocalPlayer.Board.MonsterData.ContainsKey(m.Location)) {
                     Destroy(m.gameObject);
                     MonsterList.Remove(m);
                 }

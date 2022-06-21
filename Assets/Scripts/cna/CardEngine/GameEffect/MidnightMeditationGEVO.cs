@@ -21,27 +21,27 @@ namespace cna {
             BattleAllowed = new List<List<BattlePhase_Enum>>() { new List<BattlePhase_Enum>() { } };
         }
 
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
-            List<int> cards = ar.LocalPlayer.Deck.Hand;
+        public override void ActionPaymentComplete_00(GameAPI ar) {
+            List<int> cards = ar.P.Deck.Hand;
             string title = ar.Card.CardTitle;
             string description = "Select up to 5 cards to shuffle back into your deck, you will then draw that many cards into your hand.";
             V2IntVO selectCount = new V2IntVO(0, 5);
             Image_Enum selectionImage = Image_Enum.I_disable;
             List<string> buttonText = new List<string>() { "Discard" };
             List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightBlue };
-            List<Action<ActionResultVO>> buttonCallback = new List<Action<ActionResultVO>>() { acceptCallback_00 };
+            List<Action<GameAPI>> buttonCallback = new List<Action<GameAPI>>() { acceptCallback_00 };
             List<bool> buttonForce = new List<bool>() { false };
             ar.SelectCards(cards, title, description, selectCount, selectionImage, buttonText, buttonColor, buttonCallback, buttonForce);
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             D.Action.Clear();
             ar.RemoveGameEffect(GameEffect_Enum.T_MidnightMeditation);
             ar.SelectedCardIds.ForEach(c => {
-                ar.LocalPlayer.Deck.Deck.Add(c);
-                ar.LocalPlayer.Deck.Hand.Remove(c);
+                ar.P.Deck.Deck.Add(c);
+                ar.P.Deck.Hand.Remove(c);
             });
-            ar.LocalPlayer.Deck.Deck.ShuffleDeck();
+            ar.P.Deck.Deck.ShuffleDeck();
             ar.DrawCard(ar.SelectedCardIds.Count, ar.FinishCallback);
         }
     }

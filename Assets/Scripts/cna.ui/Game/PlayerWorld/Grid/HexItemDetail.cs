@@ -11,7 +11,7 @@ namespace cna.ui {
         private Tilemap StructureTilemap;
         private Camera WorldCamera;
         private PlayerData localPlayer;
-        private GameData g;
+        private Data g;
         private bool turn;
         private V2IntVO playerLocation;
         private V2IntVO gridPosition;
@@ -60,7 +60,7 @@ namespace cna.ui {
 
 
         public PlayerData LocalPlayer { get => localPlayer; private set => localPlayer = value; }
-        public GameData G { get => g; private set => g = value; }
+        public Data G { get => g; private set => g = value; }
         public bool isTurn { get => turn; private set => turn = value; }
         public bool IsSpaceBending { get => isSpaceBending; set => isSpaceBending = value; }
         public bool IsUndergroundTravel { get => isUndergroundTravel; set => isUndergroundTravel = value; }
@@ -108,21 +108,21 @@ namespace cna.ui {
             PlayerMovementCost = calculateMovementCost();
             IsLegalMovement = PlayerMovementCost >= 0;
             PlayerCostMet = PlayerMovementCost >= 0 && LocalPlayer.Movement >= PlayerMovementCost;
-            TriggerCombatNoRamp = (Structure == Image_Enum.SH_Keep || Structure == Image_Enum.SH_MageTower || Structure == Image_Enum.SH_City_Blue || Structure == Image_Enum.SH_City_Red || Structure == Image_Enum.SH_City_Green || Structure == Image_Enum.SH_City_White) && G.Monsters.Map.ContainsKey(GridPosition);
+            TriggerCombatNoRamp = (Structure == Image_Enum.SH_Keep || Structure == Image_Enum.SH_MageTower || Structure == Image_Enum.SH_City_Blue || Structure == Image_Enum.SH_City_Red || Structure == Image_Enum.SH_City_Green || Structure == Image_Enum.SH_City_White) && LocalPlayer.Board.MonsterData.ContainsKey(GridPosition);
             IsFlight = LocalPlayer.GameEffects.Keys.Contains(GameEffect_Enum.GREEN_Flight);
             IsSpaceBending = LocalPlayer.GameEffects.Keys.Contains(GameEffect_Enum.CS_SpaceBending);
             IsUndergroundTravel = LocalPlayer.GameEffects.Keys.Contains(GameEffect_Enum.CS_UndergroundTravel);
             IsUndergroundAttack = LocalPlayer.GameEffects.Keys.Contains(GameEffect_Enum.CS_UndergroundAttack);
             IsWingsOfWind = LocalPlayer.GameEffects.Keys.Contains(GameEffect_Enum.CS_WingsOfWind);
             if (TriggerCombatNoRamp) {
-                Monsters.AddRange(G.Monsters.Map[GridPosition].Values.ConvertAll(m => {
+                Monsters.AddRange(LocalPlayer.Board.MonsterData[GridPosition].Values.ConvertAll(m => {
                     return new MonsterMetaData(m, GridPosition, Structure);
                 }));
             }
             if (Structure == Image_Enum.SH_MaraudingOrcs || Structure == Image_Enum.SH_Draconum) {
-                if (G.Monsters.Map.ContainsKey(GridPosition)) {
+                if (LocalPlayer.Board.MonsterData.ContainsKey(GridPosition)) {
                     IsLegalMovement = false;
-                    Monsters.AddRange(G.Monsters.Map[GridPosition].Values.ConvertAll(m => {
+                    Monsters.AddRange(LocalPlayer.Board.MonsterData[GridPosition].Values.ConvertAll(m => {
                         return new MonsterMetaData(m, GridPosition, Structure);
                     }));
                 }
@@ -144,7 +144,7 @@ namespace cna.ui {
                 }
                 IsRampaging = rampMonsterLoc.Count > 0;
                 foreach (V2IntVO p in rampMonsterLoc) {
-                    Monsters.AddRange(G.Monsters.Map[p].Values.ConvertAll(m => {
+                    Monsters.AddRange(LocalPlayer.Board.MonsterData[p].Values.ConvertAll(m => {
                         return new MonsterMetaData(m, p, BasicUtil.GetTilemapId(p, StructureTilemap));
                     }));
                 }
@@ -158,7 +158,7 @@ namespace cna.ui {
             foreach (V2IntVO adjPos in adjToPlayer) {
                 Image_Enum adjStructure = BasicUtil.GetTilemapId(adjPos, StructureTilemap);
                 if (adjStructure == Image_Enum.SH_MaraudingOrcs || adjStructure == Image_Enum.SH_Draconum) {
-                    if (G.Monsters.Map.ContainsKey(adjPos)) {
+                    if (LocalPlayer.Board.MonsterData.ContainsKey(adjPos)) {
                         monsters.Add(adjPos);
                     }
                 }

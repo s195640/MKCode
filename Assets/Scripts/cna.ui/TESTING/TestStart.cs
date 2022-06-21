@@ -33,6 +33,7 @@ namespace cna.ui {
             FindObjectOfType<PlayerWorld>().UpdateUI();
         }
 
+        public override void Clear() { }
 
         //public void LateUpdate() {
         //    if (afterLoad.activeSelf) {

@@ -2,22 +2,22 @@
 
 namespace cna {
     public partial class HerbalistsVO : CardUnitVO {
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
             ar.Healing(2);
             return ar;
         }
 
 
-        public override void ActionPaymentComplete_01(ActionResultVO ar) {
+        public override void ActionPaymentComplete_01(GameAPI ar) {
             ar.SelectSingleCard(acceptCallback_01);
         }
 
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             ar.RemoveCardState(ar.SelectedUniqueCardId, CardState_Enum.Unit_Exhausted);
             ar.FinishCallback(ar);
         }
 
-        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, ActionResultVO ar) {
+        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, GameAPI ar) {
             string msg = "";
             if (cardHolder != CardHolder_Enum.PlayerUnitHand) {
                 return "You must selet a unit from your hand!";
@@ -37,7 +37,7 @@ namespace cna {
             return msg;
         }
 
-        public override ActionResultVO ActionValid_02(ActionResultVO ar) {
+        public override GameAPI ActionValid_02(GameAPI ar) {
             ar.ManaGreen(1);
             return ar;
         }

@@ -1,8 +1,8 @@
 using cna.poo;
 namespace cna {
     public partial class FlameWallVO : CardSpellVO {
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            if (ar.LocalPlayer.Battle.BattlePhase == BattlePhase_Enum.Block) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            if (ar.P.Battle.BattlePhase == BattlePhase_Enum.Block) {
                 AttackData a = new AttackData();
                 a.Fire += 5;
                 ar.BattleRange(a);
@@ -14,9 +14,9 @@ namespace cna {
             return ar;
         }
 
-        public override ActionResultVO ActionValid_01(ActionResultVO ar) {
-            int totalMonsters = ar.LocalPlayer.Battle.Monsters.Count * 2;
-            if (ar.LocalPlayer.Battle.BattlePhase == BattlePhase_Enum.Block) {
+        public override GameAPI ActionValid_01(GameAPI ar) {
+            int totalMonsters = ar.P.Battle.Monsters.Count * 2;
+            if (ar.P.Battle.BattlePhase == BattlePhase_Enum.Block) {
                 AttackData a = new AttackData();
                 a.Fire = 5 + totalMonsters;
                 ar.BattleRange(a);

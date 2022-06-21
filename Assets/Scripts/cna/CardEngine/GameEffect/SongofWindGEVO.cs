@@ -19,8 +19,8 @@ namespace cna {
             BattleAllowed = new List<List<BattlePhase_Enum>>() { new List<BattlePhase_Enum>() { } };
         }
 
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            if (!ar.LocalPlayer.GameEffects.ContainsKey(GameEffect_Enum.AC_SongOfWind03)) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            if (!ar.P.GameEffects.ContainsKey(GameEffect_Enum.AC_SongOfWind03)) {
                 ar.AddGameEffect(GameEffect_Enum.AC_SongOfWind03);
             } else {
                 ar.ErrorMsg = "You already have the Song of Winds travel through lakes ability.";

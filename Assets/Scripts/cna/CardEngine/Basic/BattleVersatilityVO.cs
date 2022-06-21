@@ -2,8 +2,8 @@
 
 namespace cna {
     public partial class BattleVersatilityVO : CardActionVO {
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            switch (ar.LocalPlayer.Battle.BattlePhase) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            switch (ar.P.Battle.BattlePhase) {
                 case BattlePhase_Enum.Attack: {
                     ar.BattleAttack(new AttackData(2));
                     break;
@@ -19,8 +19,8 @@ namespace cna {
             }
             return ar;
         }
-        public override void ActionPaymentComplete_01(ActionResultVO ar) {
-            switch (ar.LocalPlayer.Battle.BattlePhase) {
+        public override void ActionPaymentComplete_01(GameAPI ar) {
+            switch (ar.P.Battle.BattlePhase) {
                 case BattlePhase_Enum.Attack: {
                     ar.SelectOptions(acceptCallback_01,
                         new OptionVO("Attack 4", Image_Enum.I_attack),
@@ -47,8 +47,8 @@ namespace cna {
         }
 
 
-        public void acceptCallback_01(ActionResultVO ar) {
-            switch (ar.LocalPlayer.Battle.BattlePhase) {
+        public void acceptCallback_01(GameAPI ar) {
+            switch (ar.P.Battle.BattlePhase) {
                 case BattlePhase_Enum.Attack: {
                     switch (ar.SelectedButtonIndex) {
                         case 0: {

@@ -33,15 +33,15 @@ namespace cna.ui {
         private List<PaymentVO> payment;
         private string[] color = { "Blue", "Red", "Green", "White", "Gold", "Black" };
         private Crystal_Enum[] crystalEnum = { Crystal_Enum.Blue, Crystal_Enum.Red, Crystal_Enum.Green, Crystal_Enum.White, Crystal_Enum.Gold, Crystal_Enum.Black };
-        private Action<ActionResultVO> cancelCallback;
-        private Action<ActionResultVO> acceptCallback;
-        private ActionResultVO ar;
+        private Action<GameAPI> cancelCallback;
+        private Action<GameAPI> acceptCallback;
+        private GameAPI ar;
         private bool payAll;
         public string cardTitle;
 
         public bool DayRules { get { return dayRules; } }
 
-        public void SetupUI(string cardTitle, CrystalData crystal, CrystalData mana, int manaPoolAvailable, List<Crystal_Enum> manaPool, bool isDayRules, ActionResultVO ar, List<Crystal_Enum> cost, Action<ActionResultVO> cancelCallback, Action<ActionResultVO> acceptCallback, bool all) {
+        public void SetupUI(string cardTitle, CrystalData crystal, CrystalData mana, int manaPoolAvailable, List<Crystal_Enum> manaPool, bool isDayRules, GameAPI ar, List<Crystal_Enum> cost, Action<GameAPI> cancelCallback, Action<GameAPI> acceptCallback, bool all) {
             this.cancelCallback = cancelCallback;
             this.acceptCallback = acceptCallback;
             this.ar = ar;
@@ -60,7 +60,7 @@ namespace cna.ui {
             playerManaData = mana.Data;
             manaPoolAvailableData = manaPoolAvailable;
             manaPoolData = manaPool;
-            bool dungeonOrTomb = ar.LocalPlayer.GameEffects.ContainsKeyAny(GameEffect_Enum.SH_Tomb, GameEffect_Enum.SH_Dungeon);
+            bool dungeonOrTomb = ar.P.GameEffects.ContainsKeyAny(GameEffect_Enum.SH_Tomb, GameEffect_Enum.SH_Dungeon);
             dayRules = isDayRules && !dungeonOrTomb;
             int[] costByColor = { 0, 0, 0, 0, 0, 0 };
             cost.ForEach(c => {
@@ -168,7 +168,7 @@ namespace cna.ui {
                 Message(msg);
                 return false;
             } else {
-                bool manaStorm = ar.LocalPlayer.GameEffects.ContainsKey(GameEffect_Enum.AC_ManaStorm);
+                bool manaStorm = ar.P.GameEffects.ContainsKey(GameEffect_Enum.AC_ManaStorm);
                 if (manaStorm && (mana == Crystal_Enum.Gold || mana == Crystal_Enum.Black)) {
                     List<Crystal_Enum> l = getNeededPaymentTypes();
                     if (!DayRules && mana == Crystal_Enum.Black) {
@@ -279,7 +279,7 @@ namespace cna.ui {
             if (!payAll && payment.Count == 1) {
                 return "No more mana is required!";
             }
-            bool manaStorm = ar.LocalPlayer.GameEffects.ContainsKey(GameEffect_Enum.AC_ManaStorm);
+            bool manaStorm = ar.P.GameEffects.ContainsKey(GameEffect_Enum.AC_ManaStorm);
             if (manaStorm && (mana == Crystal_Enum.Gold || mana == Crystal_Enum.Black)) {
                 if (getCrystalsUsedForPayment(Crystal_Enum.Blue) < cost[getIndexForCrystalEnum(Crystal_Enum.Blue)] ||
                     getCrystalsUsedForPayment(Crystal_Enum.Red) < cost[getIndexForCrystalEnum(Crystal_Enum.Red)] ||
@@ -294,7 +294,7 @@ namespace cna.ui {
                     if (cardTitle.Equals("Payment :: Polarization")) {
                         return "";
                     }
-                    if (!ar.LocalPlayer.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfTheSun)) {
+                    if (!ar.P.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfTheSun)) {
                         return "Gold Mana can not be used during the night!";
                     }
                 }
@@ -310,7 +310,7 @@ namespace cna.ui {
                     if (cardTitle.Equals("Payment :: Polarization")) {
                         return "";
                     }
-                    if (!ar.LocalPlayer.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfDarkness)) {
+                    if (!ar.P.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfDarkness)) {
                         return "Black Mana can not be used during the day!";
                     }
                 }

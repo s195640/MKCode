@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public class BattleData : Data {
+    public class BattleData : BaseData {
         public BattleData() { }
 
         [SerializeField] private BattlePhase_Enum battlePhase = BattlePhase_Enum.NA;
@@ -35,6 +35,16 @@ namespace cna.poo {
             SelectedMonsters.Clear();
             SelectedUnit = 0;
             battlePhase = BattlePhase_Enum.NA;
+        }
+
+        public void UpdateData(BattleData b) {
+            battlePhase = b.battlePhase;
+            monsters = b.monsters;
+            selectedMonsters = b.selectedMonsters;
+            siege = b.siege;
+            range = b.range;
+            shield = b.shield;
+            attack = b.attack;
         }
     }
 }

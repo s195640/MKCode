@@ -19,10 +19,10 @@ namespace cna {
         private TurnPhase_Enum playerPhase;
         private BattlePhase_Enum playerBattlePhase;
 
-        public override void OnClick_ActionBasicButton(ActionResultVO ar) {
-            playerPhase = ar.LocalPlayer.PlayerTurnPhase;
-            gameEffects = ar.LocalPlayer.GameEffects;
-            playerBattlePhase = ar.LocalPlayer.Battle.BattlePhase;
+        public override void OnClick_ActionBasicButton(GameAPI ar) {
+            playerPhase = ar.P.PlayerTurnPhase;
+            gameEffects = ar.P.GameEffects;
+            playerBattlePhase = ar.P.Battle.BattlePhase;
             if (D.Action.CheckTurnAndUI(ar)) {
                 switch (playerPhase) {
                     case TurnPhase_Enum.StartTurn:
@@ -46,17 +46,17 @@ namespace cna {
 
 
 
-        private void ActionMove(ActionResultVO ar) {
+        private void ActionMove(GameAPI ar) {
             ar.AddCardState();
             ar.TurnPhase(TurnPhase_Enum.Move);
             ar.ActionMovement(1);
         }
-        private void ActionInfluence(ActionResultVO ar) {
+        private void ActionInfluence(GameAPI ar) {
             ar.AddCardState();
             ar.TurnPhase(TurnPhase_Enum.Influence);
             ar.ActionInfluence(1);
         }
-        private void ActionRangeSiege(ActionResultVO ar) {
+        private void ActionRangeSiege(GameAPI ar) {
             if (gameEffects.ContainsKey(GameEffect_Enum.AC_Agility02)) {
                 ActionMove(ar);
             } else {
@@ -64,7 +64,7 @@ namespace cna {
             }
         }
 
-        private void ActionBlock(ActionResultVO ar) {
+        private void ActionBlock(GameAPI ar) {
             if (gameEffects.ContainsKeyAny(GameEffect_Enum.AC_Diplomacy01, GameEffect_Enum.AC_Diplomacy02)) {
                 ActionInfluence(ar);
             } else {
@@ -72,7 +72,7 @@ namespace cna {
                 ar.BattleBlock(new AttackData() { Physical = val });
             }
         }
-        private void ActionAttack(ActionResultVO ar) {
+        private void ActionAttack(GameAPI ar) {
             if (gameEffects.ContainsKeyAny(GameEffect_Enum.AC_Agility01, GameEffect_Enum.AC_Agility02)) {
                 ar.AddCardState();
                 ar.BattleAttack(new AttackData() { Physical = val });
@@ -82,7 +82,7 @@ namespace cna {
             }
         }
 
-        private void ActionAssignDamage(ActionResultVO ar) {
+        private void ActionAssignDamage(GameAPI ar) {
             if (gameEffects.ContainsKey(GameEffect_Enum.CS_WingsOfNight)) {
                 ActionMove(ar);
             } else {

@@ -19,8 +19,8 @@ namespace cna {
             BattleAllowed = new List<List<BattlePhase_Enum>>() { new List<BattlePhase_Enum>() { BattlePhase_Enum.Attack } };
         }
 
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
-            if (ar.LocalPlayer.Movement > 0) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
+            if (ar.P.Movement > 0) {
                 ar.ActionMovement(-1);
                 ar.BattleAttack(new AttackData(1));
             } else {

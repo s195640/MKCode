@@ -1246,7 +1246,16 @@ namespace cna {
             D.Cards.Add(new ManaSearchGEVO(D.Cards.Count, GameEffect_Enum.T_ManaSearch02));
             D.Cards.Add(new LongNightGEVO(D.Cards.Count));
             D.Cards.Add(new SparingPowerGEVO(D.Cards.Count));
-
+            D.Cards.Add(new CardGameEffectVO(
+                D.Cards.Count,
+                "Planning",
+                Image_Enum.I_cardBackRounded,
+                CardType_Enum.GameEffect,
+                GameEffect_Enum.T_Planning,
+                GameEffectDuration_Enum.Round,
+                CNAColor.ColorLightBlue,
+                "If you have at least two cards at the end of your turn, +1 to hand limt.",
+                true, false, false));
         }
 
 

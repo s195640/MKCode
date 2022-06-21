@@ -22,7 +22,7 @@ namespace cna {
             BattleAllowed = new List<List<BattlePhase_Enum>>() { new List<BattlePhase_Enum>() { BattlePhase_Enum.Provoke, BattlePhase_Enum.RangeSiege, BattlePhase_Enum.Block, BattlePhase_Enum.AssignDamage, BattlePhase_Enum.Attack, BattlePhase_Enum.EndOfBattle } };
         }
 
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             D.Action.Clear();
             ar.RemoveGameEffect(GameEffect_Enum.T_ManaSearch01);
             ar.AddGameEffect(GameEffect_Enum.T_ManaSearch02);
@@ -32,28 +32,25 @@ namespace cna {
             V2IntVO selectCount = new V2IntVO(1, 2);
             List<string> buttonText = new List<string>() { "Accept" };
             List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightGreen };
-            List<Action<ActionResultVO>> buttonActions = new List<Action<ActionResultVO>>() { acceptCallback_00 };
+            List<Action<GameAPI>> buttonActions = new List<Action<GameAPI>>() { acceptCallback_00 };
             List<bool> buttonForce = new List<bool>() { true };
-            List<Image_Enum> die = new List<Image_Enum>();
-            ar.G.Board.ManaPool.ForEach(m => {
-                die.Add(BasicUtil.Convert_CrystalToManaDieImageId(m));
-            });
+            List<Image_Enum> die = ar.P.ManaPool.ConvertAll(mp => BasicUtil.Convert_CrystalToManaDieImageId(mp.ManaColor));
             ar.SelectManaDie(die, title, description, selectCount, Image_Enum.I_check, buttonText, buttonColor, buttonActions, buttonForce);
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             ar.AddLog("[Mana Search]");
-            List<Crystal_Enum> selectedCrystals = new List<Crystal_Enum>();
+            List<ManaPoolData> selectedCrystals = new List<ManaPoolData>();
             ar.SelectedCardIds.ForEach(c => {
-                selectedCrystals.Add(ar.G.Board.ManaPool[c]);
+                selectedCrystals.Add(ar.P.ManaPool[c]);
             });
             selectedCrystals.ForEach(c => {
-                ar.G.Board.ManaPool.Remove(c);
+                Crystal_Enum oldDie = c.ManaColor;
                 Crystal_Enum newDie = (Crystal_Enum)UnityEngine.Random.Range(1, 7);
-                ar.G.Board.ManaPool.Add(newDie);
-                ar.AddLog("ManaDie " + c + " rerolled to " + newDie);
+                c.ManaColor = newDie;
+                c.Status = ManaPool_Enum.ManaSearch;
+                ar.AddLog("ManaDie " + oldDie + " rerolled to " + newDie);
             });
-
             ar.change();
             ar.FinishCallback(ar);
         }

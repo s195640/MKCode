@@ -11,11 +11,11 @@ namespace cna.ui {
         [SerializeField] private GameObject cancelButton;
 
         private CardActionVO card;
-        private Action<ActionResultVO> cancelCallback;
-        private Action<ActionResultVO> acceptCallback;
-        private ActionResultVO ar;
+        private Action<GameAPI> cancelCallback;
+        private Action<GameAPI> acceptCallback;
+        private GameAPI ar;
 
-        public void SetupUI(ActionResultVO ar, Action<ActionResultVO> cancelCallback, Action<ActionResultVO> acceptCallback, params OptionVO[] options) {
+        public void SetupUI(GameAPI ar, Action<GameAPI> cancelCallback, Action<GameAPI> acceptCallback, params OptionVO[] options) {
             if (cancelCallback == null) {
                 cancelButton.SetActive(false);
             } else {

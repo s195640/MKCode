@@ -39,9 +39,9 @@ namespace cna.ui {
             playerWorld.Clear();
         }
 
-        public override void StartOfTurnNotification(bool forceDeclareEndOfRound, bool isExhausted, bool endOfRoundDeclared) {
-            StartOfTurnPanel.SetupUI(forceDeclareEndOfRound, isExhausted, endOfRoundDeclared);
-        }
+        //public override void StartOfTurnNotification(bool forceDeclareEndOfRound, bool isExhausted, bool endOfRoundDeclared) {
+        //    //StartOfTurnPanel.SetupUI(forceDeclareEndOfRound, isExhausted, endOfRoundDeclared);
+        //}
         public override void StartTacticsPanel() {
             TacticsPanel.SetupUI();
         }

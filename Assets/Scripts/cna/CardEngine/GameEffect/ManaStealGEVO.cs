@@ -25,11 +25,12 @@ namespace cna {
             }
         }
 
-        public override ActionResultVO ActionValid_00(ActionResultVO ar) {
+        public override GameAPI ActionValid_00(GameAPI ar) {
             D.Action.Clear();
-            ar.AddMana((Crystal_Enum)ar.LocalPlayer.GameEffects[GameEffect_Enum.T_ManaSteal].Values[0]);
+            ar.AddMana((Crystal_Enum)ar.P.GameEffects[GameEffect_Enum.T_ManaSteal].Values[0]);
             ar.RemoveGameEffect(GameEffect_Enum.T_ManaSteal);
-            ar.G.Board.ManaPool.Add((Crystal_Enum)UnityEngine.Random.Range(1, 7));
+            ManaPoolData mpd = ar.P.ManaPoolFull.Find(mp => mp.Status.Equals(ManaPool_Enum.ManaSteal));
+            mpd.Status = ManaPool_Enum.Used;
             return ar;
         }
     }

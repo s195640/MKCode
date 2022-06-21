@@ -16,7 +16,7 @@ namespace cna.ui {
         public void UpdateUI() {
             AvatarMetaData avatarMetaData = D.AvatarMetaDataMap[avatar_Enum];
             avatarDescription.text = avatarMetaData.AvatarDesc;
-            disable.SetActive(D.G.Gld.Players.Find(p => p.Avatar.Equals(avatarMetaData.AvatarId)) != null);
+            disable.SetActive(D.G.Players.Find(p => p.Avatar.Equals(avatarMetaData.AvatarId)) != null);
         }
 
         public void UpdateUI(Image_Enum avatarEnum, Action<Image_Enum> buttonCallback) {

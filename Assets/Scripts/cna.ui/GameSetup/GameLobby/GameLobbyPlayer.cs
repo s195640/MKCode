@@ -24,7 +24,7 @@ namespace cna.ui {
             if (readyButton.isOn != pd.PlayerReady) {
                 readyButton.isOn = pd.PlayerReady;
             }
-            disable.SetActive(pd.Key != D.LocalPlayer.Key);
+            disable.SetActive(pd.Key != D.LocalPlayerKey);
 
             if (PlayerReadyCallback == null && !hasLoaded) {
                 hasLoaded = true;

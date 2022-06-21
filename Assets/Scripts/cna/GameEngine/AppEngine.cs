@@ -4,14 +4,9 @@ using UnityEngine;
 
 namespace cna {
     public abstract class AppEngine : AppBase {
-        [SerializeField] internal GameData gd_StartOfTurn = new GameData();
-        [SerializeField] private bool gd_StartOfTurnFlag = false;
-        [SerializeField] internal ScreenState_Enum screenState = ScreenState_Enum.Map;
-        [SerializeField] internal GameData gameData = new GameData();
-        [SerializeField] internal ClientState_Enum clientState = ClientState_Enum.NOT_CONNECTED;
-        [SerializeField] internal ScenarioBase scenario;
 
-        public bool Gd_StartOfTurnFlag { get => gd_StartOfTurnFlag; set => gd_StartOfTurnFlag = value; }
+        [SerializeField] internal Data masterGameData = new Data();
+        internal ClientState_Enum clientState = ClientState_Enum.NOT_CONNECTED;
 
         private void Update() {
             if (D.G.GameStatus >= Game_Enum.New_Game) {
@@ -19,48 +14,50 @@ namespace cna {
             }
         }
 
+
         private void GameEngine() {
             switch (D.G.GameStatus) {
-                case Game_Enum.New_Game: { NewGame(); break; }
-                case Game_Enum.New_Round: { NewRound(); break; }
-                case Game_Enum.Tactics: { Tactics(); break; }
-                case Game_Enum.Player_Turn: { PlayerTurn(); break; }
+                case Game_Enum.New_Game: { NewGame(masterGameData); break; }
+                case Game_Enum.New_Round: { NewRound(masterGameData); break; }
+                case Game_Enum.Tactics: { Tactics(masterGameData); break; }
+                case Game_Enum.Tactics_WaitingOnPlayers: { Tactics_WaitingOnPlayers(masterGameData); break; }
+                case Game_Enum.SaveGame: { SaveGame(masterGameData); break; }
+                case Game_Enum.Player_Turn: { PlayerTurn(masterGameData); break; }
             }
         }
 
         #region NEW GAME
-        private void NewGame() {
-            Clear();
+        private void NewGame(Data g) {
             if (D.isHost) {
-                D.G.Clear();
-                D.G.Players.ForEach(p => p.Clear());
-                NewGame_BoardSetup();
-                NewGame_PlayerSetup();
+                g.Clear();
+                g.Players.ForEach(p => p.Clear());
+                NewGame_BoardSetup(g);
+                NewGame_PlayerSetup(g);
             }
         }
 
-        private void NewGame_BoardSetup() {
-            D.G.TurnCounter = 1;
-            D.G.Board = new BoardData(D.G.Gld.GameMapLayout, D.G.Gld.BasicTiles, D.G.Gld.CoreTiles, D.G.Gld.CityTiles, D.G.Gld.EasyStart, D.G.Gld.Rounds, D.G.Gld.DummyPlayer);
+        private void NewGame_BoardSetup(Data g) {
+            g.TurnCounter = 1;
+            //g.Board = new BoardData(g.Gld.GameMapLayout, g.Gld.BasicTiles, g.Gld.CoreTiles, g.Gld.CityTiles, g.Gld.EasyStart, g.Gld.Rounds, g.Gld.DummyPlayer);
             D.Scenario.buildStartMap();
-            D.G.PlayerTurnOrder = new List<int>();
-            D.G.Players.ForEach(p => D.G.PlayerTurnOrder.Add(p.Key));
-            D.G.PlayerTurnOrder.ShuffleDeck();
-            D.G.PlayerTurnIndex = 0;
-            D.G.GameStatus = Game_Enum.New_Round;
+            g.PlayerTurnOrder = new List<int>();
+            g.Players.ForEach(p => g.PlayerTurnOrder.Add(p.Key));
+            g.PlayerTurnOrder.ShuffleDeck();
+            g.PlayerTurnIndex = 0;
+            g.GameStatus = Game_Enum.New_Round;
         }
 
-        private void NewGame_PlayerSetup() {
-            NewGame_DummyPlayerSetup();
-            NewGame_AssignAvatars();
-            NewGame_PlayerDeckSetup();
+        private void NewGame_PlayerSetup(Data g) {
+            NewGame_DummyPlayerSetup(g);
+            NewGame_AssignAvatars(g);
+            NewGame_PlayerDeckSetup(g);
         }
-        private void NewGame_AssignAvatars() {
+        private void NewGame_AssignAvatars(Data g) {
             List<Image_Enum> possibleAvatars = new List<Image_Enum>();
             possibleAvatars.AddRange(D.AvatarMetaDataMap.Keys);
             possibleAvatars.Remove(Image_Enum.A_MEEPLE_RANDOM);
-            D.G.Players.ForEach(p => { if (p.Avatar != Image_Enum.A_MEEPLE_RANDOM) { possibleAvatars.Remove(p.Avatar); } });
-            D.G.Players.ForEach(p => {
+            g.Players.ForEach(p => { if (p.Avatar != Image_Enum.A_MEEPLE_RANDOM) { possibleAvatars.Remove(p.Avatar); } });
+            g.Players.ForEach(p => {
                 if (p.Avatar == Image_Enum.A_MEEPLE_RANDOM) {
                     p.Avatar = possibleAvatars[UnityEngine.Random.Range(0, possibleAvatars.Count)];
                     possibleAvatars.Remove(p.Avatar);
@@ -68,17 +65,17 @@ namespace cna {
             });
         }
 
-        private void NewGame_PlayerDeckSetup() {
+        private void NewGame_PlayerDeckSetup(Data g) {
             D.Cards.ForEach(c => {
                 if (c.CardType == CardType_Enum.Basic) {
-                    D.G.Players.ForEach(p => {
+                    g.Players.ForEach(p => {
                         if (p.Avatar == ((CardActionVO)c).Avatar) {
                             p.Deck.Deck.Add(c.UniqueId);
                         }
                     });
                 }
             });
-            D.G.Players.ForEach(p => {
+            g.Players.ForEach(p => {
                 p.Deck.Deck.ShuffleDeck();
                 if (p.DummyPlayer) {
                     switch (p.Avatar) {
@@ -91,16 +88,16 @@ namespace cna {
             });
         }
 
-        public void NewGame_DummyPlayerSetup() {
-            if (D.G.Board.DummyPlayer) {
-                if (D.G.Players.Count == 4) {
-                    D.G.Board.DummyPlayer = false;
+        public void NewGame_DummyPlayerSetup(Data g) {
+            if (g.GameData.DummyPlayer) {
+                if (g.Players.Count == 4) {
+                    g.GameData.DummyPlayer = false;
                 } else {
                     PlayerData pd = new PlayerData("DUMMY", -999);
                     pd.Avatar = Image_Enum.A_MEEPLE_RANDOM;
                     pd.DummyPlayer = true;
-                    D.G.Players.Add(pd);
-                    D.G.PlayerTurnOrder.Add(pd.Key);
+                    g.Players.Add(pd);
+                    g.PlayerTurnOrder.Add(pd.Key);
                 }
             }
         }
@@ -108,56 +105,24 @@ namespace cna {
         #endregion
 
         #region NEW ROUND
-        private void NewRound() {
+        private void NewRound(Data g) {
             if (D.isHost) {
-                NewRound_BoardSetup();
-                //D.G.GameRoundCounter++;
-                NewRound_PlayerSetup();
+                NewRound_BoardSetup(g);
+                NewRound_PlayerSetup(g);
                 //NewRound_TESTING();
                 D.C.Send_GameData();
             }
         }
 
-        private void NewRound_PlayerSetup() {
-            D.G.Players.ForEach(p => {
-                p.PlayerTurnPhase = TurnPhase_Enum.NotTurn;
-                p.Deck.ClearNewRound();
-                foreach (GameEffect_Enum ge in p.GameEffects.Keys.ToArray()) {
-                    CardVO c = D.GetGameEffectCard(ge);
-                    if (c.GameEffectDurationId != GameEffectDuration_Enum.Game) {
-                        p.RemoveGameEffect(ge);
-                    }
-                }
-                p.PlayerTurnPhase = TurnPhase_Enum.NotTurn;
-                p.Deck.Deck.ShuffleDeck();
-                if (!p.DummyPlayer) {
-                    p.ClearEndTurn();
-                    p.AddGameEffect(D.Scenario.isDay ? GameEffect_Enum.Day : GameEffect_Enum.Night);
-                    drawHand(p.Deck);
-                    if (D.Scenario.isDay) {
-                        D.G.Monsters.Map.Keys.ForEach(pos => {
-                            D.G.Monsters.Map[pos].Values.ForEach(r => {
-                                if (D.Cards[r].CardType != CardType_Enum.Monster) {
-                                    p.VisableMonsters.Add(r);
-                                }
-                            });
-                        });
-                    }
-                }
-            });
-            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsSelect;
-        }
 
-        private void NewRound_BoardSetup() {
-            D.G.EndOfRound = -1;
-            //D.G.GameStatus = Game_Enum.Player_Turn;
-            D.G.GameStatus = Game_Enum.Tactics;
-            D.Scenario.BuildUnitOfferingDeck();
-            D.Scenario.BuildManaOfferingDeck();
-            D.Scenario.BuildSpellOfferingDeck();
-            D.Scenario.BuildAdvancedOfferingDeck();
-            D.G.GameRoundCounter++;
-            D.G.PlayerTurnIndex = 0;
+        private void NewRound_BoardSetup(Data g) {
+            g.EndOfRound = false;
+            g.GameStatus = Game_Enum.Tactics;
+            //D.Scenario.BuildUnitOfferingDeck();
+            //D.Scenario.BuildSpellOfferingDeck();
+            //D.Scenario.BuildAdvancedOfferingDeck();
+            g.GameRoundCounter++;
+            g.PlayerTurnIndex = 0;
         }
 
         private void NewRound_TESTING() {
@@ -194,492 +159,842 @@ namespace cna {
                 //D.G.Board.ManaPool.Add(Crystal_Enum.Black);
             }
         }
+        private void NewRound_PlayerSetup(Data g) {
+            PlayerData hostPlayerData = g.Players.Find(p => p.Key == g.HostPlayerKey);
+            D.Scenario.BuildManaOfferingDeck(g, hostPlayerData);
+            D.Scenario.BuildUnitOfferingDeck(g, hostPlayerData);
+            D.Scenario.BuildAdvancedOfferingDeck(hostPlayerData);
+            D.Scenario.BuildSpellOfferingDeck(hostPlayerData);
+            hostPlayerData.Board.PlayerMap.Clear();
+            hostPlayerData.Board.PlayerMap.AddRange(g.Board.CurrentMap);
+            D.Scenario.rebuildCurrentMap(hostPlayerData);
+            hostPlayerData.Board.MonsterData.Clear();
+            g.Board.MonsterData.Keys.ForEach(k => {
+                V2IntVO key = new V2IntVO(k.X, k.Y);
+                WrapList<int> value = new WrapList<int>();
+                g.Board.MonsterData[k].Values.ForEach(v => value.Add(v));
+                hostPlayerData.Board.MonsterData.Add(key, value);
+            });
+            g.Players.ForEach(p => {
+                GameAPI ar = new GameAPI(g, p);
+                ar.PlayerNewRoundSetup();
+                if (!p.DummyPlayer && p.Key != g.HostPlayerKey) {
+                    ar.P.ManaPoolFull.Clear();
+                    ar.P.Board.UnitOffering.Clear();
+                    ar.P.Board.AdvancedOffering.Clear();
+                    ar.P.Board.SpellOffering.Clear();
+                    hostPlayerData.ManaPoolFull.ForEach(m => ar.P.ManaPoolFull.Add(new ManaPoolData(m.ManaColor)));
+                    ar.P.Board.UnitOffering.AddRange(hostPlayerData.Board.UnitOffering);
+                    ar.P.Board.AdvancedOffering.AddRange(hostPlayerData.Board.AdvancedOffering);
+                    ar.P.Board.SpellOffering.AddRange(hostPlayerData.Board.SpellOffering);
+                    ar.P.Board.UnitEliteIndex = hostPlayerData.Board.UnitEliteIndex;
+                    ar.P.Board.UnitRegularIndex = hostPlayerData.Board.UnitRegularIndex;
+                    ar.P.Board.SpellIndex = hostPlayerData.Board.SpellIndex;
+                    ar.P.Board.AdvancedIndex = hostPlayerData.Board.AdvancedIndex;
+                    ar.P.Board.PlayerMap.AddRange(hostPlayerData.Board.PlayerMap);
+                    ar.P.Board.MonsterData.Clear();
+                    hostPlayerData.Board.MonsterData.Keys.ForEach(k => {
+                        V2IntVO key = new V2IntVO(k.X, k.Y);
+                        WrapList<int> value = new WrapList<int>();
+                        g.Board.MonsterData[k].Values.ForEach(v => value.Add(v));
+                        ar.P.Board.MonsterData.Add(key, value);
+                    });
+                }
+            });
+            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsSelect;
+        }
 
         #endregion
 
         #region TACTICS
 
-        private void Tactics() {
+        private void Tactics(Data g) {
             if (D.isHost) {
                 switch (D.CurrentTurn.PlayerTurnPhase) {
-                    case TurnPhase_Enum.TacticsHost: {
-                        GameData gd = D.G;
-                        D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsEnd;
-                        bool tacticsDone = true;
-                        gd.Players.ForEach(p => { tacticsDone = tacticsDone && p.PlayerTurnPhase == TurnPhase_Enum.TacticsEnd; });
-                        if (tacticsDone) {
+                    case TurnPhase_Enum.TacticsEnd:
+                    case TurnPhase_Enum.TacticsAction: {
+                        if (g.Players.TrueForAll(p => p.PlayerTurnPhase == TurnPhase_Enum.TacticsEnd || p.PlayerTurnPhase == TurnPhase_Enum.TacticsAction)) {
                             //  reorder turns
                             bool swapped = true;
                             while (swapped) {
                                 swapped = false;
-                                for (int i = 0; i < gd.PlayerTurnOrder.Count - 1; i++) {
-                                    int a = D.GetPlayerByKey(gd.PlayerTurnOrder[i]).Deck.TacticsCardId;
-                                    int b = D.GetPlayerByKey(gd.PlayerTurnOrder[i + 1]).Deck.TacticsCardId;
+                                for (int i = 0; i < g.PlayerTurnOrder.Count - 1; i++) {
+                                    int a = D.GetPlayerByKey(g.PlayerTurnOrder[i]).Deck.TacticsCardId;
+                                    int b = D.GetPlayerByKey(g.PlayerTurnOrder[i + 1]).Deck.TacticsCardId;
                                     if (a > b) {
-                                        int temp = gd.PlayerTurnOrder[i];
-                                        gd.PlayerTurnOrder[i] = gd.PlayerTurnOrder[i + 1];
-                                        gd.PlayerTurnOrder[i + 1] = temp;
+                                        int temp = g.PlayerTurnOrder[i];
+                                        g.PlayerTurnOrder[i] = g.PlayerTurnOrder[i + 1];
+                                        g.PlayerTurnOrder[i + 1] = temp;
                                         swapped = true;
                                         break;
                                     }
                                 }
                             }
-                            gd.GameStatus = Game_Enum.Player_Turn;
-                            gd.PlayerTurnIndex = 0;
-                            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
+                            g.GameStatus = Game_Enum.Tactics_WaitingOnPlayers;
+                            g.PlayerTurnIndex = 0;
                         } else {
-                            gd.PlayerTurnIndex++;
+                            g.PlayerTurnIndex++;
                             D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsSelect;
                         }
+                        D.C.Send_GameData();
                         break;
                     }
                     case TurnPhase_Enum.TacticsSelect: {
                         if (D.CurrentTurn.DummyPlayer) {
                             List<int> cards = new List<int>();
                             cards.AddRange(D.Scenario.isDay ? D.Scenario.TacticsDayDeck : D.Scenario.TacticsNightDeck);
-                            D.G.Players.ForEach(p => cards.Remove(p.Deck.TacticsCardId));
+                            g.Players.ForEach(p => cards.Remove(p.Deck.TacticsCardId));
                             D.CurrentTurn.Deck.TacticsCardId = cards.Random();
-                            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsHost;
+                            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsEnd;
+                            D.C.Send_GameData();
                         }
                         break;
                     }
                 }
-                D.C.Send_GameData();
             }
         }
 
+        #endregion
 
+        #region TACTICS WAITING ON PLAYERS
+        private void Tactics_WaitingOnPlayers(Data g) {
+            if (D.isHost) {
+                if (g.Players.TrueForAll(p => p.PlayerTurnPhase == TurnPhase_Enum.TacticsEnd)) {
+                    g.Players.ForEach(p => p.PlayerTurnPhase = TurnPhase_Enum.PlayerNotTurn);
+                    g.GameStatus = Game_Enum.SaveGame;
+                    D.C.Send_GameData();
+                }
+            }
+        }
+
+        #endregion
+
+        #region SAVE GAME
+        public void SaveGame(Data g) {
+            if (D.isHost) {
+                g.GameStatus = Game_Enum.Player_Turn;
+                g.Players.ForEach(p => { if (p.PlayerTurnPhase != TurnPhase_Enum.EndOfRound) { p.PlayerTurnPhase = TurnPhase_Enum.SetupTurn; } });
+                BasicUtil.SaveGameToFile(D.G);
+                D.C.Send_GameData();
+            }
+        }
         #endregion
 
         #region PLAYER TURN
-        private void PlayerTurn() {
-            switch (D.CurrentTurn.PlayerTurnPhase) {
-                case TurnPhase_Enum.HostSaveGame: { PlayerTurn_HostSaveGame(); break; }
-                case TurnPhase_Enum.SetupTurn: { PlayerTurn_SetupTurn(); break; }
-                case TurnPhase_Enum.EndTurn: { PlayerTurn_EndTurn(); break; }
-            }
-        }
-
-        private void PlayerTurn_HostSaveGame() {
+        public void PlayerTurn(Data g) {
             if (D.isHost) {
-                PlayerData currentPlayer = D.CurrentTurn;
-                if (currentPlayer.DummyPlayer) {
-                    currentPlayer.PlayerTurnPhase = TurnPhase_Enum.EndTurn;
-                } else {
-                    currentPlayer.PlayerTurnPhase = TurnPhase_Enum.SetupTurn;
-                    BasicUtil.SaveGameToFile(D.G);
-                }
-                D.C.Send_GameData();
-            }
-        }
-
-        private void PlayerTurn_EndTurn() {
-            if (D.isHost) {
-                PlayerData currentPlayer = D.CurrentTurn;
-                if (currentPlayer.DummyPlayer) {
-                    if (currentPlayer.Deck.Deck.Count == 0) {
-                        D.G.EndOfRound = currentPlayer.Key;
-                    } else {
-                        CardColor_Enum cardColor = CardColor_Enum.NA;
-                        int totalCards = 0;
-                        int cardId = 0;
-                        for (int i = 0; i < 3; i++) {
-                            if (currentPlayer.Deck.Deck.Count > 0) {
-                                cardId = BasicUtil.DrawCard(currentPlayer.Deck.Deck);
-                                currentPlayer.Deck.Discard.Add(cardId);
-                                totalCards++;
-                            }
-                        }
-                        if (currentPlayer.Deck.Deck.Count > 0) {
-                            int extra = 0;
-                            cardColor = D.Cards[cardId].CardColor;
-                            switch (cardColor) {
-                                case CardColor_Enum.Blue: { extra = currentPlayer.Crystal.Blue; break; }
-                                case CardColor_Enum.Red: { extra = currentPlayer.Crystal.Red; break; }
-                                case CardColor_Enum.Green: { extra = currentPlayer.Crystal.Green; break; }
-                                case CardColor_Enum.White: { extra = currentPlayer.Crystal.White; break; }
-                            }
-                            for (int i = 0; i < extra; i++) {
-                                if (currentPlayer.Deck.Deck.Count > 0) {
-                                    cardId = BasicUtil.DrawCard(currentPlayer.Deck.Deck);
-                                    currentPlayer.Deck.Discard.Add(cardId);
-                                    totalCards++;
-                                }
-                            }
-                        }
-                        string msg = "Total Cards " + totalCards;
-                        if (cardColor != CardColor_Enum.NA) {
-                            msg += " (" + cardColor + ")";
-                        }
-                        D.C.LogMessageDummy(msg);
+                PlayerData waitingOnServer = g.Players.Find(p => p.WaitOnServer);
+                if (waitingOnServer != null) {
+                    Debug.Log("Waiting On Server");
+                    int index = waitingOnServer.Board.PlayerMap.FindIndex(h => h == MapHexId_Enum.Explore);
+                    MapHexId_Enum currentMapHex = g.Board.CurrentMap[index];
+                    if (currentMapHex == MapHexId_Enum.Basic_Back ||
+                        currentMapHex == MapHexId_Enum.Core_Back ||
+                        currentMapHex == MapHexId_Enum.Invalid
+                        ) {
+                        //currentMapHex = D.Scenario.MapDeck[D.Board.MapDeckIndex];
+                        //D.Board.MapDeckIndex++;
+                        //g.Board.CurrentMap[index] = currentMapHex;
+                        currentMapHex = D.Scenario.DrawGameHex(index);
                     }
+                    waitingOnServer.Board.PlayerMap[index] = currentMapHex;
+                    D.Scenario.rebuildCurrentMap(waitingOnServer);
 
-                    D.G.PlayerTurnIndex++;
-                    if (D.G.EndOfRound == D.CurrentTurn.Key) {
-                        D.C.LogMessageDummy("End of Round Declared!");
-                        D.G.GameStatus = Game_Enum.New_Round;
-                    } else {
-                        D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
-                    }
+                    V2IntVO centerPos = new V2IntVO(D.Scenario.ConvertIndexToWorld(index));
+                    List<V2IntVO> pts = BasicUtil.GetAdjacentPoints(centerPos);
+                    pts.Add(centerPos);
+                    pts.ForEach(pt => {
+                        if (g.Board.MonsterData.ContainsKey(pt)) {
+                            waitingOnServer.Board.MonsterData.Add(pt, g.Board.MonsterData[pt]);
+                        }
+                    });
+
+                    waitingOnServer.WaitOnServer = false;
+                    D.C.Send_GameData();
+                    return;
                 } else {
-                    if (currentPlayer.GameEffects.ContainsKey(GameEffect_Enum.CS_TimeBending)) {
-                        TimeBend(currentPlayer);
-                    } else {
-                        bool theRightMoment = currentPlayer.GameEffects.ContainsKey(GameEffect_Enum.T_TheRightMoment02);
-                        clearHand(currentPlayer.Deck, currentPlayer.GameEffects);
-                        resetUnit(currentPlayer.Deck);
-                        resetSkill(currentPlayer.Deck, false);
-                        int cardsLeftInHand = currentPlayer.Deck.Hand.Count;
-                        drawHand(currentPlayer.Deck);
-                        resetManaPool();
-                        foreach (GameEffect_Enum ge in currentPlayer.GameEffects.Keys.ToArray()) {
-                            CardVO c = D.GetGameEffectCard(ge);
-                            switch (ge) {
-                                case GameEffect_Enum.AC_CrystalMastery: {
-                                    CrystalData crystal = currentPlayer.Crystal;
-                                    crystal.Blue += crystal.SpentBlue;
-                                    crystal.Green += crystal.SpentGreen;
-                                    crystal.Red += crystal.SpentRed;
-                                    crystal.White += crystal.SpentWhite;
-                                    break;
+                    if (g.GameData.DummyPlayer && D.DummyPlayer.PlayerTurnPhase == TurnPhase_Enum.SetupTurn) {
+                        GameAPI ar = new GameAPI(g, D.DummyPlayer);
+                        ar.Dummy();
+                        return;
+                    }
+                    if (g.Players.TrueForAll(p => p.PlayerTurnPhase >= TurnPhase_Enum.EndTurn && p.PlayerTurnPhase <= TurnPhase_Enum.EndOfRound)) {
+                        int spellIndex = -1;
+                        int skillBlueIndex = -1;
+                        int skillGreenIndex = -1;
+                        int skillRedIndex = -1;
+                        int skillWhiteIndex = -1;
+                        int advancedIndex = -1;
+                        int unitRegularIndex = -1;
+                        int unitEliteIndex = -1;
+                        int woundIndex = -1;
+                        int artifactIndex = -1;
+                        List<int> spellOffering = new List<int>();
+                        List<int> skillOffering = new List<int>();
+                        List<int> advancedOffering = new List<int>();
+                        List<int> unitOffering = new List<int>();
+                        g.Players.ForEach(p => {
+                            if (p.Board.SpellIndex > spellIndex) {
+                                spellIndex = p.Board.SpellIndex;
+                                spellOffering.Clear();
+                                spellOffering.AddRange(p.Board.SpellOffering);
+                            }
+                            if (p.Board.AdvancedIndex > advancedIndex) {
+                                advancedIndex = p.Board.AdvancedIndex;
+                                advancedOffering.Clear();
+                                advancedOffering.AddRange(p.Board.AdvancedOffering);
+                            }
+                            if (p.Board.UnitRegularIndex > unitRegularIndex) {
+                                unitRegularIndex = p.Board.UnitRegularIndex;
+                            }
+                            if (p.Board.UnitEliteIndex > unitEliteIndex) {
+                                unitEliteIndex = p.Board.UnitEliteIndex;
+                            }
+                            if (p.Board.WoundIndex > woundIndex) {
+                                woundIndex = p.Board.WoundIndex;
+                            }
+                            if (p.Board.ArtifactIndex > artifactIndex) {
+                                artifactIndex = p.Board.ArtifactIndex;
+                            }
+                            if (p.Board.SkillBlueIndex > skillBlueIndex) {
+                                skillBlueIndex = p.Board.SkillBlueIndex;
+                            }
+                            if (p.Board.SkillGreenIndex > skillGreenIndex) {
+                                skillGreenIndex = p.Board.SkillGreenIndex;
+                            }
+                            if (p.Board.SkillRedIndex > skillRedIndex) {
+                                skillRedIndex = p.Board.SkillRedIndex;
+                            }
+                            if (p.Board.SkillWhiteIndex > skillWhiteIndex) {
+                                skillWhiteIndex = p.Board.SkillWhiteIndex;
+                            }
+                            p.Board.SkillOffering.ForEach(s => {
+                                if (!skillOffering.Contains(s)) {
+                                    skillOffering.Add(s);
                                 }
-                                case GameEffect_Enum.SH_CrystalMines_Blue: {
-                                    D.C.LogMessage("[Blue Crystal Mine] +1 Blue Crystal");
-                                    currentPlayer.Crystal.Blue++;
-                                    break;
+                            });
+                            p.Board.UnitOffering.ForEach(u => {
+                                if (!unitOffering.Contains(u)) {
+                                    unitOffering.Add(u);
                                 }
-                                case GameEffect_Enum.SH_CrystalMines_Red: {
-                                    D.C.LogMessage("[Red Crystal Mine] +1 Red Crystal");
-                                    currentPlayer.Crystal.Red++;
-                                    break;
-                                }
-                                case GameEffect_Enum.SH_CrystalMines_Green: {
-                                    D.C.LogMessage("[Green Crystal Mine] +1 Green Crystal");
-                                    currentPlayer.Crystal.Green++;
-                                    break;
-                                }
-                                case GameEffect_Enum.SH_CrystalMines_White: {
-                                    D.C.LogMessage("[White Crystal Mine] +1 White Crystal");
-                                    currentPlayer.Crystal.White++;
-                                    break;
-                                }
-                                case GameEffect_Enum.T_Planning: {
-                                    if (cardsLeftInHand >= 2) {
-                                        D.C.LogMessage("[Planning] +1 Card");
-                                        if (currentPlayer.Deck.Deck.Count > 0) {
-                                            currentPlayer.Deck.Hand.Add(BasicUtil.DrawCard(currentPlayer.Deck.Deck));
+                            });
+                        });
+                        g.Players.ForEach(p => {
+                            p.Deck.Skill.ForEach(s => skillOffering.Remove(s));
+                            p.Deck.Deck.ForEach(c => { spellOffering.Remove(c); advancedOffering.Remove(c); unitOffering.Remove(c); });
+                            p.Deck.Discard.ForEach(c => { spellOffering.Remove(c); advancedOffering.Remove(c); unitOffering.Remove(c); });
+                            p.Deck.Hand.ForEach(c => { spellOffering.Remove(c); advancedOffering.Remove(c); unitOffering.Remove(c); });
+                            p.Deck.Unit.ForEach(c => { unitOffering.Remove(c); });
+                        });
+                        while (advancedOffering.Count < 3 && advancedIndex < D.Scenario.AdvancedDeck.Count) {
+                            advancedOffering.Add(D.Scenario.AdvancedDeck[advancedIndex]);
+                            advancedIndex++;
+                        }
+                        while (spellOffering.Count < 3 && spellIndex < D.Scenario.SpellDeck.Count) {
+                            spellOffering.Add(D.Scenario.SpellDeck[spellIndex]);
+                            spellIndex++;
+                        }
+                        g.Players.ForEach(p => {
+                            if (!p.DummyPlayer) {
+                                GameAPI ar = new GameAPI(g, p);
+                                ar.P.Board.UnitOffering.Clear();
+                                ar.P.Board.AdvancedOffering.Clear();
+                                ar.P.Board.SpellOffering.Clear();
+                                ar.P.Board.SkillOffering.Clear();
+                                ar.P.Board.UnitOffering.AddRange(unitOffering);
+                                ar.P.Board.AdvancedOffering.AddRange(advancedOffering);
+                                ar.P.Board.SpellOffering.AddRange(spellOffering);
+                                ar.P.Board.SkillOffering.AddRange(skillOffering);
+                                ar.P.Board.UnitEliteIndex = unitEliteIndex;
+                                ar.P.Board.UnitRegularIndex = unitRegularIndex;
+                                ar.P.Board.SpellIndex = spellIndex;
+                                ar.P.Board.AdvancedIndex = advancedIndex;
+                                ar.P.Board.ArtifactIndex = artifactIndex;
+                                ar.P.Board.WoundIndex = woundIndex;
+                                ar.P.Board.SkillBlueIndex = skillBlueIndex;
+                                ar.P.Board.SkillGreenIndex = skillGreenIndex;
+                                ar.P.Board.SkillRedIndex = skillRedIndex;
+                                ar.P.Board.SkillWhiteIndex = skillWhiteIndex;
+                            }
+                        });
+
+                        if (g.EndOfRound) {
+                            g.GameStatus = Game_Enum.New_Round;
+                        } else {
+                            g.GameStatus = Game_Enum.SaveGame;
+                            g.EndOfRound = !g.Players.TrueForAll(p => p.PlayerTurnPhase == TurnPhase_Enum.EndTurn);
+                            List<ManaPoolData> rerollmana = new List<ManaPoolData>();
+                            g.Players.ForEach(p => {
+                                GameAPI ar = new GameAPI(g, p);
+                                ar.PlayerEndOfTurn();
+                                if (!p.DummyPlayer) {
+                                    List<ManaPoolData> m = p.ManaPoolFull;
+                                    for (int i = 0; i < p.ManaPoolFull.Count; i++) {
+                                        Crystal_Enum c;
+                                        ManaPool_Enum status = ManaPool_Enum.Reroll;
+                                        if (m[i].Status == ManaPool_Enum.Used) {
+                                            c = (Crystal_Enum)Random.Range(1, 7);
+                                        } else {
+                                            c = m[i].ManaColor;
+                                            status = m[i].Status;
+                                        }
+                                        if (rerollmana.Count <= i) {
+                                            rerollmana.Add(new ManaPoolData(c, status));
+                                        } else {
+                                            if (rerollmana[i].Status != ManaPool_Enum.Reroll) {
+                                                rerollmana[i].ManaColor = c;
+                                                rerollmana[i].Status = status;
+                                            }
                                         }
                                     }
-                                    break;
                                 }
-                                case GameEffect_Enum.T_ManaSearch02: {
-                                    currentPlayer.RemoveGameEffect(GameEffect_Enum.T_ManaSearch02);
-                                    currentPlayer.AddGameEffect(GameEffect_Enum.T_ManaSearch01);
-                                    break;
+                            });
+                            rerollmana.ForEach(m => {
+                                if (m.Status != ManaPool_Enum.ManaSteal) {
+                                    m.Status = ManaPool_Enum.None;
                                 }
-                            }
-                            if (c.GameEffectDurationId == GameEffectDuration_Enum.Turn) {
-                                currentPlayer.RemoveGameEffect(ge);
-                            }
+                            });
+                            g.Players.ForEach(p => {
+                                p.ManaPoolFull.Clear();
+                                rerollmana.ForEach(m => p.ManaPoolFull.Add(new ManaPoolData(m.ManaColor, m.Status)));
+                            });
                         }
-                        currentPlayer.ClearEndTurn();
-                        if (theRightMoment) {
-                            D.C.LogMessage("[The Right Moment] Taking another turn!");
-                        } else {
-                            D.G.PlayerTurnIndex++;
-                        }
-                        D.G.TurnCounter++;
-                        if (D.G.EndOfRound == D.CurrentTurn.Key) {
-                            D.G.GameStatus = Game_Enum.New_Round;
-                        } else {
-                            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
-                        }
-                    }
-                }
-                D.C.Send_GameData();
-            }
-        }
-
-        private void TimeBend(PlayerData pd) {
-            PlayerDeckData pDeck = pd.Deck;
-            pd.ActionTaken = false;
-            foreach (int c in pDeck.Hand.ToArray()) {
-                if (pDeck.State.ContainsKey(c)) {
-                    if (pDeck.StateContainsAny(c, CardState_Enum.Discard, CardState_Enum.Trashed)) {
-                        pDeck.Hand.Remove(c);
-                        if (!pDeck.StateContains(c, CardState_Enum.Trashed)) {
-                            pDeck.Discard.Add(c);
-                        }
-                        pDeck.State.Remove(c);
-                    } else if (pDeck.StateContainsAny(c, CardState_Enum.Basic, CardState_Enum.Normal, CardState_Enum.Advanced)) {
-                        pDeck.State.Remove(c);
+                        D.C.Send_GameData();
+                        return;
                     }
                 }
             }
-            resetUnit(pd.Deck);
-            resetSkill(pd.Deck, false);
-            resetManaPool();
-            foreach (GameEffect_Enum ge in pd.GameEffects.Keys.ToArray()) {
-                CardVO c = D.GetGameEffectCard(ge);
-                switch (ge) {
-                    case GameEffect_Enum.AC_CrystalMastery: {
-                        CrystalData crystal = pd.Crystal;
-                        crystal.Blue += crystal.SpentBlue;
-                        crystal.Green += crystal.SpentGreen;
-                        crystal.Red += crystal.SpentRed;
-                        crystal.White += crystal.SpentWhite;
-                        break;
-                    }
-                    case GameEffect_Enum.SH_CrystalMines_Blue: {
-                        D.C.LogMessage("[Blue Crystal Mine] +1 Blue Crystal");
-                        pd.Crystal.Blue++;
-                        break;
-                    }
-                    case GameEffect_Enum.SH_CrystalMines_Red: {
-                        D.C.LogMessage("[Red Crystal Mine] +1 Red Crystal");
-                        pd.Crystal.Red++;
-                        break;
-                    }
-                    case GameEffect_Enum.SH_CrystalMines_Green: {
-                        D.C.LogMessage("[Green Crystal Mine] +1 Green Crystal");
-                        pd.Crystal.Green++;
-                        break;
-                    }
-                    case GameEffect_Enum.SH_CrystalMines_White: {
-                        D.C.LogMessage("[White Crystal Mine] +1 White Crystal");
-                        pd.Crystal.White++;
-                        break;
-                    }
-                    case GameEffect_Enum.T_ManaSearch02: {
-                        pd.RemoveGameEffect(GameEffect_Enum.T_ManaSearch02);
-                        pd.AddGameEffect(GameEffect_Enum.T_ManaSearch01);
-                        break;
-                    }
-                }
-                if (c.GameEffectDurationId == GameEffectDuration_Enum.Turn) {
-                    pd.RemoveGameEffect(ge);
-                }
-            }
-            D.G.TurnCounter++;
-            pd.ClearEndTurn();
-            pd.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
-        }
-
-        private void PlayerTurn_SetupTurn() {
             PlayerData localPlayer = D.LocalPlayer;
-            if (localPlayer.Equals(D.CurrentTurn)) {
-                Clear();
-                BasicUtil.UpdateMovementGameEffects(localPlayer);
-                localPlayer.PlayerTurnPhase = TurnPhase_Enum.NotifyTurn;
-                localPlayer.GameEffects.Keys.ForEach(ge => {
-                    switch (ge) {
-                        case GameEffect_Enum.SH_MagicGlade: {
-                            if (D.Scenario.isDay) {
-                                D.C.LogMessage("[Magical Glade] +1 Gold Mana");
-                                localPlayer.Mana.Gold++;
-                            } else {
-                                D.C.LogMessage("[Magical Glade] +1 Black Mana");
-                                localPlayer.Mana.Black++;
-                            }
-                            break;
-                        }
-                        case GameEffect_Enum.SH_City_Red_Own:
-                        case GameEffect_Enum.SH_City_Green_Own:
-                        case GameEffect_Enum.SH_City_White_Own:
-                        case GameEffect_Enum.SH_City_Blue_Own: {
-                            if (D.G.Monsters.Shield.ContainsKey(localPlayer.CurrentGridLoc)) {
-                                Image_Enum AvatarShieldId = D.AvatarMetaDataMap[localPlayer.Avatar].AvatarShieldId;
-                                D.G.Monsters.Shield[localPlayer.CurrentGridLoc].Values.ForEach(s => { if (s.Equals(AvatarShieldId)) { localPlayer.Influence++; } });
-                            }
-                            break;
-                        }
-                    }
-                });
-                D.C.Send_GameData();
-                PlayerTurn_SetupTurn_SparingPower(localPlayer);
+            switch (localPlayer.PlayerTurnPhase) {
+                case TurnPhase_Enum.SetupTurn: { PlayerTurn_SetupTurn(g, localPlayer); break; }
             }
         }
 
-        private void PlayerTurn_SetupTurn_SparingPower(PlayerData localPlayer) {
-            bool sparingPower = localPlayer.GameEffects.ContainsKey(GameEffect_Enum.T_SparingPower);
-            if (sparingPower) {
-                int powerDeckSize = localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Count - 1;
-                int deckSize = localPlayer.Deck.Deck.Count;
-                if (powerDeckSize == 0) {
-                    int topCardFromDeck = BasicUtil.DrawCard(localPlayer.Deck.Deck);
-                    localPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
-                    D.C.LogMessage("[Sparing Power] No cards in Sparing Power Deck, +1 Card to Sparing Power Deck!");
-                } else if (deckSize == 0) {
-                    D.C.LogMessage("[Sparing Power] No cards in Deck, Sparing Power Used!");
-                    localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
-                        if (c != 0) {
-                            localPlayer.Deck.Hand.Add(c);
-                        }
-                    });
-                    localPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
-                } else {
-                    ActionResultVO ar = new ActionResultVO(D.GetGameEffectCard(GameEffect_Enum.T_SparingPower).UniqueId, CardState_Enum.NA);
-                    ar.ActionIndex = 0;
-                    D.Action.SelectOptions(ar, null, PlayerTurn_SetupTurn_SparingPower_options, new OptionVO("Use Deck", Image_Enum.I_check), new OptionVO("+1 to Deck", Image_Enum.I_cardBackRounded));
-                    return;
-                }
-                D.C.Send_GameData();
-            }
-            PlayerTurn_SetupTurn_Notification(localPlayer);
+        public void PlayerTurn_SetupTurn(Data g, PlayerData l) {
+            Clear();
+            GameAPI ar = new GameAPI(g, l);
+            ar.StartOfTurnPanel(PlayerTurn_SetupTurnCallback);
         }
 
-        private void PlayerTurn_SetupTurn_SparingPower_options(ActionResultVO ar) {
-            switch (ar.SelectedButtonIndex) {
-                case 0: {
-                    ar.AddLog("Sparing Power Used!");
-                    ar.LocalPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
-                        if (c != 0) {
-                            ar.LocalPlayer.Deck.Hand.Add(c);
-                        }
-                    });
-                    ar.LocalPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
-                    ar.change();
-                    ar.CompleteAction();
-                    break;
-                }
-                case 1: {
-                    ar.AddLog("+1 Card to Sparing Power Deck!");
-                    int topCardFromDeck = BasicUtil.DrawCard(ar.LocalPlayer.Deck.Deck);
-                    ar.LocalPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
-                    ar.change();
-                    ar.CompleteAction();
-                    break;
-                }
-            }
-            PlayerTurn_SetupTurn_Notification(ar.LocalPlayer);
+        public void PlayerTurn_SetupTurnCallback(GameAPI ar) {
+            pd_StartOfTurn = ar.P.Clone();
+            ar.Push();
         }
 
 
-        private void PlayerTurn_SetupTurn_Notification(PlayerData localPlayer) {
-            bool forceDeclareEndOfRound = localPlayer.Deck.Deck.Count == 0 && localPlayer.Deck.Hand.Count == 0;
-            bool isExhausted = true;
-            localPlayer.Deck.Hand.ForEach(c => isExhausted = isExhausted && D.Cards[c].CardType == CardType_Enum.Wound);
-            bool endOfRoundDeclared = D.G.EndOfRound != -1;
-            StartOfTurnNotification(forceDeclareEndOfRound, isExhausted, endOfRoundDeclared);
-        }
+        //public void PlayerTurn_SetupTurn(PlayerData localPlayer) {
+        //    Clear();
+        //    BasicUtil.UpdateMovementGameEffects(localPlayer);
+        //    localPlayer.PlayerTurnPhase = TurnPhase_Enum.NotifyTurn;
+        //    localPlayer.GameEffects.Keys.ForEach(ge => {
+        //        switch (ge) {
+        //            case GameEffect_Enum.SH_MagicGlade: {
+        //                if (D.Scenario.isDay) {
+        //                    D.C.LogMessage("[Magical Glade] +1 Gold Mana");
+        //                    localPlayer.Mana.Gold++;
+        //                } else {
+        //                    D.C.LogMessage("[Magical Glade] +1 Black Mana");
+        //                    localPlayer.Mana.Black++;
+        //                }
+        //                break;
+        //            }
+        //            case GameEffect_Enum.SH_City_Red_Own:
+        //            case GameEffect_Enum.SH_City_Green_Own:
+        //            case GameEffect_Enum.SH_City_White_Own:
+        //            case GameEffect_Enum.SH_City_Blue_Own: {
+        //                if (D.G.Monsters.Shield.ContainsKey(localPlayer.CurrentGridLoc)) {
+        //                    Image_Enum AvatarShieldId = D.AvatarMetaDataMap[localPlayer.Avatar].AvatarShieldId;
+        //                    D.G.Monsters.Shield[localPlayer.CurrentGridLoc].Values.ForEach(s => { if (s.Equals(AvatarShieldId)) { localPlayer.Influence++; } });
+        //                }
+        //                break;
+        //            }
+        //        }
+        //    });
+        //    D.C.Send_GameData();
+        //    PlayerTurn_SetupTurn_SparingPower(localPlayer);
+        //}
+
+        //private void PlayerTurn_SetupTurn_SparingPower(PlayerData localPlayer) {
+        //    bool sparingPower = localPlayer.GameEffects.ContainsKey(GameEffect_Enum.T_SparingPower);
+        //    if (sparingPower) {
+        //        int powerDeckSize = localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Count - 1;
+        //        int deckSize = localPlayer.Deck.Deck.Count;
+        //        if (powerDeckSize == 0) {
+        //            int topCardFromDeck = BasicUtil.DrawCard(localPlayer.Deck.Deck);
+        //            localPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
+        //            D.C.LogMessage("[Sparing Power] No cards in Sparing Power Deck, +1 Card to Sparing Power Deck!");
+        //        } else if (deckSize == 0) {
+        //            D.C.LogMessage("[Sparing Power] No cards in Deck, Sparing Power Used!");
+        //            localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
+        //                if (c != 0) {
+        //                    localPlayer.Deck.Hand.Add(c);
+        //                }
+        //            });
+        //            localPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
+        //        } else {
+        //            ActionResultVO ar = new ActionResultVO(D.GetGameEffectCard(GameEffect_Enum.T_SparingPower).UniqueId, CardState_Enum.NA);
+        //            ar.ActionIndex = 0;
+        //            D.Action.SelectOptions(ar, null, PlayerTurn_SetupTurn_SparingPower_options, new OptionVO("Use Deck", Image_Enum.I_check), new OptionVO("+1 to Deck", Image_Enum.I_cardBackRounded));
+        //            return;
+        //        }
+        //        D.C.Send_GameData();
+        //    }
+        //    PlayerTurn_SetupTurn_Notification(localPlayer);
+        //}
+
+        //private void PlayerTurn_SetupTurn_SparingPower_options(ActionResultVO ar) {
+        //    switch (ar.SelectedButtonIndex) {
+        //        case 0: {
+        //            ar.AddLog("Sparing Power Used!");
+        //            ar.LocalPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
+        //                if (c != 0) {
+        //                    ar.LocalPlayer.Deck.Hand.Add(c);
+        //                }
+        //            });
+        //            ar.LocalPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
+        //            ar.change();
+        //            ar.CompleteAction();
+        //            break;
+        //        }
+        //        case 1: {
+        //            ar.AddLog("+1 Card to Sparing Power Deck!");
+        //            int topCardFromDeck = BasicUtil.DrawCard(ar.LocalPlayer.Deck.Deck);
+        //            ar.LocalPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
+        //            ar.change();
+        //            ar.CompleteAction();
+        //            break;
+        //        }
+        //    }
+        //    PlayerTurn_SetupTurn_Notification(ar.LocalPlayer);
+        //}
+
+
+        //private void PlayerTurn_SetupTurn_Notification(PlayerData localPlayer) {
+        //    bool forceDeclareEndOfRound = localPlayer.Deck.Deck.Count == 0 && localPlayer.Deck.Hand.Count == 0;
+        //    bool isExhausted = true;
+        //    localPlayer.Deck.Hand.ForEach(c => isExhausted = isExhausted && D.Cards[c].CardType == CardType_Enum.Wound);
+        //    bool endOfRoundDeclared = D.G.EndOfRound != -1;
+        //    StartOfTurnNotification(forceDeclareEndOfRound, isExhausted, endOfRoundDeclared);
+        //}
+
+        //public abstract void StartOfTurnNotification(bool forceDeclareEndOfRound, bool isExhausted, bool endOfRoundDeclared);
+
+        //public void OnClick_StartofTurnOkay(bool forceDeclareEndOfRound, bool isExhausted, bool endOfRoundDeclared) {
+        //    if (forceDeclareEndOfRound) {
+        //        if (D.G.EndOfRound == -1) {
+        //            D.G.EndOfRound = D.CurrentTurn.Key;
+        //        }
+        //        D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.EndTurn;
+        //    } else {
+        //        if (isExhausted) {
+        //            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.Exhaustion;
+        //            int cardid = D.LocalPlayer.Deck.Hand.Find(c => D.Cards[c].CardType == CardType_Enum.Wound);
+        //            if (cardid > 0) {
+        //                D.LocalPlayer.Deck.AddState(cardid, CardState_Enum.Discard);
+        //            }
+        //        } else {
+        //            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.StartTurn;
+        //        }
+        //        gd_StartOfTurn = D.G.Clone();
+        //    }
+        //    D.C.Send_GameData();
+        //}
 
         #endregion
 
-        #region PLAYER REWARDS
-
-        public void PlayerRewards() {
-            PlayerData localPlayer = D.LocalPlayer;
-            localPlayer.PlayerTurnPhase = TurnPhase_Enum.Reward;
-            CardVO Card = D.GetGameEffectCard(GameEffect_Enum.Rewards);
-            ActionResultVO ar = new ActionResultVO(D.G.Clone(), Card.UniqueId, CardState_Enum.NA, 0);
-            Card.OnClick_ActionButton(ar);
+        public virtual void New() {
+            screenState = ScreenState_Enum.Map;
+            masterGameData = new Data();
         }
 
-        #endregion
 
-        private void drawHand(PlayerDeckData p) {
-            int handLimit = p.TotalHandSize;
-            while (p.Deck.Count > 0 && p.Hand.Count < handLimit) {
-                p.Hand.Add(BasicUtil.DrawCard(p.Deck));
-            }
-        }
-        private void clearHand(PlayerDeckData p, CNAMap<GameEffect_Enum, WrapList<int>> gameEffects) {
-            foreach (int c in p.Hand.ToArray()) {
-                if (p.State.ContainsKey(c)) {
-                    if (p.StateContainsAny(c, CardState_Enum.Discard, CardState_Enum.Basic, CardState_Enum.Normal, CardState_Enum.Advanced, CardState_Enum.Trashed)) {
-                        p.Hand.Remove(c);
-                        if (!p.StateContains(c, CardState_Enum.Trashed)) {
-                            bool steadyTempNormal = gameEffects.ContainsKey(GameEffect_Enum.AC_SteadyTempo01);
-                            bool steadyTempAdvanced = gameEffects.ContainsKey(GameEffect_Enum.AC_SteadyTempo02);
-                            if (p.Deck.Count > 0 && (steadyTempNormal || steadyTempAdvanced)) {
-                                if (steadyTempNormal) {
-                                    p.Deck.Add(c);
-                                } else {
-                                    p.Deck.Insert(0, c);
-                                }
-                            } else {
-                                p.Discard.Add(c);
-                            }
-                        }
-                        p.State.Remove(c);
-                    }
-                }
-            }
-        }
-        private void resetSkill(PlayerDeckData p, bool round) {
-            foreach (int c in p.Skill.ToArray()) {
-                if (p.State.ContainsKey(c)) {
-                    SkillRefresh_Enum refresh = D.Cards[c].SkillRefresh;
-                    if (round || refresh == SkillRefresh_Enum.Turn) {
-                        p.State.Remove(c);
-                    }
-                }
-            }
-        }
-        private void resetUnit(PlayerDeckData p) {
-            foreach (int c in p.Unit.ToArray()) {
-                if (p.State.ContainsKey(c)) {
-                    if (p.State[c].Values.Contains(CardState_Enum.Unit_Paralyzed)) {
-                        p.State.Remove(c);
-                        p.Unit.Remove(c);
-                    }
-                    p.State[c].Values.Remove(CardState_Enum.Unit_UsedInBattle);
-                    if (p.State[c].Count == 0) {
-                        p.State.Remove(c);
-                    }
-                }
-            }
-        }
-        private void resetManaPool() {
-            bool manaSteal = false;
-            D.G.Players.ForEach(p => {
-                manaSteal |= p.GameEffects.ContainsKey(GameEffect_Enum.T_ManaSteal);
-            });
-            int totalDie = D.G.Players.Count + 2;
-            if (D.Board.DummyPlayer) {
-                totalDie--;
-            }
-            if (manaSteal) {
-                totalDie--;
-            }
-            int currentManaTotal = D.G.Board.ManaPool.Count;
-            for (int i = currentManaTotal; i < totalDie; i++) {
-                D.G.Board.ManaPool.Add((Crystal_Enum)UnityEngine.Random.Range(1, 7));
-            }
-        }
-        public void OnClick_StartofTurnOkay(bool forceDeclareEndOfRound, bool isExhausted, bool endOfRoundDeclared) {
-            if (forceDeclareEndOfRound) {
-                if (D.G.EndOfRound == -1) {
-                    D.G.EndOfRound = D.CurrentTurn.Key;
-                }
-                D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.EndTurn;
-            } else {
-                if (isExhausted) {
-                    D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.Exhaustion;
-                    int cardid = D.LocalPlayer.Deck.Hand.Find(c => D.Cards[c].CardType == CardType_Enum.Wound);
-                    if (cardid > 0) {
-                        D.LocalPlayer.Deck.AddState(cardid, CardState_Enum.Discard);
-                    }
-                } else {
-                    D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.StartTurn;
-                }
-                gd_StartOfTurn = D.G.Clone();
-            }
-            D.C.Send_GameData();
-        }
+        //  MIGHT RETHING LOCATION OF THESE
+        internal ScenarioBase scenario;
+        internal ScreenState_Enum screenState = ScreenState_Enum.Map;
+        public abstract void StartTacticsPanel();
+        private bool gd_StartOfTurnFlag = false;
+        public bool Gd_StartOfTurnFlag { get => gd_StartOfTurnFlag; set => gd_StartOfTurnFlag = value; }
+        internal PlayerData pd_StartOfTurn = new PlayerData();
 
-        #region GameWorld Buttons
+
+
+
+
+
+
+
+
+
+        //#region PLAYER TURN
+        //private void PlayerTurn() {
+        //    switch (D.CurrentTurn.PlayerTurnPhase) {
+        //        case TurnPhase_Enum.HostSaveGame: { PlayerTurn_HostSaveGame(); break; }
+        //        case TurnPhase_Enum.SetupTurn: { PlayerTurn_SetupTurn(); break; }
+        //        case TurnPhase_Enum.EndTurn: { PlayerTurn_EndTurn(); break; }
+        //    }
+        //}
+
+        //private void PlayerTurn_HostSaveGame() {
+        //    if (D.isHost) {
+        //        PlayerData currentPlayer = D.CurrentTurn;
+        //        if (currentPlayer.DummyPlayer) {
+        //            currentPlayer.PlayerTurnPhase = TurnPhase_Enum.EndTurn;
+        //        } else {
+        //            currentPlayer.PlayerTurnPhase = TurnPhase_Enum.SetupTurn;
+        //            BasicUtil.SaveGameToFile(D.G);
+        //        }
+        //        D.C.Send_GameData();
+        //    }
+        //}
+
+        //private void PlayerTurn_EndTurn() {
+        //    if (D.isHost) {
+        //        PlayerData currentPlayer = D.CurrentTurn;
+        //        if (currentPlayer.DummyPlayer) {
+        //            if (currentPlayer.Deck.Deck.Count == 0) {
+        //                D.G.EndOfRound = currentPlayer.Key;
+        //            } else {
+        //                CardColor_Enum cardColor = CardColor_Enum.NA;
+        //                int totalCards = 0;
+        //                int cardId = 0;
+        //                for (int i = 0; i < 3; i++) {
+        //                    if (currentPlayer.Deck.Deck.Count > 0) {
+        //                        cardId = BasicUtil.DrawCard(currentPlayer.Deck.Deck);
+        //                        currentPlayer.Deck.Discard.Add(cardId);
+        //                        totalCards++;
+        //                    }
+        //                }
+        //                if (currentPlayer.Deck.Deck.Count > 0) {
+        //                    int extra = 0;
+        //                    cardColor = D.Cards[cardId].CardColor;
+        //                    switch (cardColor) {
+        //                        case CardColor_Enum.Blue: { extra = currentPlayer.Crystal.Blue; break; }
+        //                        case CardColor_Enum.Red: { extra = currentPlayer.Crystal.Red; break; }
+        //                        case CardColor_Enum.Green: { extra = currentPlayer.Crystal.Green; break; }
+        //                        case CardColor_Enum.White: { extra = currentPlayer.Crystal.White; break; }
+        //                    }
+        //                    for (int i = 0; i < extra; i++) {
+        //                        if (currentPlayer.Deck.Deck.Count > 0) {
+        //                            cardId = BasicUtil.DrawCard(currentPlayer.Deck.Deck);
+        //                            currentPlayer.Deck.Discard.Add(cardId);
+        //                            totalCards++;
+        //                        }
+        //                    }
+        //                }
+        //                string msg = "Total Cards " + totalCards;
+        //                if (cardColor != CardColor_Enum.NA) {
+        //                    msg += " (" + cardColor + ")";
+        //                }
+        //                D.C.LogMessageDummy(msg);
+        //            }
+
+        //            D.G.PlayerTurnIndex++;
+        //            if (D.G.EndOfRound == D.CurrentTurn.Key) {
+        //                D.C.LogMessageDummy("End of Round Declared!");
+        //                D.G.GameStatus = Game_Enum.New_Round;
+        //            } else {
+        //                D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
+        //            }
+        //        } else {
+        //            if (currentPlayer.GameEffects.ContainsKey(GameEffect_Enum.CS_TimeBending)) {
+        //                TimeBend(currentPlayer);
+        //            } else {
+        //                bool theRightMoment = currentPlayer.GameEffects.ContainsKey(GameEffect_Enum.T_TheRightMoment02);
+        //                clearHand(currentPlayer.Deck, currentPlayer.GameEffects);
+        //                resetUnit(currentPlayer.Deck);
+        //                resetSkill(currentPlayer.Deck, false);
+        //                int cardsLeftInHand = currentPlayer.Deck.Hand.Count;
+        //                drawHand(currentPlayer.Deck);
+        //                resetManaPool();
+        //                foreach (GameEffect_Enum ge in currentPlayer.GameEffects.Keys.ToArray()) {
+        //                    CardVO c = D.GetGameEffectCard(ge);
+        //                    switch (ge) {
+        //                        case GameEffect_Enum.AC_CrystalMastery: {
+        //                            CrystalData crystal = currentPlayer.Crystal;
+        //                            crystal.Blue += crystal.SpentBlue;
+        //                            crystal.Green += crystal.SpentGreen;
+        //                            crystal.Red += crystal.SpentRed;
+        //                            crystal.White += crystal.SpentWhite;
+        //                            break;
+        //                        }
+        //                        case GameEffect_Enum.SH_CrystalMines_Blue: {
+        //                            D.C.LogMessage("[Blue Crystal Mine] +1 Blue Crystal");
+        //                            currentPlayer.Crystal.Blue++;
+        //                            break;
+        //                        }
+        //                        case GameEffect_Enum.SH_CrystalMines_Red: {
+        //                            D.C.LogMessage("[Red Crystal Mine] +1 Red Crystal");
+        //                            currentPlayer.Crystal.Red++;
+        //                            break;
+        //                        }
+        //                        case GameEffect_Enum.SH_CrystalMines_Green: {
+        //                            D.C.LogMessage("[Green Crystal Mine] +1 Green Crystal");
+        //                            currentPlayer.Crystal.Green++;
+        //                            break;
+        //                        }
+        //                        case GameEffect_Enum.SH_CrystalMines_White: {
+        //                            D.C.LogMessage("[White Crystal Mine] +1 White Crystal");
+        //                            currentPlayer.Crystal.White++;
+        //                            break;
+        //                        }
+        //                        case GameEffect_Enum.T_Planning: {
+        //                            if (cardsLeftInHand >= 2) {
+        //                                D.C.LogMessage("[Planning] +1 Card");
+        //                                if (currentPlayer.Deck.Deck.Count > 0) {
+        //                                    currentPlayer.Deck.Hand.Add(BasicUtil.DrawCard(currentPlayer.Deck.Deck));
+        //                                }
+        //                            }
+        //                            break;
+        //                        }
+        //                        case GameEffect_Enum.T_ManaSearch02: {
+        //                            currentPlayer.RemoveGameEffect(GameEffect_Enum.T_ManaSearch02);
+        //                            currentPlayer.AddGameEffect(GameEffect_Enum.T_ManaSearch01);
+        //                            break;
+        //                        }
+        //                    }
+        //                    if (c.GameEffectDurationId == GameEffectDuration_Enum.Turn) {
+        //                        currentPlayer.RemoveGameEffect(ge);
+        //                    }
+        //                }
+        //                currentPlayer.ClearEndTurn();
+        //                if (theRightMoment) {
+        //                    D.C.LogMessage("[The Right Moment] Taking another turn!");
+        //                } else {
+        //                    D.G.PlayerTurnIndex++;
+        //                }
+        //                D.G.TurnCounter++;
+        //                if (D.G.EndOfRound == D.CurrentTurn.Key) {
+        //                    D.G.GameStatus = Game_Enum.New_Round;
+        //                } else {
+        //                    D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
+        //                }
+        //            }
+        //        }
+        //        D.C.Send_GameData();
+        //    }
+        //}
+
+        //private void TimeBend(PlayerData pd) {
+        //    PlayerDeckData pDeck = pd.Deck;
+        //    pd.ActionTaken = false;
+        //    foreach (int c in pDeck.Hand.ToArray()) {
+        //        if (pDeck.State.ContainsKey(c)) {
+        //            if (pDeck.StateContainsAny(c, CardState_Enum.Discard, CardState_Enum.Trashed)) {
+        //                pDeck.Hand.Remove(c);
+        //                if (!pDeck.StateContains(c, CardState_Enum.Trashed)) {
+        //                    pDeck.Discard.Add(c);
+        //                }
+        //                pDeck.State.Remove(c);
+        //            } else if (pDeck.StateContainsAny(c, CardState_Enum.Basic, CardState_Enum.Normal, CardState_Enum.Advanced)) {
+        //                pDeck.State.Remove(c);
+        //            }
+        //        }
+        //    }
+        //    resetUnit(pd.Deck);
+        //    resetSkill(pd.Deck, false);
+        //    resetManaPool();
+        //    foreach (GameEffect_Enum ge in pd.GameEffects.Keys.ToArray()) {
+        //        CardVO c = D.GetGameEffectCard(ge);
+        //        switch (ge) {
+        //            case GameEffect_Enum.AC_CrystalMastery: {
+        //                CrystalData crystal = pd.Crystal;
+        //                crystal.Blue += crystal.SpentBlue;
+        //                crystal.Green += crystal.SpentGreen;
+        //                crystal.Red += crystal.SpentRed;
+        //                crystal.White += crystal.SpentWhite;
+        //                break;
+        //            }
+        //            case GameEffect_Enum.SH_CrystalMines_Blue: {
+        //                D.C.LogMessage("[Blue Crystal Mine] +1 Blue Crystal");
+        //                pd.Crystal.Blue++;
+        //                break;
+        //            }
+        //            case GameEffect_Enum.SH_CrystalMines_Red: {
+        //                D.C.LogMessage("[Red Crystal Mine] +1 Red Crystal");
+        //                pd.Crystal.Red++;
+        //                break;
+        //            }
+        //            case GameEffect_Enum.SH_CrystalMines_Green: {
+        //                D.C.LogMessage("[Green Crystal Mine] +1 Green Crystal");
+        //                pd.Crystal.Green++;
+        //                break;
+        //            }
+        //            case GameEffect_Enum.SH_CrystalMines_White: {
+        //                D.C.LogMessage("[White Crystal Mine] +1 White Crystal");
+        //                pd.Crystal.White++;
+        //                break;
+        //            }
+        //            case GameEffect_Enum.T_ManaSearch02: {
+        //                pd.RemoveGameEffect(GameEffect_Enum.T_ManaSearch02);
+        //                pd.AddGameEffect(GameEffect_Enum.T_ManaSearch01);
+        //                break;
+        //            }
+        //        }
+        //        if (c.GameEffectDurationId == GameEffectDuration_Enum.Turn) {
+        //            pd.RemoveGameEffect(ge);
+        //        }
+        //    }
+        //    D.G.TurnCounter++;
+        //    pd.ClearEndTurn();
+        //    pd.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
+        //}
+
+        //private void PlayerTurn_SetupTurn() {
+        //    PlayerData localPlayer = D.LocalPlayer;
+        //    if (localPlayer.Equals(D.CurrentTurn)) {
+        //        Clear();
+        //        BasicUtil.UpdateMovementGameEffects(localPlayer);
+        //        localPlayer.PlayerTurnPhase = TurnPhase_Enum.NotifyTurn;
+        //        localPlayer.GameEffects.Keys.ForEach(ge => {
+        //            switch (ge) {
+        //                case GameEffect_Enum.SH_MagicGlade: {
+        //                    if (D.Scenario.isDay) {
+        //                        D.C.LogMessage("[Magical Glade] +1 Gold Mana");
+        //                        localPlayer.Mana.Gold++;
+        //                    } else {
+        //                        D.C.LogMessage("[Magical Glade] +1 Black Mana");
+        //                        localPlayer.Mana.Black++;
+        //                    }
+        //                    break;
+        //                }
+        //                case GameEffect_Enum.SH_City_Red_Own:
+        //                case GameEffect_Enum.SH_City_Green_Own:
+        //                case GameEffect_Enum.SH_City_White_Own:
+        //                case GameEffect_Enum.SH_City_Blue_Own: {
+        //                    if (D.G.Monsters.Shield.ContainsKey(localPlayer.CurrentGridLoc)) {
+        //                        Image_Enum AvatarShieldId = D.AvatarMetaDataMap[localPlayer.Avatar].AvatarShieldId;
+        //                        D.G.Monsters.Shield[localPlayer.CurrentGridLoc].Values.ForEach(s => { if (s.Equals(AvatarShieldId)) { localPlayer.Influence++; } });
+        //                    }
+        //                    break;
+        //                }
+        //            }
+        //        });
+        //        D.C.Send_GameData();
+        //        PlayerTurn_SetupTurn_SparingPower(localPlayer);
+        //    }
+        //}
+
+        //private void PlayerTurn_SetupTurn_SparingPower(PlayerData localPlayer) {
+        //    bool sparingPower = localPlayer.GameEffects.ContainsKey(GameEffect_Enum.T_SparingPower);
+        //    if (sparingPower) {
+        //        int powerDeckSize = localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Count - 1;
+        //        int deckSize = localPlayer.Deck.Deck.Count;
+        //        if (powerDeckSize == 0) {
+        //            int topCardFromDeck = BasicUtil.DrawCard(localPlayer.Deck.Deck);
+        //            localPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
+        //            D.C.LogMessage("[Sparing Power] No cards in Sparing Power Deck, +1 Card to Sparing Power Deck!");
+        //        } else if (deckSize == 0) {
+        //            D.C.LogMessage("[Sparing Power] No cards in Deck, Sparing Power Used!");
+        //            localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
+        //                if (c != 0) {
+        //                    localPlayer.Deck.Hand.Add(c);
+        //                }
+        //            });
+        //            localPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
+        //        } else {
+        //            ActionResultVO ar = new ActionResultVO(D.GetGameEffectCard(GameEffect_Enum.T_SparingPower).UniqueId, CardState_Enum.NA);
+        //            ar.ActionIndex = 0;
+        //            D.Action.SelectOptions(ar, null, PlayerTurn_SetupTurn_SparingPower_options, new OptionVO("Use Deck", Image_Enum.I_check), new OptionVO("+1 to Deck", Image_Enum.I_cardBackRounded));
+        //            return;
+        //        }
+        //        D.C.Send_GameData();
+        //    }
+        //    PlayerTurn_SetupTurn_Notification(localPlayer);
+        //}
+
+        //private void PlayerTurn_SetupTurn_SparingPower_options(ActionResultVO ar) {
+        //    switch (ar.SelectedButtonIndex) {
+        //        case 0: {
+        //            ar.AddLog("Sparing Power Used!");
+        //            ar.LocalPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
+        //                if (c != 0) {
+        //                    ar.LocalPlayer.Deck.Hand.Add(c);
+        //                }
+        //            });
+        //            ar.LocalPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
+        //            ar.change();
+        //            ar.CompleteAction();
+        //            break;
+        //        }
+        //        case 1: {
+        //            ar.AddLog("+1 Card to Sparing Power Deck!");
+        //            int topCardFromDeck = BasicUtil.DrawCard(ar.LocalPlayer.Deck.Deck);
+        //            ar.LocalPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
+        //            ar.change();
+        //            ar.CompleteAction();
+        //            break;
+        //        }
+        //    }
+        //    PlayerTurn_SetupTurn_Notification(ar.LocalPlayer);
+        //}
+
+
+        //private void PlayerTurn_SetupTurn_Notification(PlayerData localPlayer) {
+        //    bool forceDeclareEndOfRound = localPlayer.Deck.Deck.Count == 0 && localPlayer.Deck.Hand.Count == 0;
+        //    bool isExhausted = true;
+        //    localPlayer.Deck.Hand.ForEach(c => isExhausted = isExhausted && D.Cards[c].CardType == CardType_Enum.Wound);
+        //    bool endOfRoundDeclared = D.G.EndOfRound != -1;
+        //    StartOfTurnNotification(forceDeclareEndOfRound, isExhausted, endOfRoundDeclared);
+        //}
+
+        //#endregion
+
+
+
+
+        //private void resetSkill(PlayerDeckData p, bool round) {
+        //    foreach (int c in p.Skill.ToArray()) {
+        //        if (p.State.ContainsKey(c)) {
+        //            SkillRefresh_Enum refresh = D.Cards[c].SkillRefresh;
+        //            if (round || refresh == SkillRefresh_Enum.Turn) {
+        //                p.State.Remove(c);
+        //            }
+        //        }
+        //    }
+        //}
+        //private void resetUnit(PlayerDeckData p) {
+        //    foreach (int c in p.Unit.ToArray()) {
+        //        if (p.State.ContainsKey(c)) {
+        //            if (p.State[c].Values.Contains(CardState_Enum.Unit_Paralyzed)) {
+        //                p.State.Remove(c);
+        //                p.Unit.Remove(c);
+        //            }
+        //            p.State[c].Values.Remove(CardState_Enum.Unit_UsedInBattle);
+        //            if (p.State[c].Count == 0) {
+        //                p.State.Remove(c);
+        //            }
+        //        }
+        //    }
+        //}
+        //private void resetManaPool() {
+        //    bool manaSteal = false;
+        //    D.G.Players.ForEach(p => {
+        //        manaSteal |= p.GameEffects.ContainsKey(GameEffect_Enum.T_ManaSteal);
+        //    });
+        //    int totalDie = D.G.Players.Count + 2;
+        //    if (D.GLD.DummyPlayer) {
+        //        totalDie--;
+        //    }
+        //    if (manaSteal) {
+        //        totalDie--;
+        //    }
+        //    int currentManaTotal = D.G.Board.ManaPool.Count;
+        //    for (int i = currentManaTotal; i < totalDie; i++) {
+        //        D.G.Board.ManaPool.Add((Crystal_Enum)UnityEngine.Random.Range(1, 7));
+        //    }
+        //}
+
+
+        //#region GameWorld Buttons
 
         public void OnClick_Undo() {
             D.C.LogMessage("[Undo]");
-            gameData = gd_StartOfTurn.Clone();
+            int localPlayerKey = D.LocalPlayerKey;
+            masterGameData.Players.Find(p => p.Key == localPlayerKey).UpdateData(pd_StartOfTurn.Clone());
             Clear();
-            D.C.Send_GameData();
+            D.C.Send_PlayerData();
         }
-        #endregion
+        //#endregion
 
-        public abstract void Clear();
-        public abstract void StartOfTurnNotification(bool forceDeclareEndOfRound, bool isExhausted, bool endOfRoundDeclared);
-        public abstract void StartTacticsPanel();
     }
 }

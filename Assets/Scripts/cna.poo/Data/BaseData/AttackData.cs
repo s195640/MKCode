@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public class AttackData : Data {
+    public class AttackData : BaseData {
         public AttackData() {
             Clear();
         }

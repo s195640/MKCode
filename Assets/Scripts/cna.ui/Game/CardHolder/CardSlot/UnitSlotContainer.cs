@@ -185,7 +185,7 @@ namespace cna.ui {
         public void OnClick_ActionUnitButton(int i) {
             ICNA_Base clicked = UnitButtons[i];
             int index = card.Actions.Count == 2 ? i : (i - 2);
-            ActionResultVO ar = new ActionResultVO(D.G.Clone(), card.UniqueId, CardState_Enum.Unit_Exhausted, index);
+            GameAPI ar = new GameAPI(card.UniqueId, CardState_Enum.Unit_Exhausted, index);
             ActionCardSlot.OnClick_ActionUnitButton(ar, clicked);
         }
     }

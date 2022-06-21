@@ -2,8 +2,8 @@ using cna.poo;
 namespace cna {
     public partial class BLUE_ColdSwordsmanshipVO : CardSkillVO {
 
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
-            switch (ar.LocalPlayer.Battle.BattlePhase) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
+            switch (ar.P.Battle.BattlePhase) {
                 case BattlePhase_Enum.Attack: {
                     ar.SelectOptions(acceptCallback_00,
                         new OptionVO("Attack 2", Image_Enum.I_attack),
@@ -14,7 +14,7 @@ namespace cna {
             }
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     ar.BattleAttack(new AttackData(2));

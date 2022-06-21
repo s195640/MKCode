@@ -1,12 +1,12 @@
 using cna.poo;
 namespace cna {
     public partial class WHITE_InspirationVO : CardSkillVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             ar.SelectSingleCard(acceptCallback_00);
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
-            CNAMap<int, WrapList<CardState_Enum>> state = ar.LocalPlayer.Deck.State;
+        public void acceptCallback_00(GameAPI ar) {
+            CNAMap<int, WrapList<CardState_Enum>> state = ar.P.Deck.State;
             bool exhausted = state[ar.SelectedUniqueCardId].ContainsAny(CardState_Enum.Unit_Exhausted);
             bool wounded = state[ar.SelectedUniqueCardId].ContainsAny(CardState_Enum.Unit_Wounded);
             bool poisoned = state[ar.SelectedUniqueCardId].ContainsAny(CardState_Enum.Unit_Poisoned);
@@ -24,14 +24,14 @@ namespace cna {
             }
             ar.FinishCallback(ar);
         }
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     ar.RemoveCardState(ar.SelectedUniqueCardId, CardState_Enum.Unit_Exhausted);
                     break;
                 }
                 case 1: {
-                    bool poisoned = ar.LocalPlayer.Deck.State[ar.SelectedUniqueCardId].ContainsAny(CardState_Enum.Unit_Poisoned);
+                    bool poisoned = ar.P.Deck.State[ar.SelectedUniqueCardId].ContainsAny(CardState_Enum.Unit_Poisoned);
                     if (poisoned) {
                         ar.RemoveCardState(ar.SelectedUniqueCardId, CardState_Enum.Unit_Poisoned);
                     } else {
@@ -43,7 +43,7 @@ namespace cna {
             ar.FinishCallback(ar);
         }
 
-        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, ActionResultVO ar) {
+        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, GameAPI ar) {
             string msg = "";
             if (cardHolder != CardHolder_Enum.PlayerUnitHand) {
                 return "You must selet a unit from your hand!";

@@ -2,14 +2,14 @@
 
 namespace cna {
     public partial class TranquilityVO : CardActionVO {
-        public override void ActionPaymentComplete_00(ActionResultVO ar) {
+        public override void ActionPaymentComplete_00(GameAPI ar) {
             ar.SelectOptions(acceptCallback_00,
                 new OptionVO("Healing", Image_Enum.I_healHand),
                 new OptionVO("Draw Card", Image_Enum.I_cardBackRounded)
                 );
         }
 
-        public void acceptCallback_00(ActionResultVO ar) {
+        public void acceptCallback_00(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     ar.Healing(1);
@@ -23,14 +23,14 @@ namespace cna {
             }
         }
 
-        public override void ActionPaymentComplete_01(ActionResultVO ar) {
+        public override void ActionPaymentComplete_01(GameAPI ar) {
             ar.SelectOptions(acceptCallback_01,
                 new OptionVO("Healing", Image_Enum.I_healHand),
                 new OptionVO("Draw Card", Image_Enum.I_cardBackRounded)
                 );
         }
 
-        public void acceptCallback_01(ActionResultVO ar) {
+        public void acceptCallback_01(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     ar.Healing(2);

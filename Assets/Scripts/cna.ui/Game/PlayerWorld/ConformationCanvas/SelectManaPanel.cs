@@ -14,16 +14,16 @@ namespace cna.ui {
 
         [SerializeField] private CNA_Button[] manaDie;
 
-        private ActionResultVO ar;
+        private GameAPI ar;
         private string title;
         private V2IntVO selectCount;
         private List<CNA_Button> buttonSlots = new List<CNA_Button>();
-        private List<Action<ActionResultVO>> buttonCallback;
+        private List<Action<GameAPI>> buttonCallback;
         private List<bool> buttonForce;
         private List<int> selectedIndexes;
         private List<Image_Enum> die;
 
-        public void SetupUI(ActionResultVO ar, List<Image_Enum> die, string title, string description, V2IntVO selectCount, Image_Enum selectionImage, List<string> buttonText, List<Color> buttonColor, List<Action<ActionResultVO>> buttonCallback, List<bool> buttonForce) {
+        public void SetupUI(GameAPI ar, List<Image_Enum> die, string title, string description, V2IntVO selectCount, Image_Enum selectionImage, List<string> buttonText, List<Color> buttonColor, List<Action<GameAPI>> buttonCallback, List<bool> buttonForce) {
             gameObject.SetActive(true);
             selectedIndexes = new List<int>();
             this.ar = ar;

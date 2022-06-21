@@ -7,8 +7,8 @@ using UnityEngine.UI;
 namespace cna.ui {
     public class LevelUpPanel : BasePanel {
 
-        private ActionResultVO ar;
-        private Action<ActionResultVO> callback;
+        private GameAPI ar;
+        private Action<GameAPI> callback;
         private List<int> actionOffering;
         private List<int> skillOffering;
         private List<int> skills;
@@ -28,7 +28,7 @@ namespace cna.ui {
         private int skillOfferingIndex;
         private int skillIndex;
 
-        public void SetupUI(ActionResultVO ar, Action<ActionResultVO> callback, List<int> actionOffering, List<int> skillOffering, List<int> skills) {
+        public void SetupUI(GameAPI ar, Action<GameAPI> callback, List<int> actionOffering, List<int> skillOffering, List<int> skills) {
             this.ar = ar;
             this.callback = callback;
             this.actionOffering = actionOffering;

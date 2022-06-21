@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public abstract class Data {
-        public Data() { }
+    public abstract class BaseData {
+        public BaseData() { }
         public override string ToString() {
             return JsonUtility.ToJson(this, true);
         }

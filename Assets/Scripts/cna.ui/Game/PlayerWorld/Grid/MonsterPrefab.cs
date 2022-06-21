@@ -14,7 +14,7 @@ namespace cna.ui {
 
         public V2IntVO Location { get => location; set => location = value; }
         public Vector3 ScreenLocation { get => screenLocation; set => screenLocation = value; }
-        public List<int> Monsters { get => D.G.Monsters.Map[Location].Values; }
+        public List<int> Monsters { get => D.LocalPlayer.Board.MonsterData[Location].Values; }
 
         public void UpdateUI() {
             transform.position = ScreenLocation;

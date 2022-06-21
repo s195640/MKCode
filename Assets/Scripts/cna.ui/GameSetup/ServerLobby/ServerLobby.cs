@@ -52,7 +52,7 @@ namespace cna.ui {
         public void JoinGame_OnClick(LobbyData lgd) {
             disableScreen.SetActive(true);
             D.ClientState = ClientState_Enum.CONNECTED_JOINING_GAME;
-            D.G.GameId = lgd.GameId;
+            D.GLD.GameId = lgd.GameId;
             D.C.Send_JoinGame(lgd.HostPlayer.Key, lgd.GameId);
         }
 

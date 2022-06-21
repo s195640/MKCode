@@ -33,5 +33,7 @@ namespace cna {
         public static Color LearnSpell = ColorLightGreen;
         public static Color CityGreen_LearnAction = ColorLightGreen;
         public static Color BlueSelect = new Color32(72, 118, 145, 255);
+
+        public static Color BlueBackgroundColor = new Color32(44, 97, 128, 255);
     }
 }

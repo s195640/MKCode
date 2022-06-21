@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
-    public class wsData : Data {
+    public class wsData : BaseData {
         public mType_Enum type;
         public byte[] byteMsg;
         public string textMsg_01;
         public string textMsg_02;
         public int intMsg;
         public int sender;
-        [NonSerialized] private Data msg;
+        [NonSerialized] private BaseData msg;
 
         //public I getData<I>() where I : Data {
         //    if (msg == null) {
@@ -21,7 +21,7 @@ namespace cna.poo {
         //    return (I)msg;
         //}
 
-        public I getData<I>() where I : Data {
+        public I getData<I>() where I : BaseData {
             if (msg == null) {
                 msg = (I)Activator.CreateInstance(typeof(I));
                 msg.Deserialize(textMsg_01);
@@ -37,7 +37,7 @@ namespace cna.poo {
         public wsData(mType_Enum type, int msg, int sender) : this(type, sender) {
             intMsg = msg;
         }
-        public wsData(mType_Enum type, int intMsg, Data data, int sender) : this(type, sender) {
+        public wsData(mType_Enum type, int intMsg, BaseData data, int sender) : this(type, sender) {
             this.intMsg = intMsg;
             this.msg = data;
             textMsg_01 = JsonUtility.ToJson(data);
@@ -47,11 +47,11 @@ namespace cna.poo {
             textMsg_01 = msg;
         }
 
-        public wsData(mType_Enum type, Data data, int sender) : this(type, sender) {
+        public wsData(mType_Enum type, BaseData data, int sender) : this(type, sender) {
             this.msg = data;
             textMsg_01 = JsonUtility.ToJson(data);
         }
-        public wsData(mType_Enum type, string msg, Data data, int sender) : this(type, sender) {
+        public wsData(mType_Enum type, string msg, BaseData data, int sender) : this(type, sender) {
             this.msg = data;
             textMsg_01 = JsonUtility.ToJson(data);
             textMsg_02 = msg;

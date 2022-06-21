@@ -173,7 +173,7 @@ namespace cna.ui {
                 });
                 MagicGlade_woundInDiscard = localPlayer.Deck.Discard.Find(c => D.Cards[c].CardType == CardType_Enum.Wound);
                 if (MagicGlade_woundInHand > 0 || MagicGlade_woundInDiscard > 0 || MagicGlade_woundInHandDiscard > 0) {
-                    ActionResultVO ar = new ActionResultVO(D.GetGameEffectCard(GameEffect_Enum.SH_MagicGlade).UniqueId, CardState_Enum.NA, 0);
+                    GameAPI ar = new GameAPI(D.GetGameEffectCard(GameEffect_Enum.SH_MagicGlade).UniqueId, CardState_Enum.NA, 0);
                     if (MagicGlade_woundInHand > 0 && (MagicGlade_woundInDiscard > 0 || MagicGlade_woundInHandDiscard > 0)) {
                         D.Action.SelectOptions(ar, EndOfTurn_MagicGladeReject, EndOfTurn_MagicGladeAccept, new OptionVO("Wound From Hand", Image_Enum.I_healHand), new OptionVO("Wound From Discard", Image_Enum.I_healHand));
                     } else {
@@ -186,22 +186,22 @@ namespace cna.ui {
                 EndOfTurn_Result();
             }
         }
-        public void EndOfTurn_MagicGladeReject(ActionResultVO ar) {
+        public void EndOfTurn_MagicGladeReject(GameAPI ar) {
             D.C.LogMessage("[Magical Glade] - No wound removed, rejected by player!");
             EndOfTurn_Result();
         }
-        public void EndOfTurn_MagicGladeAccept(ActionResultVO ar) {
+        public void EndOfTurn_MagicGladeAccept(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
                 case 0: {
                     if (MagicGlade_woundInHand > 0) {
                         D.C.LogMessage("[Magical Glade] - Wound in hand Trashed!");
-                        ar.LocalPlayer.Deck.AddState(MagicGlade_woundInHand, CardState_Enum.Trashed);
+                        ar.P.Deck.AddState(MagicGlade_woundInHand, CardState_Enum.Trashed);
                     } else {
                         D.C.LogMessage("[Magical Glade] - Wound in discard Trashed!");
                         if (MagicGlade_woundInHandDiscard > 0) {
-                            ar.LocalPlayer.Deck.AddState(MagicGlade_woundInHandDiscard, CardState_Enum.Trashed);
+                            ar.P.Deck.AddState(MagicGlade_woundInHandDiscard, CardState_Enum.Trashed);
                         } else {
-                            ar.LocalPlayer.Deck.Discard.Remove(MagicGlade_woundInDiscard);
+                            ar.P.Deck.Discard.Remove(MagicGlade_woundInDiscard);
                         }
                     }
                     break;
@@ -209,9 +209,9 @@ namespace cna.ui {
                 case 1: {
                     D.C.LogMessage("[Magical Glade] - Wound in discard Trashed!");
                     if (MagicGlade_woundInHandDiscard > 0) {
-                        ar.LocalPlayer.Deck.AddState(MagicGlade_woundInHandDiscard, CardState_Enum.Trashed);
+                        ar.P.Deck.AddState(MagicGlade_woundInHandDiscard, CardState_Enum.Trashed);
                     } else {
-                        ar.LocalPlayer.Deck.Discard.Remove(MagicGlade_woundInDiscard);
+                        ar.P.Deck.Discard.Remove(MagicGlade_woundInDiscard);
                     }
                     break;
                 }
@@ -221,22 +221,25 @@ namespace cna.ui {
 
         private void EndOfTurn_Result() {
             D.A.Gd_StartOfTurnFlag = false;
-            if (D.LocalPlayer.GameEffects.ContainsKey(GameEffect_Enum.Rewards)) {
-                D.A.PlayerRewards();
+            PlayerData localPlayer = D.LocalPlayer;
+            if (localPlayer.GameEffects.ContainsKey(GameEffect_Enum.Rewards)) {
+                CardVO Card = D.GetGameEffectCard(GameEffect_Enum.Rewards);
+                GameAPI ar = new GameAPI(Card.UniqueId, CardState_Enum.NA, 0);
+                ar.TurnPhase(TurnPhase_Enum.Reward);
+                Card.OnClick_ActionButton(ar);
             } else {
-                D.LocalPlayer.PlayerTurnPhase = TurnPhase_Enum.EndTurn;
-                D.C.Send_GameData();
+                GameAPI ar = new GameAPI();
+                ar.TurnPhase(TurnPhase_Enum.EndTurn);
+                ar.CompleteAction();
             }
         }
 
 
         public void DeclareEndOfRound() {
             D.A.Gd_StartOfTurnFlag = false;
-            D.LocalPlayer.PlayerTurnPhase = TurnPhase_Enum.EndTurn;
-            if (D.G.EndOfRound == -1) {
-                D.G.EndOfRound = D.LocalPlayer.Key;
-            }
-            D.C.Send_GameData();
+            GameAPI ar = new GameAPI();
+            ar.TurnPhase(TurnPhase_Enum.EndOfRound);
+            ar.CompleteAction();
         }
 
         public void NO() { }
@@ -244,9 +247,10 @@ namespace cna.ui {
         public void OnClick_Rest() {
             if (D.isTurn) {
                 if (D.LocalPlayer.PlayerTurnPhase <= TurnPhase_Enum.StartTurn) {
-                    D.LocalPlayer.PlayerTurnPhase = TurnPhase_Enum.Resting;
-                    D.C.LogMessage("[Resting]");
-                    D.C.Send_GameData();
+                    GameAPI ar = new GameAPI(D.G, D.LocalPlayer);
+                    ar.TurnPhase(TurnPhase_Enum.Resting);
+                    ar.AddLog("[Resting]");
+                    ar.CompleteAction();
                 } else {
                     Msg("You can only rest at the begining of your turn!");
                     restButton.ShakeButton();
