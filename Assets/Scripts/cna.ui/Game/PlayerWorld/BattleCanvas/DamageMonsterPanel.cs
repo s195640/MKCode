@@ -50,12 +50,12 @@ namespace cna.ui {
             avatarShields[1].ImageEnum = sImage;
         }
 
-        public void UpdateUI() {
-            CalculateBattleResults();
-            DisplayBattleResults();
+        public void UpdateUI(GameAPI ar) {
+            CalculateBattleResults(ar);
+            DisplayBattleResults(ar);
         }
 
-        public void DisplayBattleResults() {
+        public void DisplayBattleResults(GameAPI ar) {
             avatarArmorText[0].text = "" + avatarArmor;
             avatarArmorText[1].text = "" + avatarArmor;
             if (unitIdUsedForCombat > 0) {
@@ -64,7 +64,7 @@ namespace cna.ui {
             } else {
                 defendingUnitCardSlot.gameObject.SetActive(false);
             }
-            if (D.LocalPlayer.Battle.SelectedMonsters.Count > 0) {
+            if (ar.P.Battle.SelectedMonsters.Count > 0) {
                 battleResults.SetActive(true);
                 if (unitIdUsedForCombat > 0) {
                     unitText.SetActive(true);
@@ -105,12 +105,12 @@ namespace cna.ui {
             }
         }
 
-        public void CalculateBattleResults() {
+        public void CalculateBattleResults(GameAPI ar) {
             Clear();
-            unitIdUsedForCombat = D.LocalPlayer.Battle.SelectedUnit;
-            if (D.LocalPlayer.Battle.SelectedMonsters.Count > 0) {
-                avatarArmor = D.LocalPlayer.Armor;
-                monsterId = D.LocalPlayer.Battle.SelectedMonsters[0];
+            unitIdUsedForCombat = ar.P.Battle.SelectedUnit;
+            if (ar.P.Battle.SelectedMonsters.Count > 0) {
+                avatarArmor = ar.P.Armor;
+                monsterId = ar.P.Battle.SelectedMonsters[0];
                 CardMonsterVO monsterCard = (CardMonsterVO)D.Cards[monsterId];
                 avatarDamage = monsterCard.MonsterEffects.Contains(UnitEffect_Enum.Brutal) ? monsterCard.MonsterDamage * 2 : monsterCard.MonsterDamage;
                 if (unitIdUsedForCombat > 0) {
@@ -121,8 +121,8 @@ namespace cna.ui {
                     int unitArmor = unitCard.UnitArmor;
 
                     //  Add Game Effects & Banners
-                    if (D.LocalPlayer.Deck.Banners.ContainsKey(unitIdUsedForCombat)) {
-                        int bannerUniqueId = D.LocalPlayer.Deck.Banners[unitIdUsedForCombat];
+                    if (ar.P.Deck.Banners.ContainsKey(unitIdUsedForCombat)) {
+                        int bannerUniqueId = ar.P.Deck.Banners[unitIdUsedForCombat];
                         CardVO banner = D.Cards.Find(c => c.UniqueId == bannerUniqueId);
                         if (banner.CardImage == Image_Enum.CT_banner_of_glory) {
                             unitArmor++;
@@ -133,7 +133,7 @@ namespace cna.ui {
                         }
                     }
 
-                    D.LocalPlayer.GameEffects.Keys.ForEach(ge => {
+                    ar.P.GameEffects.Keys.ForEach(ge => {
                         switch (ge) {
                             case GameEffect_Enum.CT_BannerOfGlory: {
                                 unitArmor++;
@@ -187,11 +187,11 @@ namespace cna.ui {
         }
 
 
-        public string AssignDamage() {
+        public string AssignDamage(GameAPI ar) {
             CardMonsterVO monsterCard = (CardMonsterVO)D.Cards[monsterId];
             string msg = "[Damage " + monsterCard.CardTitle + "] :: ";
 
-            PlayerDeckData deck = D.LocalPlayer.Deck;
+            PlayerDeckData deck = ar.P.Deck;
             if (unitIdUsedForCombat > 0) {
                 CardUnitVO unitCard = (CardUnitVO)D.Cards[unitIdUsedForCombat];
                 string unitMsg = "(Unit " + unitCard.CardTitle;
@@ -217,14 +217,14 @@ namespace cna.ui {
             if (avatarWounds > 0) {
                 avatarMsg += " is wounded +" + avatarWounds + " wounds to hand";
                 for (int i = 0; i < avatarWounds; i++) {
-                    //deck.Hand.Add(D.Scenario.DrawWound());
+                    deck.Hand.Add(ar.DrawWoundCard());
                 }
                 if (avatarPoisoned) {
                     avatarMsg += ", is poisoned +" + avatarWounds + " wounds to discard";
                     for (int i = 0; i < avatarWounds; i++) {
-                        //int woundid = D.Scenario.DrawWound();
-                        //deck.Hand.Add(woundid);
-                        //deck.AddState(woundid, CardState_Enum.Discard);
+                        int woundid = ar.DrawWoundCard();
+                        deck.Hand.Add(woundid);
+                        deck.AddState(woundid, CardState_Enum.Discard);
                     }
                 }
                 if (avatarParalyzed) {
@@ -240,21 +240,21 @@ namespace cna.ui {
             }
             avatarMsg += ")";
             msg += avatarMsg;
-            BattleData battle = D.LocalPlayer.Battle;
+            BattleData battle = ar.P.Battle;
             battle.Monsters[monsterId].Assigned = true;
             battle.SelectedMonsters.Clear();
             battle.SelectedUnit = 0;
             return msg;
         }
 
-        public string isAllowedToAssignDamage() {
+        public string isAllowedToAssignDamage(GameAPI ar) {
             string msg = "";
             if (unitIdUsedForCombat > 0) {
-                if (D.LocalPlayer.Deck.State.ContainsKey(unitIdUsedForCombat)) {
-                    bool wounded = D.LocalPlayer.Deck.State[unitIdUsedForCombat].Contains(CardState_Enum.Unit_Wounded);
-                    bool paralyzed = D.LocalPlayer.Deck.State[unitIdUsedForCombat].Contains(CardState_Enum.Unit_Paralyzed);
-                    bool usedInBattle = D.LocalPlayer.Deck.State[unitIdUsedForCombat].Contains(CardState_Enum.Unit_UsedInBattle);
-                    bool intoTheHeat = D.LocalPlayer.GameEffects.ContainsKeyAny(GameEffect_Enum.AC_IntoTheHeat01, GameEffect_Enum.AC_IntoTheHeat02);
+                if (ar.P.Deck.State.ContainsKey(unitIdUsedForCombat)) {
+                    bool wounded = ar.P.Deck.State[unitIdUsedForCombat].Contains(CardState_Enum.Unit_Wounded);
+                    bool paralyzed = ar.P.Deck.State[unitIdUsedForCombat].Contains(CardState_Enum.Unit_Paralyzed);
+                    bool usedInBattle = ar.P.Deck.State[unitIdUsedForCombat].Contains(CardState_Enum.Unit_UsedInBattle);
+                    bool intoTheHeat = ar.P.GameEffects.ContainsKeyAny(GameEffect_Enum.AC_IntoTheHeat01, GameEffect_Enum.AC_IntoTheHeat02);
                     if (wounded) {
                         msg = "Can not assign damage to Wounded units!";
                     } else if (paralyzed) {

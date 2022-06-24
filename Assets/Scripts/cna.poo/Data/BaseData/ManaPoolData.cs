@@ -16,5 +16,9 @@ namespace cna.poo {
 
         public Crystal_Enum ManaColor { get => manaColor; set => manaColor = value; }
         public ManaPool_Enum Status { get => status; set => status = value; }
+
+        public ManaPoolData Clone() {
+            return new ManaPoolData(manaColor, status);
+        }
     }
 }

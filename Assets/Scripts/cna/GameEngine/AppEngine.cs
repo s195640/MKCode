@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using cna.poo;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 namespace cna {
     public abstract class AppEngine : AppBase {
@@ -37,13 +40,13 @@ namespace cna {
         }
 
         private void NewGame_BoardSetup(Data g) {
-            g.TurnCounter = 1;
-            //g.Board = new BoardData(g.Gld.GameMapLayout, g.Gld.BasicTiles, g.Gld.CoreTiles, g.Gld.CityTiles, g.Gld.EasyStart, g.Gld.Rounds, g.Gld.DummyPlayer);
+            g.Board.TurnCounter = 1;
+            g.GameData.Seed = Guid.NewGuid().GetHashCode();
             D.Scenario.buildStartMap();
-            g.PlayerTurnOrder = new List<int>();
-            g.Players.ForEach(p => g.PlayerTurnOrder.Add(p.Key));
-            g.PlayerTurnOrder.ShuffleDeck();
-            g.PlayerTurnIndex = 0;
+            g.Board.PlayerTurnOrder = new List<int>();
+            g.Players.ForEach(p => g.Board.PlayerTurnOrder.Add(p.Key));
+            g.Board.PlayerTurnOrder.ShuffleDeck();
+            g.Board.PlayerTurnIndex = 0;
             g.GameStatus = Game_Enum.New_Round;
         }
 
@@ -97,7 +100,7 @@ namespace cna {
                     pd.Avatar = Image_Enum.A_MEEPLE_RANDOM;
                     pd.DummyPlayer = true;
                     g.Players.Add(pd);
-                    g.PlayerTurnOrder.Add(pd.Key);
+                    g.Board.PlayerTurnOrder.Add(pd.Key);
                 }
             }
         }
@@ -116,13 +119,10 @@ namespace cna {
 
 
         private void NewRound_BoardSetup(Data g) {
-            g.EndOfRound = false;
+            g.Board.EndOfRound = false;
             g.GameStatus = Game_Enum.Tactics;
-            //D.Scenario.BuildUnitOfferingDeck();
-            //D.Scenario.BuildSpellOfferingDeck();
-            //D.Scenario.BuildAdvancedOfferingDeck();
-            g.GameRoundCounter++;
-            g.PlayerTurnIndex = 0;
+            g.Board.GameRoundCounter++;
+            g.Board.PlayerTurnIndex = 0;
         }
 
         private void NewRound_TESTING() {
@@ -218,22 +218,22 @@ namespace cna {
                             bool swapped = true;
                             while (swapped) {
                                 swapped = false;
-                                for (int i = 0; i < g.PlayerTurnOrder.Count - 1; i++) {
-                                    int a = D.GetPlayerByKey(g.PlayerTurnOrder[i]).Deck.TacticsCardId;
-                                    int b = D.GetPlayerByKey(g.PlayerTurnOrder[i + 1]).Deck.TacticsCardId;
+                                for (int i = 0; i < g.Board.PlayerTurnOrder.Count - 1; i++) {
+                                    int a = D.GetPlayerByKey(g.Board.PlayerTurnOrder[i]).Deck.TacticsCardId;
+                                    int b = D.GetPlayerByKey(g.Board.PlayerTurnOrder[i + 1]).Deck.TacticsCardId;
                                     if (a > b) {
-                                        int temp = g.PlayerTurnOrder[i];
-                                        g.PlayerTurnOrder[i] = g.PlayerTurnOrder[i + 1];
-                                        g.PlayerTurnOrder[i + 1] = temp;
+                                        int temp = g.Board.PlayerTurnOrder[i];
+                                        g.Board.PlayerTurnOrder[i] = g.Board.PlayerTurnOrder[i + 1];
+                                        g.Board.PlayerTurnOrder[i + 1] = temp;
                                         swapped = true;
                                         break;
                                     }
                                 }
                             }
                             g.GameStatus = Game_Enum.Tactics_WaitingOnPlayers;
-                            g.PlayerTurnIndex = 0;
+                            g.Board.PlayerTurnIndex = 0;
                         } else {
-                            g.PlayerTurnIndex++;
+                            g.Board.PlayerTurnIndex++;
                             D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsSelect;
                         }
                         D.C.Send_GameData();
@@ -292,9 +292,6 @@ namespace cna {
                         currentMapHex == MapHexId_Enum.Core_Back ||
                         currentMapHex == MapHexId_Enum.Invalid
                         ) {
-                        //currentMapHex = D.Scenario.MapDeck[D.Board.MapDeckIndex];
-                        //D.Board.MapDeckIndex++;
-                        //g.Board.CurrentMap[index] = currentMapHex;
                         currentMapHex = D.Scenario.DrawGameHex(index);
                     }
                     waitingOnServer.Board.PlayerMap[index] = currentMapHex;
@@ -303,9 +300,52 @@ namespace cna {
                     V2IntVO centerPos = new V2IntVO(D.Scenario.ConvertIndexToWorld(index));
                     List<V2IntVO> pts = BasicUtil.GetAdjacentPoints(centerPos);
                     pts.Add(centerPos);
+                    bool amuletOfSun = waitingOnServer.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfTheSun);
+                    List<V2IntVO> adj = BasicUtil.GetAdjacentPoints(waitingOnServer.CurrentGridLoc);
                     pts.ForEach(pt => {
                         if (g.Board.MonsterData.ContainsKey(pt)) {
-                            waitingOnServer.Board.MonsterData.Add(pt, g.Board.MonsterData[pt]);
+                            WrapList<int> value = new WrapList<int>();
+                            g.Board.MonsterData[pt].Values.ForEach(v => value.Add(v));
+                            waitingOnServer.Board.MonsterData.Add(pt, value);
+                            Image_Enum structure = BasicUtil.GetStructureAtLoc(pt);
+                            switch (structure) {
+                                case Image_Enum.SH_City_Blue:
+                                case Image_Enum.SH_City_Green:
+                                case Image_Enum.SH_City_Red:
+                                case Image_Enum.SH_City_White:
+                                case Image_Enum.SH_MaraudingOrcs:
+                                case Image_Enum.SH_Draconum: {
+                                    value.Values.ForEach(m => {
+                                        if (!waitingOnServer.VisableMonsters.Contains(m)) {
+                                            waitingOnServer.VisableMonsters.Add(m);
+                                        }
+                                    });
+                                    break;
+                                }
+                                case Image_Enum.SH_AncientRuins: {
+                                    if (D.Scenario.isDay || amuletOfSun) {
+                                        value.Values.ForEach(m => {
+                                            if (!waitingOnServer.VisableMonsters.Contains(m)) {
+                                                waitingOnServer.VisableMonsters.Add(m);
+                                            }
+                                        });
+                                    }
+                                    break;
+                                }
+                                case Image_Enum.SH_MageTower:
+                                case Image_Enum.SH_Keep: {
+                                    if (D.Scenario.isDay || amuletOfSun) {
+                                        if (adj.Contains(pt)) {
+                                            value.Values.ForEach(m => {
+                                                if (!waitingOnServer.VisableMonsters.Contains(m)) {
+                                                    waitingOnServer.VisableMonsters.Add(m);
+                                                }
+                                            });
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
                         }
                     });
 
@@ -333,58 +373,92 @@ namespace cna {
                         List<int> skillOffering = new List<int>();
                         List<int> advancedOffering = new List<int>();
                         List<int> unitOffering = new List<int>();
+                        List<MapHexId_Enum> playerMap = new List<MapHexId_Enum>();
+                        for (int i = 0; i < g.Board.CurrentMap.Count; i++) {
+                            playerMap.Add(MapHexId_Enum.Invalid);
+                        }
                         g.Players.ForEach(p => {
-                            if (p.Board.SpellIndex > spellIndex) {
-                                spellIndex = p.Board.SpellIndex;
-                                spellOffering.Clear();
-                                spellOffering.AddRange(p.Board.SpellOffering);
-                            }
-                            if (p.Board.AdvancedIndex > advancedIndex) {
-                                advancedIndex = p.Board.AdvancedIndex;
-                                advancedOffering.Clear();
-                                advancedOffering.AddRange(p.Board.AdvancedOffering);
-                            }
-                            if (p.Board.UnitRegularIndex > unitRegularIndex) {
-                                unitRegularIndex = p.Board.UnitRegularIndex;
-                            }
-                            if (p.Board.UnitEliteIndex > unitEliteIndex) {
-                                unitEliteIndex = p.Board.UnitEliteIndex;
-                            }
-                            if (p.Board.WoundIndex > woundIndex) {
-                                woundIndex = p.Board.WoundIndex;
-                            }
-                            if (p.Board.ArtifactIndex > artifactIndex) {
-                                artifactIndex = p.Board.ArtifactIndex;
-                            }
-                            if (p.Board.SkillBlueIndex > skillBlueIndex) {
-                                skillBlueIndex = p.Board.SkillBlueIndex;
-                            }
-                            if (p.Board.SkillGreenIndex > skillGreenIndex) {
-                                skillGreenIndex = p.Board.SkillGreenIndex;
-                            }
-                            if (p.Board.SkillRedIndex > skillRedIndex) {
-                                skillRedIndex = p.Board.SkillRedIndex;
-                            }
-                            if (p.Board.SkillWhiteIndex > skillWhiteIndex) {
-                                skillWhiteIndex = p.Board.SkillWhiteIndex;
-                            }
-                            p.Board.SkillOffering.ForEach(s => {
-                                if (!skillOffering.Contains(s)) {
-                                    skillOffering.Add(s);
+                            if (!p.DummyPlayer) {
+                                for (int i = 0; i < g.Board.CurrentMap.Count; i++) {
+                                    if (g.Board.CurrentMap[i] >= MapHexId_Enum.Basic_01) {
+                                        V2IntVO centerPos = new V2IntVO(D.Scenario.ConvertIndexToWorld(i));
+                                        List<V2IntVO> pts = BasicUtil.GetAdjacentPoints(centerPos);
+                                        pts.Add(centerPos);
+                                        pts.ForEach(pos => {
+                                            if (g.Board.MonsterData.ContainsKey(pos)) {
+                                                if (p.Board.MonsterData.ContainsKey(pos)) {
+                                                    foreach (int m in g.Board.MonsterData[pos].Values.ToArray()) {
+                                                        if (!p.Board.MonsterData[pos].Contains(m)) {
+                                                            g.Board.MonsterData[pos].Remove(m);
+                                                        }
+                                                    }
+                                                } else {
+                                                    g.Board.MonsterData.Remove(pos);
+                                                }
+                                            }
+                                        });
+                                    }
                                 }
-                            });
-                            p.Board.UnitOffering.ForEach(u => {
-                                if (!unitOffering.Contains(u)) {
-                                    unitOffering.Add(u);
+                                for (int i = 0; i < p.Board.PlayerMap.Count; i++) {
+                                    MapHexId_Enum m = p.Board.PlayerMap[i];
+                                    if ((int)m >= 10) {
+                                        playerMap[i] = m;
+                                    }
                                 }
-                            });
+                                if (p.Board.SpellIndex > spellIndex) {
+                                    spellIndex = p.Board.SpellIndex;
+                                    spellOffering.Clear();
+                                    spellOffering.AddRange(p.Board.SpellOffering);
+                                }
+                                if (p.Board.AdvancedIndex > advancedIndex) {
+                                    advancedIndex = p.Board.AdvancedIndex;
+                                    advancedOffering.Clear();
+                                    advancedOffering.AddRange(p.Board.AdvancedOffering);
+                                }
+                                if (p.Board.UnitRegularIndex > unitRegularIndex) {
+                                    unitRegularIndex = p.Board.UnitRegularIndex;
+                                }
+                                if (p.Board.UnitEliteIndex > unitEliteIndex) {
+                                    unitEliteIndex = p.Board.UnitEliteIndex;
+                                }
+                                if (p.Board.WoundIndex > woundIndex) {
+                                    woundIndex = p.Board.WoundIndex;
+                                }
+                                if (p.Board.ArtifactIndex > artifactIndex) {
+                                    artifactIndex = p.Board.ArtifactIndex;
+                                }
+                                if (p.Board.SkillBlueIndex > skillBlueIndex) {
+                                    skillBlueIndex = p.Board.SkillBlueIndex;
+                                }
+                                if (p.Board.SkillGreenIndex > skillGreenIndex) {
+                                    skillGreenIndex = p.Board.SkillGreenIndex;
+                                }
+                                if (p.Board.SkillRedIndex > skillRedIndex) {
+                                    skillRedIndex = p.Board.SkillRedIndex;
+                                }
+                                if (p.Board.SkillWhiteIndex > skillWhiteIndex) {
+                                    skillWhiteIndex = p.Board.SkillWhiteIndex;
+                                }
+                                p.Board.SkillOffering.ForEach(s => {
+                                    if (!skillOffering.Contains(s)) {
+                                        skillOffering.Add(s);
+                                    }
+                                });
+                                p.Board.UnitOffering.ForEach(u => {
+                                    if (!unitOffering.Contains(u)) {
+                                        unitOffering.Add(u);
+                                    }
+                                });
+                            }
                         });
                         g.Players.ForEach(p => {
-                            p.Deck.Skill.ForEach(s => skillOffering.Remove(s));
-                            p.Deck.Deck.ForEach(c => { spellOffering.Remove(c); advancedOffering.Remove(c); unitOffering.Remove(c); });
-                            p.Deck.Discard.ForEach(c => { spellOffering.Remove(c); advancedOffering.Remove(c); unitOffering.Remove(c); });
-                            p.Deck.Hand.ForEach(c => { spellOffering.Remove(c); advancedOffering.Remove(c); unitOffering.Remove(c); });
-                            p.Deck.Unit.ForEach(c => { unitOffering.Remove(c); });
+                            if (!p.DummyPlayer) {
+                                p.Deck.Skill.ForEach(s => skillOffering.Remove(s));
+                                p.Deck.Deck.ForEach(c => { spellOffering.Remove(c); advancedOffering.Remove(c); unitOffering.Remove(c); });
+                                p.Deck.Discard.ForEach(c => { spellOffering.Remove(c); advancedOffering.Remove(c); unitOffering.Remove(c); });
+                                p.Deck.Hand.ForEach(c => { spellOffering.Remove(c); advancedOffering.Remove(c); unitOffering.Remove(c); });
+                                p.Deck.Unit.ForEach(c => { unitOffering.Remove(c); });
+                            }
                         });
                         while (advancedOffering.Count < 3 && advancedIndex < D.Scenario.AdvancedDeck.Count) {
                             advancedOffering.Add(D.Scenario.AdvancedDeck[advancedIndex]);
@@ -415,14 +489,72 @@ namespace cna {
                                 ar.P.Board.SkillGreenIndex = skillGreenIndex;
                                 ar.P.Board.SkillRedIndex = skillRedIndex;
                                 ar.P.Board.SkillWhiteIndex = skillWhiteIndex;
+                                ar.P.Board.MonsterData.Clear();
+                                ar.P.Board.PlayerMap.Clear();
+                                ar.P.Board.PlayerMap.AddRange(playerMap);
+                                D.Scenario.rebuildCurrentMap(ar.P);
+                                List<V2IntVO> adj = BasicUtil.GetAdjacentPoints(ar.P.CurrentGridLoc);
+                                for (int i = 0; i < playerMap.Count; i++) {
+                                    if ((int)playerMap[i] >= 10) {
+                                        V2IntVO centerPos = new V2IntVO(D.Scenario.ConvertIndexToWorld(i));
+                                        List<V2IntVO> pts = BasicUtil.GetAdjacentPoints(centerPos);
+                                        pts.Add(centerPos);
+                                        pts.ForEach(pos => {
+                                            if (g.Board.MonsterData.ContainsKey(pos)) {
+                                                WrapList<int> value = new WrapList<int>();
+                                                g.Board.MonsterData[pos].Values.ForEach(v => value.Add(v));
+                                                ar.P.Board.MonsterData.Add(pos, value);
+                                                Image_Enum structure = BasicUtil.GetStructureAtLoc(pos);
+                                                switch (structure) {
+                                                    case Image_Enum.SH_City_Blue:
+                                                    case Image_Enum.SH_City_Green:
+                                                    case Image_Enum.SH_City_Red:
+                                                    case Image_Enum.SH_City_White:
+                                                    case Image_Enum.SH_MaraudingOrcs:
+                                                    case Image_Enum.SH_Draconum: {
+                                                        value.Values.ForEach(m => {
+                                                            if (!ar.P.VisableMonsters.Contains(m)) {
+                                                                ar.P.VisableMonsters.Add(m);
+                                                            }
+                                                        });
+                                                        break;
+                                                    }
+                                                    case Image_Enum.SH_AncientRuins: {
+                                                        if (D.Scenario.isDay) {
+                                                            value.Values.ForEach(m => {
+                                                                if (!ar.P.VisableMonsters.Contains(m)) {
+                                                                    ar.P.VisableMonsters.Add(m);
+                                                                }
+                                                            });
+                                                        }
+                                                        break;
+                                                    }
+                                                    case Image_Enum.SH_MageTower:
+                                                    case Image_Enum.SH_Keep: {
+                                                        if (D.Scenario.isDay) {
+                                                            if (adj.Contains(pos)) {
+                                                                value.Values.ForEach(m => {
+                                                                    if (!ar.P.VisableMonsters.Contains(m)) {
+                                                                        ar.P.VisableMonsters.Add(m);
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
                             }
                         });
 
-                        if (g.EndOfRound) {
+                        if (g.Board.EndOfRound) {
                             g.GameStatus = Game_Enum.New_Round;
                         } else {
                             g.GameStatus = Game_Enum.SaveGame;
-                            g.EndOfRound = !g.Players.TrueForAll(p => p.PlayerTurnPhase == TurnPhase_Enum.EndTurn);
+                            g.Board.EndOfRound = !g.Players.TrueForAll(p => p.PlayerTurnPhase == TurnPhase_Enum.EndTurn);
                             List<ManaPoolData> rerollmana = new List<ManaPoolData>();
                             g.Players.ForEach(p => {
                                 GameAPI ar = new GameAPI(g, p);
@@ -433,7 +565,7 @@ namespace cna {
                                         Crystal_Enum c;
                                         ManaPool_Enum status = ManaPool_Enum.Reroll;
                                         if (m[i].Status == ManaPool_Enum.Used) {
-                                            c = (Crystal_Enum)Random.Range(1, 7);
+                                            c = (Crystal_Enum)BasicUtil.RandomRange(1, 7);
                                         } else {
                                             c = m[i].ManaColor;
                                             status = m[i].Status;
@@ -455,10 +587,13 @@ namespace cna {
                                 }
                             });
                             g.Players.ForEach(p => {
-                                p.ManaPoolFull.Clear();
-                                rerollmana.ForEach(m => p.ManaPoolFull.Add(new ManaPoolData(m.ManaColor, m.Status)));
+                                if (!p.DummyPlayer) {
+                                    p.ManaPoolFull.Clear();
+                                    rerollmana.ForEach(m => p.ManaPoolFull.Add(new ManaPoolData(m.ManaColor, m.Status)));
+                                }
                             });
                         }
+                        g.Board.TurnCounter++;
                         D.C.Send_GameData();
                         return;
                     }
@@ -467,6 +602,14 @@ namespace cna {
             PlayerData localPlayer = D.LocalPlayer;
             switch (localPlayer.PlayerTurnPhase) {
                 case TurnPhase_Enum.SetupTurn: { PlayerTurn_SetupTurn(g, localPlayer); break; }
+                case TurnPhase_Enum.Move: {
+                    if (localPlayer.UndoLock) {
+                        localPlayer.UndoLock = false;
+                        pd_StartOfTurn = localPlayer.Clone();
+                        D.C.Send_PlayerData();
+                    }
+                    break;
+                }
             }
         }
 
@@ -614,7 +757,7 @@ namespace cna {
         public abstract void StartTacticsPanel();
         private bool gd_StartOfTurnFlag = false;
         public bool Gd_StartOfTurnFlag { get => gd_StartOfTurnFlag; set => gd_StartOfTurnFlag = value; }
-        internal PlayerData pd_StartOfTurn = new PlayerData();
+        public PlayerData pd_StartOfTurn = new PlayerData();
 
 
 

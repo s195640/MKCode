@@ -31,9 +31,9 @@ namespace cna.ui {
         }
 
         private void reOrder() {
-            if (!Enumerable.SequenceEqual(D.G.PlayerTurnOrder, currentOrder)) {
+            if (!Enumerable.SequenceEqual(D.G.Board.PlayerTurnOrder, currentOrder)) {
                 currentOrder.Clear();
-                currentOrder.AddRange(D.G.PlayerTurnOrder);
+                currentOrder.AddRange(D.G.Board.PlayerTurnOrder);
                 for (int i = currentOrder.Count - 1; i >= 0; i--) {
                     playerPanelList.Find(pi => pi.playerKey == currentOrder[i]).transform.SetAsFirstSibling();
                 }

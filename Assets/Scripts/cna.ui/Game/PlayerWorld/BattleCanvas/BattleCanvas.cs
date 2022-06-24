@@ -206,7 +206,7 @@ namespace cna.ui {
                 MonsterSelectionPanel.gameObject.SetActive(true);
                 DamageMonsterPanel.gameObject.SetActive(true);
                 BattleSummaryPanel.gameObject.SetActive(false);
-                DamageMonsterPanel.UpdateUI();
+                DamageMonsterPanel.UpdateUI(AR);
             }
         }
 
@@ -216,9 +216,9 @@ namespace cna.ui {
         }
 
         public void OnClick_AssignDamage() {
-            string msg = DamageMonsterPanel.isAllowedToAssignDamage();
+            string msg = DamageMonsterPanel.isAllowedToAssignDamage(AR);
             if (msg.Equals("")) {
-                AR.AddLog(DamageMonsterPanel.AssignDamage());
+                AR.AddLog(DamageMonsterPanel.AssignDamage(AR));
                 AR.PushForce();
             } else {
                 D.Msg(msg);

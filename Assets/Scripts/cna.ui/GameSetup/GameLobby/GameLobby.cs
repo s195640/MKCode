@@ -37,7 +37,7 @@ namespace cna.ui {
             startGameButton.onClick.AddListener(StartGameButtonCallback);
             gameLayoutDropdown.onValueChanged.AddListener(delegate { GameLayoutDropdownCallback(gameLayoutDropdown.value); });
             easyStartToggle.onValueChanged.AddListener(delegate { EasyStartToggleCallback(easyStartToggle.isOn); });
-            basicTiles.Setup(D.G.GameData.EasyStart ? D.G.GameData.GameMapLayout == GameMapLayout_Enum.Wedge ? 2 : 3 : 0, 11, D.G.GameData.BasicTiles, BasicTileSliderCallback);
+            basicTiles.Setup(0, 8, D.G.GameData.BasicTiles, BasicTileSliderCallback);
             coreTiles.Setup(0, 4, D.G.GameData.CoreTiles, CoreTileSliderCallback);
             cityTiles.Setup(1, 4, D.G.GameData.CityTiles, CityTileSliderCallback);
             rounds.Setup(1, 10, D.G.GameData.Rounds, RoundSliderCallback);
@@ -107,7 +107,6 @@ namespace cna.ui {
             if (D.G.GameData.CityTiles != (int)cityTiles.Value) {
                 cityTiles.Value = D.G.GameData.CityTiles;
             }
-            basicTiles.MinValue = D.G.GameData.EasyStart ? D.G.GameData.GameMapLayout == GameMapLayout_Enum.Wedge ? 2 : 3 : 0;
             if (D.G.GameData.DummyPlayer != dummyPlayerToggle.isOn) {
                 dummyPlayerToggle.isOn = D.G.GameData.DummyPlayer;
             }
@@ -137,8 +136,6 @@ namespace cna.ui {
 
         private void StartGameButtonCallback() {
             if (D.ClientState == ClientState_Enum.CONNECTED_HOST || D.ClientState == ClientState_Enum.SINGLE_PLAYER) {
-                //D.G.HostId = D.LocalPlayerKey;
-                //D.G.Players = D.G.Players;
                 D.G.GameStatus = Game_Enum.New_Game;
             }
         }
@@ -146,30 +143,12 @@ namespace cna.ui {
         private void GameLayoutDropdownCallback(int value) {
             if (D.G.GameData.GameMapLayout != (GameMapLayout_Enum)(value + 2)) {
                 D.G.GameData.GameMapLayout = (GameMapLayout_Enum)(value + 2);
-                if (D.G.GameData.EasyStart) {
-                    if (D.G.GameData.GameMapLayout != GameMapLayout_Enum.Wedge) {
-                        if (D.G.GameData.BasicTiles < 3) {
-                            D.G.GameData.BasicTiles = 3;
-                        }
-                    }
-                }
                 D.C.Send_GameData();
             }
         }
         private void EasyStartToggleCallback(bool value) {
             if (D.G.GameData.EasyStart != value) {
                 D.G.GameData.EasyStart = value;
-                if (D.G.GameData.EasyStart) {
-                    if (D.G.GameData.GameMapLayout == GameMapLayout_Enum.Wedge) {
-                        if (D.G.GameData.BasicTiles < 2) {
-                            D.G.GameData.BasicTiles = 2;
-                        }
-                    } else {
-                        if (D.G.GameData.BasicTiles < 3) {
-                            D.G.GameData.BasicTiles = 3;
-                        }
-                    }
-                }
                 D.C.Send_GameData();
             }
         }

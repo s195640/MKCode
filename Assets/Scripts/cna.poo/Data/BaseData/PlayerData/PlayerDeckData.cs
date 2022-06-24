@@ -105,5 +105,30 @@ namespace cna.poo {
             }
             State.RemoveRange(State.Keys.FindAll(c => !Unit.Contains(c)));
         }
+
+
+        public void UpdateData(PlayerDeckData pdd) {
+            state.Clear();
+            pdd.state.Keys.ForEach(key => {
+                WrapList<CardState_Enum> value = new WrapList<CardState_Enum>();
+                pdd.state[key].Values.ForEach(v => value.Add(v));
+                state.Add(key, value);
+            });
+            banners.Clear();
+            pdd.banners.Keys.ForEach(key => banners.Add(key, pdd.banners[key]));
+            hand.Clear();
+            hand.AddRange(pdd.hand);
+            deck.Clear();
+            deck.AddRange(pdd.deck);
+            discard.Clear();
+            discard.AddRange(pdd.discard);
+            unit.Clear();
+            unit.AddRange(pdd.unit);
+            skill.Clear();
+            skill.AddRange(pdd.skill);
+            handSize = pdd.handSize.Clone();
+            unitHandLimit = pdd.unitHandLimit;
+            tacticsCardId = pdd.tacticsCardId;
+        }
     }
 }

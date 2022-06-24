@@ -55,5 +55,9 @@ namespace cna.poo {
 
         public static V2IntVO operator +(V2IntVO a, V2IntVO b) => new V2IntVO(a.X + b.X, a.Y + b.Y);
         public static V2IntVO operator -(V2IntVO a, V2IntVO b) => new V2IntVO(a.X - b.X, a.Y - b.Y);
+
+        public V2IntVO Clone() {
+            return new V2IntVO(x, y);
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace cna.ui {
         public void rightClick(Vector3 avatarWorldPosition) {
             if (Input.GetMouseButton(1)) {
                 transform.localPosition = new Vector3(avatarWorldPosition.x, avatarWorldPosition.y, -1f);
-                GetComponent<Camera>().orthographicSize = 3f;
+                GetComponent<Camera>().orthographicSize = 4f;
             }
         }
 

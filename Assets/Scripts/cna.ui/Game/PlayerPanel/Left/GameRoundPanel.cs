@@ -5,10 +5,10 @@ using UnityEngine.UI;
 
 namespace cna.ui {
     public class GameRoundPanel : MonoBehaviour {
-        [SerializeField] private Image Background;
-        [SerializeField] private GameObject PlayerPhase;
 
+        [SerializeField] private GameObject PlayerPhase;
         [SerializeField] private Image[] BackgroundColor;
+        [SerializeField] private Image[] BackgroundColorLight;
         [SerializeField] private GameObject Tactics;
         [SerializeField] private GameObject TacticsWaiting;
         [SerializeField] private GameObject StartOfTurn;
@@ -27,11 +27,13 @@ namespace cna.ui {
             setup = true;
             PlayerPhase.SetActive(true);
             Color avatarColor = D.AvatarMetaDataMap[D.LocalPlayer.Avatar].AvatarColor;
-            Background.color = avatarColor;
+            for (int i = 0; i < BackgroundColor.Length; i++) {
+                BackgroundColor[i].color = avatarColor;
+            }
             Color avatarColorLight = avatarColor * 1.2f;
             avatarColorLight.a = 1;
-            for (int i = 0; i < BackgroundColor.Length; i++) {
-                BackgroundColor[i].color = avatarColorLight;
+            for (int i = 0; i < BackgroundColorLight.Length; i++) {
+                BackgroundColorLight[i].color = avatarColorLight;
             }
             UpdateUI_TurnPhase();
         }

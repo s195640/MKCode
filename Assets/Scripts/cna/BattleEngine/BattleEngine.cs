@@ -63,6 +63,11 @@ namespace cna {
 
         #region START BATTLE
         protected void battleEngine_StartOfBattle() {
+            gdProvoke = null;
+            gdRange = null;
+            gdBlock = null;
+            gdDamage = null;
+            gdAttack = null;
             UpdateMonsterDetails();
             List<string> monsterNames = B.Monsters.Keys.ConvertAll(m => ((CardMonsterVO)D.Cards[m]).CardTitle);
             AR.AddLog("[Battle Starts] :: " + string.Join(", ", monsterNames));
@@ -71,11 +76,13 @@ namespace cna {
         }
 
         public void UpdateMonsterDetails() {
-            MonsterDetails.Clear();
-            B.Monsters.Keys.ForEach(m => {
-                CardVO monsterCard = D.Cards[m];
-                MonsterDetails.Add(monsterCard.UniqueId, new MonsterDetailsVO(monsterCard, L.GameEffects));
-            });
+            if (AR != null && L.PlayerTurnPhase == TurnPhase_Enum.Battle) {
+                MonsterDetails.Clear();
+                B.Monsters.Keys.ForEach(m => {
+                    CardVO monsterCard = D.Cards[m];
+                    MonsterDetails.Add(monsterCard.UniqueId, new MonsterDetailsVO(monsterCard, L.GameEffects));
+                });
+            }
         }
         #endregion
 
@@ -117,9 +124,15 @@ namespace cna {
 
         #region Battle Undo
         protected void CloneGameData(ref PlayerData clone) {
-            clone = AR.P.Clone();
+            if (clone == null) {
+                clone = AR.P.Clone();
+            }
         }
         protected virtual void OnClick_UndoProvoke() {
+            gdRange = null;
+            gdBlock = null;
+            gdDamage = null;
+            gdAttack = null;
             AR.AddLog("[Undo - Provoke]");
             AR.P.UpdateData(gdProvoke);
             D.Action.Clear();
@@ -127,6 +140,9 @@ namespace cna {
             AR.PushForce();
         }
         protected virtual void OnClick_UndoRange() {
+            gdBlock = null;
+            gdDamage = null;
+            gdAttack = null;
             AR.AddLog("[Undo - Range]");
             AR.P.UpdateData(gdRange);
             D.Action.Clear();
@@ -134,6 +150,8 @@ namespace cna {
             AR.PushForce();
         }
         protected virtual void OnClick_UndoBlock() {
+            gdDamage = null;
+            gdAttack = null;
             AR.AddLog("[Undo - Block]");
             AR.P.UpdateData(gdBlock);
             D.Action.Clear();
@@ -141,6 +159,7 @@ namespace cna {
             AR.PushForce();
         }
         protected virtual void OnClick_UndoDamage() {
+            gdAttack = null;
             AR.AddLog("[Undo - Damage]");
             AR.P.UpdateData(gdDamage);
             D.Action.Clear();

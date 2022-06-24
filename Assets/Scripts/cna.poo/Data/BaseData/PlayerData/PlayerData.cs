@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace cna.poo {
     [Serializable]
@@ -30,6 +32,7 @@ namespace cna.poo {
         [SerializeField] private List<ManaPoolData> manaPool = new List<ManaPoolData>();
         [SerializeField] private PlayerBoardData board = new PlayerBoardData();
         [SerializeField] private bool waitOnServer = false;
+        [SerializeField] private bool undoLock = false;
 
         public string Name { get => playerName; set => playerName = value; }
         public int Key { get => playerKey; set => playerKey = value; }
@@ -59,6 +62,7 @@ namespace cna.poo {
         public List<ManaPoolData> ManaPool { get => manaPool.FindAll(mp => mp.Status != ManaPool_Enum.NA && mp.Status != ManaPool_Enum.Used && mp.Status != ManaPool_Enum.ManaSteal); }
         public PlayerBoardData Board { get => board; set => board = value; }
         public bool WaitOnServer { get => waitOnServer; set => waitOnServer = value; }
+        public bool UndoLock { get => undoLock; set => undoLock = value; }
 
         public void AddGameEffect(GameEffect_Enum ge, params int[] cards) {
             if (cards.Length == 0) cards = new int[] { 0 };
@@ -85,20 +89,6 @@ namespace cna.poo {
             Name = name;
             Key = key;
             Clear();
-            //Deck = new PlayerDeckData();
-            //Battle = new BattleData();
-            //Movement = 0;
-            //Influence = 0;
-            //fame = V2IntVO.zero;
-            //repLevel = 0;
-            //crystal = new CrystalData(); ;
-            //mana = new CrystalData();
-            //armor = 2;
-            //healpoints = 0;
-            //dummyPlayer = false;
-            //shields = new List<V2IntVO>();
-            //manaPool = new List<ManaPoolData>();
-            //board = new PlayerBoardData();
         }
 
         public override bool Equals(object obj) {
@@ -130,6 +120,7 @@ namespace cna.poo {
             manaPool.Clear();
             board.Clear();
             WaitOnServer = false;
+            UndoLock = false;
         }
 
         public void ClearEndTurn() {
@@ -153,30 +144,40 @@ namespace cna.poo {
             avatar = p.avatar;
             playerReady = p.playerReady;
             playerTurnPhase = p.playerTurnPhase;
-            playerDeckData = p.playerDeckData;
+            playerDeckData.UpdateData(p.playerDeckData);
             playerMovementCount = p.playerMovementCount;
             playerInfluenceCount = p.playerInfluenceCount;
-            gridLocationHistory = p.gridLocationHistory;
-            visableMonsters = p.visableMonsters;
+            gridLocationHistory.Clear();
+            p.gridLocationHistory.ForEach(pos => gridLocationHistory.Add(pos.Clone()));
+            visableMonsters.Clear();
+            visableMonsters.AddRange(p.visableMonsters);
             if (battle == null) {
                 battle = p.battle;
             } else {
                 battle.UpdateData(p.battle);
             }
-            fame = p.fame;
+            fame = p.fame.Clone();
             repLevel = p.repLevel;
             actionTaken = p.actionTaken;
-            crystal = p.crystal;
-            mana = p.mana;
+            crystal.UpdateData(p.crystal);
+            mana.UpdateData(p.mana);
             armor = p.armor;
             healpoints = p.healpoints;
             manaPoolAvailable = p.manaPoolAvailable;
             dummyPlayer = p.dummyPlayer;
-            gameEffects = p.gameEffects;
-            shields = p.shields;
-            manaPool = p.manaPool;
+            gameEffects.Clear();
+            p.gameEffects.Keys.ForEach(key => {
+                WrapList<int> value = new WrapList<int>();
+                p.gameEffects[key].Values.ForEach(v => value.Add(v));
+                gameEffects.Add(key, value);
+            });
+            shields.Clear();
+            p.shields.ForEach(pos => shields.Add(pos.Clone()));
+            manaPool.Clear();
+            p.manaPool.ForEach(m => manaPool.Add(m.Clone()));
             board.UpdateData(p.board);
             waitOnServer = p.waitOnServer;
+            undoLock = p.undoLock;
         }
 
         public PlayerData Clone() {

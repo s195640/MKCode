@@ -30,7 +30,7 @@ namespace cna.ui {
         }
 
         private void UpdateUI_Count() {
-            gameTurnCounter = D.G.GameRoundCounter;
+            gameTurnCounter = D.G.Board.GameRoundCounter;
             string val;
             if (gameTurnCounter < 1) {
                 val = "Day 00";
@@ -46,7 +46,7 @@ namespace cna.ui {
         }
 
         private void UpdateUI_LastTurn() {
-            LastTurn.SetActive(D.G.EndOfRound);
+            LastTurn.SetActive(D.G.Board.EndOfRound);
         }
 
         private void UpdateUI_WaitingOn() {

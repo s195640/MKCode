@@ -237,9 +237,8 @@ namespace cna {
         }
 
         public void UpdateGameData(Data data) {
-            //D.G = gd.Clone();
             D.G.UpdateData(data);
-            D.Scenario.Check();
+            //D.Scenario.Check();
         }
         public void UpdatePlayerData(PlayerData playerData) {
             D.G.Players.Find(p => p.Key == playerData.Key).UpdateData(playerData);

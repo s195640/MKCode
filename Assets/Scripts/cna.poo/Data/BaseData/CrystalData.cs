@@ -164,5 +164,20 @@ namespace cna.poo {
             if (gold > max) gold = max;
             if (black > max) black = max;
         }
+
+        public void UpdateData(CrystalData c) {
+            blue = c.blue;
+            red = c.red;
+            green = c.green;
+            white = c.white;
+            gold = c.gold;
+            black = c.black;
+            spentBlue = c.spentBlue;
+            spentRed = c.spentRed;
+            spentGreen = c.spentGreen;
+            spentWhite = c.spentWhite;
+            spentGold = c.spentGold;
+            spentBlack = c.spentBlack;
+        }
     }
 }

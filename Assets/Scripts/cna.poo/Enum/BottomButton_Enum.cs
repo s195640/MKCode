@@ -27,5 +27,6 @@
         CityGreen_LearnAction,
         LearnSpell,
         Adventure_AncientRuins,
+        RevealMonster,
     }
 }

@@ -178,7 +178,23 @@ namespace cna.ui {
         }
 
         public void setPlayerTurn() {
-            PlayerTurnImage.color = D.CurrentTurn.Key == playerKey ? TURN_COLOR : NOT_TURN_COLOR;
+            if (D.G.GameStatus == Game_Enum.Tactics || D.G.GameStatus == Game_Enum.Tactics_WaitingOnPlayers) {
+                PlayerTurnImage.color = D.CurrentTurn.Key == playerKey ? TURN_COLOR : NOT_TURN_COLOR;
+            } else if (D.G.GameStatus == Game_Enum.Player_Turn) {
+                PlayerData pd = D.GetPlayerByKey(playerKey);
+                if (pd.DummyPlayer) {
+                    PlayerTurnImage.color = NOT_TURN_COLOR;
+                } else {
+                    TurnPhase_Enum turnPhase_Enum = pd.PlayerTurnPhase;
+                    if (turnPhase_Enum >= TurnPhase_Enum.StartTurn || turnPhase_Enum <= TurnPhase_Enum.EndTurn) {
+                        PlayerTurnImage.color = TURN_COLOR;
+                    } else {
+                        PlayerTurnImage.color = NOT_TURN_COLOR;
+                    }
+                }
+            } else {
+                PlayerTurnImage.color = NOT_TURN_COLOR;
+            }
         }
     }
 }

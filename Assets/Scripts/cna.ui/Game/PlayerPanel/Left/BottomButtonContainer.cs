@@ -86,6 +86,17 @@ namespace cna.ui {
                             if (A.Hex.Monsters.Count > 0) {
                                 B1 = BottomButton_Enum.Provoke;
                             }
+                        } else if (A.Hex.Structure == Image_Enum.SH_Keep || A.Hex.Structure == Image_Enum.SH_MageTower) {
+                            if (localPlayer.Board.MonsterData.ContainsKey(A.Hex.GridPosition) &&
+                                localPlayer.Board.MonsterData[A.Hex.GridPosition].Count > 0) {
+                                int monsterId = localPlayer.Board.MonsterData[A.Hex.GridPosition].Values[0];
+                                if (!localPlayer.VisableMonsters.Contains(monsterId)) {
+                                    bool amuletOfSun = localPlayer.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfTheSun);
+                                    if (D.Scenario.isDay || amuletOfSun) {
+                                        B1 = BottomButton_Enum.RevealMonster;
+                                    }
+                                }
+                            }
                         }
                     }
                     if (A.Hex.GridPosition.Equals(localPlayer.CurrentGridLoc)) {
@@ -290,6 +301,11 @@ namespace cna.ui {
                     color = CNAColor.CityGreen_LearnAction;
                     break;
                 }
+                case BottomButton_Enum.RevealMonster: {
+                    text = "Reveal";
+                    color = CNAColor.ColorLightGreen;
+                    break;
+                }
             }
 
             button.SetupUI(text, color, buttonImageid, isActive);
@@ -415,6 +431,10 @@ namespace cna.ui {
                 }
                 case BottomButton_Enum.Adventure_AncientRuins: {
                     A.OnClick_AdventureAncientRuins();
+                    break;
+                }
+                case BottomButton_Enum.RevealMonster: {
+                    A.OnClick_RevealMonster();
                     break;
                 }
             }

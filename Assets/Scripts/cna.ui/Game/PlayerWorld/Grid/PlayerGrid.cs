@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 namespace cna.ui {
     public class PlayerGrid : MonoBehaviour {
         [SerializeField] private Camera WorldCamera;
+        [SerializeField] private RectTransform GameDisplay;
         [SerializeField] private Tilemap TerrainTilemap;
         [SerializeField] private Tilemap StructureTilemap;
         [SerializeField] private MonsterTilemap MonsterTilemap;
@@ -21,17 +22,15 @@ namespace cna.ui {
 
 
         public void LateUpdate() {
-            Vector3 viewPoint = WorldCamera.ScreenToViewportPoint(Input.mousePosition);
-            //  Debug.Log(string.Format("input {0}, View {1}, World {2}", Input.mousePosition, viewPoint, worldPoint));
-            if (isPointValid(viewPoint)) {
+            if (isPointValid()) {
                 HexItemDetail hexItemDetail = new HexItemDetail(TerrainTilemap, StructureTilemap, MainGrid, WorldCamera);
                 SelectionHex.UpdateUI(hexItemDetail);
                 WorldCamera.GetComponent<WorldCamera>().UpdateUI(hexItemDetail);
                 OnClick_Hex(hexItemDetail);
             }
         }
-        public bool isPointValid(Vector3 point) {
-            return point.x >= 0 && point.x <= 1 && point.y >= 0 && point.y <= 1 && (!ConformationCanvas.Active || ConformationCanvas.Minimized);
+        public bool isPointValid() {
+            return (!ConformationCanvas.Active || ConformationCanvas.Minimized) && RectTransformUtility.RectangleContainsScreenPoint(GameDisplay, Input.mousePosition, WorldCamera);
         }
 
         public void OnClick_Hex(HexItemDetail hexItemDetail) {
@@ -85,7 +84,7 @@ namespace cna.ui {
                     GameAPI ar = new GameAPI(hd.G, hd.LocalPlayer);
                     ar.TurnPhase(TurnPhase_Enum.Move);
                     ar.RemoveGameEffect(GameEffect_Enum.CS_UndergroundTravel);
-                    ar.SetCurrentLocation(hd.GridPosition);
+                    ar.SetCurrentLocation(hd.GridPosition, hd.TriggerCombat, hd.Monsters);
                     ar.AddLog("[Underground Travel]");
                     ar.CompleteAction();
                 }
@@ -98,7 +97,7 @@ namespace cna.ui {
                     GameAPI ar = new GameAPI(hd.G, hd.LocalPlayer);
                     ar.TurnPhase(TurnPhase_Enum.Move);
                     ar.RemoveGameEffect(GameEffect_Enum.CS_WingsOfWind);
-                    ar.SetCurrentLocation(hd.GridPosition);
+                    ar.SetCurrentLocation(hd.GridPosition, hd.TriggerCombat, hd.Monsters);
                     ar.AddLog("[Wings of Wind]");
                     ar.ActionMovement(-1 * hd.Distance);
                     ar.CompleteAction();
@@ -118,7 +117,7 @@ namespace cna.ui {
             GameAPI ar = new GameAPI(hd.G, hd.LocalPlayer);
             ar.TurnPhase(TurnPhase_Enum.Move);
             ar.RemoveGameEffect(GameEffect_Enum.CS_UndergroundAttack);
-            ar.SetCurrentLocation(hd.GridPosition);
+            ar.SetCurrentLocation(hd.GridPosition, hd.TriggerCombat, hd.Monsters);
             ar.AddLog("[Underground Attack]");
             ar.CompleteAction();
         }
@@ -129,7 +128,7 @@ namespace cna.ui {
                     GameAPI ar = new GameAPI(hd.G, hd.LocalPlayer);
                     ar.TurnPhase(TurnPhase_Enum.Move);
                     ar.RemoveGameEffect(GameEffect_Enum.CS_SpaceBending);
-                    ar.SetCurrentLocation(hd.GridPosition);
+                    ar.SetCurrentLocation(hd.GridPosition, hd.TriggerCombat, hd.Monsters);
                     ar.AddLog("[Space Bending]");
                     ar.CompleteAction();
                 }
@@ -142,14 +141,14 @@ namespace cna.ui {
                     GameAPI ar = new GameAPI(hd.G, hd.LocalPlayer);
                     ar.TurnPhase(TurnPhase_Enum.Move);
                     ar.RemoveGameEffect(GameEffect_Enum.GREEN_Flight);
-                    ar.SetCurrentLocation(hd.GridPosition);
+                    ar.SetCurrentLocation(hd.GridPosition, hd.TriggerCombat, hd.Monsters);
                     ar.AddLog("[Flight]");
                     ar.CompleteAction();
                 } else if (hd.Distance == 2) {
                     GameAPI ar = new GameAPI(hd.G, hd.LocalPlayer);
                     ar.TurnPhase(TurnPhase_Enum.Move);
                     ar.RemoveGameEffect(GameEffect_Enum.GREEN_Flight);
-                    ar.SetCurrentLocation(hd.GridPosition);
+                    ar.SetCurrentLocation(hd.GridPosition, hd.TriggerCombat, hd.Monsters);
                     ar.AddLog("[Flight]");
                     ar.ActionMovement(-2);
                     ar.CompleteAction();
@@ -160,86 +159,11 @@ namespace cna.ui {
         public void performMovement(HexItemDetail hd) {
             GameAPI ar = new GameAPI(hd.G, hd.LocalPlayer);
             ar.TurnPhase(TurnPhase_Enum.Move);
-            ar.SetCurrentLocation(hd.GridPosition);
+            ar.SetCurrentLocation(hd.GridPosition, hd.TriggerCombat, hd.Monsters);
             ar.AddLog("[Move]");
             ar.ActionMovement(-1 * hd.PlayerMovementCost);
             ar.CompleteAction();
         }
-
-        //public Image_Enum getTerrainAtLoc(V2IntVO loc) {
-        //    int mapIndex = D.Scenario.ConvertWorldToIndex(loc);
-        //    int locIndex = D.Scenario.ConvertWorldToLocIndex(loc);
-        //    MapHexId_Enum mapHexId_Enum = D.G.Board.CurrentMap[mapIndex];
-        //    MapHexVO mapHex = D.HexMap[mapHexId_Enum];
-        //    return mapHex.TerrainList[locIndex];
-        //}
-
-        //public void addLoctionGameEffect(HexItemDetail hd) {
-        //    D.LocalPlayer.GameEffects.Remove(GameEffect_Enum.SH_MageTower);
-        //    D.LocalPlayer.GameEffects.Remove(GameEffect_Enum.SH_Keep);
-        //    D.LocalPlayer.GameEffects.Remove(GameEffect_Enum.SH_City_Red);
-        //    D.LocalPlayer.GameEffects.Remove(GameEffect_Enum.SH_City_Green);
-        //    D.LocalPlayer.GameEffects.Remove(GameEffect_Enum.SH_City_White);
-        //    D.LocalPlayer.GameEffects.Remove(GameEffect_Enum.SH_City_Blue);
-        //    GameEffect_Enum ge = GameEffect_Enum.NA;
-        //    switch (hd.Structure) {
-        //        case Image_Enum.SH_MageTower: {
-        //            ge = GameEffect_Enum.SH_MageTower;
-        //            break;
-        //        }
-        //        case Image_Enum.SH_Keep: {
-        //            ge = GameEffect_Enum.SH_Keep;
-        //            break;
-        //        }
-        //        case Image_Enum.SH_City_Blue: {
-        //            ge = GameEffect_Enum.SH_City_Blue;
-        //            break;
-        //        }
-        //        case Image_Enum.SH_City_Green: {
-        //            ge = GameEffect_Enum.SH_City_Green;
-        //            break;
-        //        }
-        //        case Image_Enum.SH_City_Red: {
-        //            ge = GameEffect_Enum.SH_City_Red;
-        //            break;
-        //        }
-        //        case Image_Enum.SH_City_White: {
-        //            ge = GameEffect_Enum.SH_City_White;
-        //            break;
-        //        }
-        //    }
-        //    D.LocalPlayer.AddGameEffect(ge);
-        //    if (hd.TriggerCombat) {
-        //        hd.Monsters.ForEach(m => {
-        //            switch (m.Structure) {
-        //                case Image_Enum.SH_MageTower: {
-        //                    D.LocalPlayer.AddGameEffect(GameEffect_Enum.SH_MageTower, m.Uniqueid);
-        //                    break;
-        //                }
-        //                case Image_Enum.SH_Keep: {
-        //                    D.LocalPlayer.AddGameEffect(GameEffect_Enum.SH_Keep, m.Uniqueid);
-        //                    break;
-        //                }
-        //                case Image_Enum.SH_City_Blue: {
-        //                    D.LocalPlayer.AddGameEffect(GameEffect_Enum.SH_City_Blue, m.Uniqueid);
-        //                    break;
-        //                }
-        //                case Image_Enum.SH_City_Green: {
-        //                    D.LocalPlayer.AddGameEffect(GameEffect_Enum.SH_City_Green, m.Uniqueid);
-        //                    break;
-        //                }
-        //                case Image_Enum.SH_City_Red: {
-        //                    D.LocalPlayer.AddGameEffect(GameEffect_Enum.SH_City_Red, m.Uniqueid);
-        //                    break;
-        //                }
-        //                case Image_Enum.SH_City_White: {
-        //                    D.LocalPlayer.AddGameEffect(GameEffect_Enum.SH_City_White, m.Uniqueid);
-        //                    break;
-        //                }
-        //            }
-        //        });
-        //    }
-        //}
 
         public void UpdateUI() {
             drawCurrentMap();

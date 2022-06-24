@@ -7,6 +7,7 @@ using UnityEngine.Tilemaps;
 namespace cna {
     public class D {
         private static string gameid = "";
+        private static int seed = 0;
         private static BaseConnector connector;
         private static CardEngine cardEngine;
         private static AppEngine appEngine;
@@ -26,14 +27,15 @@ namespace cna {
         public static BattleEngine B { get { if (battleEngine == null) { battleEngine = Resources.FindObjectsOfTypeAll<BattleEngine>()[0]; } return battleEngine; } }
         public static int LocalPlayerKey { get => Connector.Player.Key; }
         public static PlayerData LocalPlayer { get { return G.Players.Find(p => p.Key.Equals(LocalPlayerKey)); } }
-        public static PlayerData CurrentTurn { get { return G.Players.Find(p => p.Key == G.PlayerTurnOrder[G.PlayerTurnIndex]); } }
+        public static PlayerData CurrentTurn { get { return G.Players.Find(p => p.Key == G.Board.PlayerTurnOrder[G.Board.PlayerTurnIndex]); } }
         public static PlayerData DummyPlayer { get { return GetPlayerByKey(-999); } }
         public static BoardData Board { get => G.Board; }
         public static GameData GLD { get => G.GameData; }
         public static ScenarioBase Scenario {
             get {
-                if (!gameid.Equals(G.GameId) || A.scenario == null) {
+                if (!gameid.Equals(G.GameId) || seed != GLD.Seed || A.scenario == null) {
                     gameid = G.GameId;
+                    seed = GLD.Seed;
                     A.scenario = ScenarioBase.Create();
                 }
                 return A.scenario;

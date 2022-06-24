@@ -8,7 +8,6 @@ namespace cna.ui {
         [SerializeField] GameInfoPanel gameInfoPanel;
         [SerializeField] PlayerCardPanel playerCardPanel;
         [SerializeField] ActionCardSlot actionCardSlot;
-        [SerializeField] GameObject gridCanvas;
         [SerializeField] TopBar TopBar;
         [SerializeField] GameEffectPanel GameEffectPanel;
 
@@ -19,7 +18,6 @@ namespace cna.ui {
 
             gameRoundPanel.UpdateUI();
             playerWorld.gameObject.SetActive(true);
-            gridCanvas.SetActive(true);
             playerWorld.UpdateUI();
             gameInfoPanel.UpdateUI();
             playerCardPanel.UpdateUI();

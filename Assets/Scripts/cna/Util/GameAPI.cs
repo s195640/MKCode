@@ -501,10 +501,15 @@ namespace cna {
             log.Add((val > 0 ? "+" : "") + val + " " + color + " " + magicType);
         }
 
-        public void SetCurrentLocation(V2IntVO pos) {
+        public void SetCurrentLocation(V2IntVO pos, bool triggerCombat, List<MonsterMetaData> monsters) {
             change();
             P.GridLocationHistory.Insert(0, pos);
+            BasicUtil.AddMovementGameEffects(P);
+            if (triggerCombat) {
+                BasicUtil.AddBattleGameEffects(P, monsters);
+            }
         }
+
         #endregion
 
         #region Panels
@@ -584,7 +589,7 @@ namespace cna {
             bool forceDeclareEndOfRound = playerData.Deck.Deck.Count == 0 && playerData.Deck.Hand.Count == 0;
             bool isExhausted = true;
             playerData.Deck.Hand.ForEach(c => isExhausted = isExhausted && D.Cards[c].CardType == CardType_Enum.Wound);
-            bool endOfRoundDeclared = D.G.EndOfRound;
+            bool endOfRoundDeclared = D.G.Board.EndOfRound;
 
             if (forceDeclareEndOfRound) {
                 TurnPhase(TurnPhase_Enum.EndOfRound);

@@ -24,8 +24,6 @@ namespace cna.poo {
             this.gameId = gameId;
         }
 
-        //public PlayerData Host { get => players.Find(p => p.Key == hostPlayerKey); }
-        //public List<PlayerData> Players { get => players; set => players = value; }
         public string GameId { get => gameId; set => gameId = value; }
         public GameMapLayout_Enum GameMapLayout { get => gameMapLayout; set => gameMapLayout = value; }
         public int BasicTiles { get => basicTiles; set => basicTiles = value; }

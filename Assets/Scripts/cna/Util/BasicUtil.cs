@@ -61,7 +61,7 @@ namespace cna {
             int n = deck.Count;
             while (n > 1) {
                 n--;
-                int k = UnityEngine.Random.Range(0, n + 1);
+                int k = RandomRange(0, n + 1);
                 T value = deck[k];
                 deck[k] = deck[n];
                 deck[n] = value;
@@ -69,7 +69,7 @@ namespace cna {
         }
 
         public static T Random<T>(this IList<T> deck) {
-            return deck[UnityEngine.Random.Range(0, deck.Count)];
+            return deck[RandomRange(0, deck.Count)];
         }
 
         public static T DrawCard<T>(this IList<T> deck) {
@@ -247,10 +247,10 @@ namespace cna {
 
         public static void SaveGameToFile(Data gd) {
             string gameid = gd.GameId;
-            string turnCounter = "" + gd.TurnCounter;
-            string playerName = gd.Players[gd.PlayerTurnIndex].Name;
+            string turnCounter = "" + gd.Board.TurnCounter;
+            string hostName = gd.Players[gd.HostPlayerKey].Name;
             string SAVED_GAME_PATH = SAVED_GAME_FILE_PATH + gameid + "/";
-            string fileName = string.Format("{0}_{1}.gd", turnCounter.PadLeft(4, '0'), playerName);
+            string fileName = string.Format("{0}_{1}.gd", turnCounter.PadLeft(4, '0'), hostName);
             DirectoryInfo info = Directory.CreateDirectory(SAVED_GAME_PATH);
             File.WriteAllText(SAVED_GAME_PATH + fileName, JsonUtility.ToJson(gd));
         }
@@ -278,6 +278,108 @@ namespace cna {
             MapHexVO mapHex = D.HexMap[mapHexId_Enum];
             return mapHex.StructureList[locIndex];
         }
+
+        public static void ClearAllMovementGameEffects(PlayerData pd) {
+            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Blue);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Red);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Green);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_White);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_MagicGlade);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_MageTower);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_Keep);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Red);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Green);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_White);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Blue);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_Keep_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Blue_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Red_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Green_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_White_Own);
+            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Own);
+        }
+        public static void AddMovementGameEffects(PlayerData pd) {
+            ClearAllMovementGameEffects(pd);
+            Image_Enum structure = GetStructureAtLoc(pd.CurrentGridLoc);
+            List<V2IntVO> adj = GetAdjacentPoints(pd.CurrentGridLoc);
+            adj.ForEach(pos => {
+                if (!pd.Board.MonsterData.ContainsKey(pos)) {
+                    if (pd.Shields.Contains(pos)) {
+                        Image_Enum structure = GetStructureAtLoc(pos);
+                        switch (structure) {
+                            case Image_Enum.SH_Keep: { pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own); break; }
+                            case Image_Enum.SH_City_Blue:
+                            case Image_Enum.SH_City_Red:
+                            case Image_Enum.SH_City_Green:
+                            case Image_Enum.SH_City_White: { pd.AddGameEffect(GameEffect_Enum.SH_City_Own); break; }
+                        }
+                    }
+                }
+            });
+            switch (structure) {
+                case Image_Enum.SH_CrystalMines_Blue: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Blue); break; }
+                case Image_Enum.SH_CrystalMines_Red: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Red); break; }
+                case Image_Enum.SH_CrystalMines_Green: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Green); break; }
+                case Image_Enum.SH_CrystalMines_White: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_White); break; }
+                case Image_Enum.SH_MagicGlade: { pd.AddGameEffect(GameEffect_Enum.SH_MagicGlade); break; }
+                case Image_Enum.SH_Keep: {
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own); }
+                    break;
+                }
+                case Image_Enum.SH_City_Blue: {
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Blue_Own); }
+                    break;
+                }
+                case Image_Enum.SH_City_Red: {
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Red_Own); }
+                    break;
+                }
+                case Image_Enum.SH_City_Green: {
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Green_Own); }
+                    break;
+                }
+                case Image_Enum.SH_City_White: {
+                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_White_Own); }
+                    break;
+                }
+            }
+        }
+
+        public static void AddBattleGameEffects(PlayerData pd, List<MonsterMetaData> monsters) {
+            monsters.ForEach(m => {
+                GameEffect_Enum be = GameEffect_Enum.NA;
+                switch (m.Structure) {
+                    case Image_Enum.SH_MageTower: {
+                        be = GameEffect_Enum.SH_MageTower;
+                        break;
+                    }
+                    case Image_Enum.SH_Keep: {
+                        be = GameEffect_Enum.SH_Keep;
+                        break;
+                    }
+                    case Image_Enum.SH_City_Blue: {
+                        be = GameEffect_Enum.SH_City_Blue;
+                        break;
+                    }
+                    case Image_Enum.SH_City_Green: {
+                        be = GameEffect_Enum.SH_City_Green;
+                        break;
+                    }
+                    case Image_Enum.SH_City_Red: {
+                        be = GameEffect_Enum.SH_City_Red;
+                        break;
+                    }
+                    case Image_Enum.SH_City_White: {
+                        be = GameEffect_Enum.SH_City_White;
+                        break;
+                    }
+                }
+                if (be != GameEffect_Enum.NA) {
+                    pd.AddGameEffect(be, m.Uniqueid);
+                }
+            });
+        }
+
 
         public static void UpdateMovementGameEffects(PlayerData pd) {
             Image_Enum AvatarShieldId = D.AvatarMetaDataMap[pd.Avatar].AvatarShieldId;
@@ -317,61 +419,61 @@ namespace cna {
                     }
                 }
             }
+            AddMovementGameEffects(pd);
+            ////  Mines & Glade
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Blue);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Red);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Green);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_White);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_MagicGlade);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_Keep_Own);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_City_Blue_Own);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_City_Red_Own);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_City_Green_Own);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_City_White_Own);
+            //pd.GameEffects.Remove(GameEffect_Enum.SH_City_Own);
+            //adj.ForEach(pos => {
+            //    if (!pd.Board.MonsterData.ContainsKey(pos)) {
+            //        if (pd.Shields.Contains(pos)) {
+            //            Image_Enum structure = GetStructureAtLoc(pos);
+            //            switch (structure) {
+            //                case Image_Enum.SH_Keep: { pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own); break; }
+            //                case Image_Enum.SH_City_Blue:
+            //                case Image_Enum.SH_City_Red:
+            //                case Image_Enum.SH_City_Green:
+            //                case Image_Enum.SH_City_White: { pd.AddGameEffect(GameEffect_Enum.SH_City_Own); break; }
+            //            }
+            //        }
+            //    }
+            //});
 
-            //  Mines & Glade
-            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Blue);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Red);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_Green);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_CrystalMines_White);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_MagicGlade);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_Keep_Own);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Blue_Own);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Red_Own);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Green_Own);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_City_White_Own);
-            pd.GameEffects.Remove(GameEffect_Enum.SH_City_Own);
-            adj.ForEach(pos => {
-                if (!pd.Board.MonsterData.ContainsKey(pos)) {
-                    if (pd.Shields.Contains(pos)) {
-                        Image_Enum structure = GetStructureAtLoc(pos);
-                        switch (structure) {
-                            case Image_Enum.SH_Keep: { pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own); break; }
-                            case Image_Enum.SH_City_Blue:
-                            case Image_Enum.SH_City_Red:
-                            case Image_Enum.SH_City_Green:
-                            case Image_Enum.SH_City_White: { pd.AddGameEffect(GameEffect_Enum.SH_City_Own); break; }
-                        }
-                    }
-                }
-            });
-
-            switch (Structure) {
-                case Image_Enum.SH_CrystalMines_Blue: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Blue); break; }
-                case Image_Enum.SH_CrystalMines_Red: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Red); break; }
-                case Image_Enum.SH_CrystalMines_Green: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Green); break; }
-                case Image_Enum.SH_CrystalMines_White: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_White); break; }
-                case Image_Enum.SH_MagicGlade: { pd.AddGameEffect(GameEffect_Enum.SH_MagicGlade); break; }
-                case Image_Enum.SH_Keep: {
-                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own); }
-                    break;
-                }
-                case Image_Enum.SH_City_Blue: {
-                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Blue_Own); }
-                    break;
-                }
-                case Image_Enum.SH_City_Red: {
-                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Red_Own); }
-                    break;
-                }
-                case Image_Enum.SH_City_Green: {
-                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Green_Own); }
-                    break;
-                }
-                case Image_Enum.SH_City_White: {
-                    if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_White_Own); }
-                    break;
-                }
-            }
+            //switch (Structure) {
+            //    case Image_Enum.SH_CrystalMines_Blue: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Blue); break; }
+            //    case Image_Enum.SH_CrystalMines_Red: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Red); break; }
+            //    case Image_Enum.SH_CrystalMines_Green: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_Green); break; }
+            //    case Image_Enum.SH_CrystalMines_White: { pd.AddGameEffect(GameEffect_Enum.SH_CrystalMines_White); break; }
+            //    case Image_Enum.SH_MagicGlade: { pd.AddGameEffect(GameEffect_Enum.SH_MagicGlade); break; }
+            //    case Image_Enum.SH_Keep: {
+            //        if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_Keep_Own); }
+            //        break;
+            //    }
+            //    case Image_Enum.SH_City_Blue: {
+            //        if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Blue_Own); }
+            //        break;
+            //    }
+            //    case Image_Enum.SH_City_Red: {
+            //        if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Red_Own); }
+            //        break;
+            //    }
+            //    case Image_Enum.SH_City_Green: {
+            //        if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_Green_Own); }
+            //        break;
+            //    }
+            //    case Image_Enum.SH_City_White: {
+            //        if (pd.Shields.Contains(pd.CurrentGridLoc)) { pd.AddGameEffect(GameEffect_Enum.SH_City_White_Own); }
+            //        break;
+            //    }
+            //}
             CalculatePlayerHandBonus(pd);
         }
         public static void CalculatePlayerHandBonus(PlayerData pd) {
@@ -463,6 +565,10 @@ namespace cna {
                 });
             });
             return shields;
+        }
+
+        public static int RandomRange(int a, int b) {
+            return UnityEngine.Random.Range(a, b);
         }
     }
 }

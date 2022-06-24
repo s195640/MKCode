@@ -9,6 +9,8 @@ namespace cna {
     public abstract class ScenarioBase {
         [SerializeField] protected int maxBoardSize = 0;
         [SerializeField] private List<MapHexId_Enum> mapDeck;
+        [SerializeField] private int mapDeckSize;
+        [SerializeField] private int basicDeckSize;
         [SerializeField] private List<int> woundDeck = new List<int>();
         [SerializeField] private List<int> monsterGreenDeck = new List<int>();
         [SerializeField] private List<int> monsterGreyDeck = new List<int>();
@@ -36,7 +38,7 @@ namespace cna {
         public Dictionary<int, List<int>> AdjBoard { get => adjBoard; set => adjBoard = value; }
         public Dictionary<int, Vector3Int> LocationMap { get => locationMap; set => locationMap = value; }
         public List<MapHexId_Enum> MapDeck { get => mapDeck; set => mapDeck = value; }
-        public bool isDay { get => D.G.GameRoundCounter % 2 != 0; }
+        public bool isDay { get => D.G.Board.GameRoundCounter % 2 != 0; }
         public List<int> MonsterGreenDeck { get => monsterGreenDeck; set => monsterGreenDeck = value; }
         public List<int> MonsterGreyDeck { get => monsterGreyDeck; set => monsterGreyDeck = value; }
         public List<int> MonsterBrownDeck { get => monsterBrownDeck; set => monsterBrownDeck = value; }
@@ -56,6 +58,8 @@ namespace cna {
         public List<int> RuinDeck { get => ruinDeck; set => ruinDeck = value; }
         public List<int> TacticsDayDeck { get => tacticsDayDeck; set => tacticsDayDeck = value; }
         public List<int> TacticsNightDeck { get => tacticsNightDeck; set => tacticsNightDeck = value; }
+        public int MapDeckSize { get => mapDeckSize; set => mapDeckSize = value; }
+        public int BasicDeckSize { get => basicDeckSize; set => basicDeckSize = value; }
 
         public static ScenarioBase Create() {
             D.A.Clear();
@@ -674,68 +678,62 @@ namespace cna {
 
         public void buildMapDeck(bool isWedge, bool easyStart, int basic, int core, int city) {
             MapDeck = new List<MapHexId_Enum>();
-
             List<MapHexId_Enum> basicIds = new List<MapHexId_Enum>();
             List<MapHexId_Enum> coreIds = new List<MapHexId_Enum>();
-            List<MapHexId_Enum> citeIds = new List<MapHexId_Enum>();
+            List<MapHexId_Enum> cityIds = new List<MapHexId_Enum>();
             foreach (MapHexId_Enum id in Enum.GetValues(typeof(MapHexId_Enum))) {
                 if (id >= MapHexId_Enum.City_Green) {
-                    citeIds.Add(id);
+                    cityIds.Add(id);
                 } else if (id >= MapHexId_Enum.Core_01) {
                     coreIds.Add(id);
                 } else if (id >= MapHexId_Enum.Basic_01) {
                     basicIds.Add(id);
                 }
             }
-
-            int b = 0;
+            basicIds.ShuffleDeck();
+            coreIds.ShuffleDeck();
+            cityIds.ShuffleDeck();
+            //  Basic Tiles
             MapDeck.Add(isWedge ? MapHexId_Enum.Start_A : MapHexId_Enum.Start_B);
             if (easyStart) {
                 basicIds.Remove(MapHexId_Enum.Basic_01);
+                basicIds.Remove(MapHexId_Enum.Basic_02);
                 MapDeck.Add(MapHexId_Enum.Basic_01);
                 MapDeck.Add(MapHexId_Enum.Basic_02);
-                basicIds.Remove(MapHexId_Enum.Basic_02);
-                b += 2;
                 if (!isWedge) {
-                    MapDeck.Add(MapHexId_Enum.Basic_03);
                     basicIds.Remove(MapHexId_Enum.Basic_03);
-                    b++;
+                    MapDeck.Add(MapHexId_Enum.Basic_03);
+                }
+            } else {
+                MapDeck.Add(basicIds[0]);
+                basicIds.RemoveAt(0);
+                MapDeck.Add(basicIds[0]);
+                basicIds.RemoveAt(0);
+                if (!isWedge) {
+                    MapDeck.Add(basicIds[0]);
+                    basicIds.RemoveAt(0);
                 }
             }
-            for (; b < basic; b++) {
-                int rand = UnityEngine.Random.Range(0, basicIds.Count);
-                MapDeck.Add(basicIds[rand]);
-                basicIds.RemoveAt(rand);
+            for (int b = 0; b < basic; b++) {
+                MapDeck.Add(basicIds[0]);
+                basicIds.RemoveAt(0);
             }
+            BasicDeckSize = MapDeck.Count();
+            //  Advanced Tiles
             List<MapHexId_Enum> advancedIds = new List<MapHexId_Enum>();
             for (int i = 0; i < city; i++) {
-                int rand = UnityEngine.Random.Range(0, citeIds.Count);
-                advancedIds.Add(citeIds[rand]);
-                citeIds.RemoveAt(rand);
+                advancedIds.Add(cityIds[0]);
+                cityIds.RemoveAt(0);
             }
             for (int i = 0; i < core; i++) {
-                int rand = UnityEngine.Random.Range(0, coreIds.Count);
-                advancedIds.Add(coreIds[rand]);
-                coreIds.RemoveAt(rand);
+                advancedIds.Add(coreIds[0]);
+                coreIds.RemoveAt(0);
             }
-            int total = advancedIds.Count;
-            for (int i = 0; i < total; i++) {
-                int rand = UnityEngine.Random.Range(0, advancedIds.Count);
-                MapDeck.Add(advancedIds[rand]);
-                advancedIds.RemoveAt(rand);
-            }
-            total = basicIds.Count;
-            for (int i = 0; i < total; i++) {
-                int rand = UnityEngine.Random.Range(0, basicIds.Count);
-                MapDeck.Add(basicIds[rand]);
-                basicIds.RemoveAt(rand);
-            }
-            total = coreIds.Count;
-            for (int i = 0; i < total; i++) {
-                int rand = UnityEngine.Random.Range(0, coreIds.Count);
-                MapDeck.Add(coreIds[rand]);
-                coreIds.RemoveAt(rand);
-            }
+            advancedIds.ShuffleDeck();
+            MapDeck.AddRange(advancedIds);
+            MapDeckSize = MapDeck.Count;
+            MapDeck.AddRange(coreIds);
+            MapDeck.AddRange(basicIds);
         }
         public void buildStartMap() {
             D.Board.CurrentMap = new List<MapHexId_Enum>();
@@ -750,12 +748,13 @@ namespace cna {
         }
         public void rebuildCurrentMap(PlayerData pd) {
             int totalTilesLeft = MapDeck.Count - D.Board.MapDeckIndex;
-            int gameTilesLeft = 1 + (D.GLD.BasicTiles + D.GLD.CoreTiles + D.GLD.CityTiles) - D.Board.MapDeckIndex;
-            bool nextTileBasic = D.Board.MapDeckIndex <= D.GLD.BasicTiles;
+            int playerTotalMapTiles = pd.Board.PlayerMap.FindAll(m => m >= MapHexId_Enum.Start_A).Count();
+            int gameTilesLeft = MapDeckSize - playerTotalMapTiles;
+            bool nextTileBasic = playerTotalMapTiles < BasicDeckSize;
             for (int i = 0; i < pd.Board.PlayerMap.Count; i++) {
                 if (pd.Board.PlayerMap[i] <= MapHexId_Enum.Core_Back) {
                     if (recalculateHex(i, pd.Board.PlayerMap, totalTilesLeft, gameTilesLeft, nextTileBasic)) {
-                        pd.Board.PlayerMap[i] = MapDeck[D.Board.MapDeckIndex] < MapHexId_Enum.Core_01 ? MapHexId_Enum.Basic_Back : MapHexId_Enum.Core_Back;
+                        pd.Board.PlayerMap[i] = MapDeck[playerTotalMapTiles] < MapHexId_Enum.Core_01 ? MapHexId_Enum.Basic_Back : MapHexId_Enum.Core_Back;
                     } else {
                         pd.Board.PlayerMap[i] = MapHexId_Enum.Invalid;
                     }
@@ -816,11 +815,11 @@ namespace cna {
             pd.ManaPoolFull.Clear();
             int totalDie = g.Players.Count + 2 - (g.GameData.DummyPlayer ? 1 : 0);
             for (int i = 0; i < totalDie / 2; i++) {
-                Crystal_Enum crystal_Enum = (Crystal_Enum)UnityEngine.Random.Range(1, 7);
+                Crystal_Enum crystal_Enum = (Crystal_Enum)BasicUtil.RandomRange(1, 7);
                 pd.ManaPoolFull.Add(new ManaPoolData(crystal_Enum));
             }
             for (int i = 0; i < totalDie - (totalDie / 2); i++) {
-                Crystal_Enum crystal_Enum = (Crystal_Enum)UnityEngine.Random.Range(2, 6);
+                Crystal_Enum crystal_Enum = (Crystal_Enum)BasicUtil.RandomRange(2, 6);
                 pd.ManaPoolFull.Add(new ManaPoolData(crystal_Enum));
             }
         }

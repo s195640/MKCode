@@ -32,8 +32,8 @@ namespace cna.ui {
             D.G = new Data();
             //D.G.HostId = 0;
             //D.G.GameId = "NEWGAMEID";
-            D.G.PlayerTurnOrder = new List<int>() { 0 };
-            D.G.PlayerTurnIndex = 0;
+            D.G.Board.PlayerTurnOrder = new List<int>() { 0 };
+            D.G.Board.PlayerTurnIndex = 0;
             D.G.Players = new List<PlayerData>();
             D.G.Players.Add(new PlayerData(playerName, 0));
             D.G.GameStatus = Game_Enum.TESTING;

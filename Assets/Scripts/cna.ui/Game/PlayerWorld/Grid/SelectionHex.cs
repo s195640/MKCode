@@ -23,7 +23,7 @@ namespace cna.ui {
         [SerializeField] private Grid MainGrid;
         [SerializeField] private Camera WorldCamera;
         [SerializeField] private GameObject GridMovementCost;
-        [SerializeField] private TextMeshProUGUI MoveVal;
+        [SerializeField] private TextMeshPro MoveVal;
         [SerializeField] private GameObject AttackImage;
         [SerializeField] private GameObject MoveImage;
         [SerializeField] private GameObject ViewImage;
@@ -48,7 +48,7 @@ namespace cna.ui {
                     //avatarPosition = d.PlayerLocation;
                     //distance = d.Distance;
 
-                    GridMovementCost.transform.position = d.GridWorldPosition;
+                    //GridMovementCost.transform.position = d.GridWorldPosition;
                     if (!d.ShiftDown && (d.isTurn || d.LocalPlayer.PlayerTurnPhase != TurnPhase_Enum.Move)) {
                         if (d.IsFlight) {
                             Flight(d);

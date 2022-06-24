@@ -494,13 +494,12 @@ namespace cna.ui {
             if (CheckTurnAndUI(ar)) {
                 if (ar.P.PlayerTurnPhase <= TurnPhase_Enum.Move) {
                     if (ar.P.Movement >= 2) {
-                        int index = D.Scenario.ConvertWorldToIndex(Hex.GridPosition);
-                        ar.P.Board.PlayerMap[index] = MapHexId_Enum.Explore;
-                        ar.P.WaitOnServer = true;
-                        SelectedCardSlot = null;
-                        ar.AddLog("[Explore]");
-                        ar.ActionMovement(-2);
-                        ar.WaitOnServerPanel();
+                        ar.AcceptPanel("Warning!",
+                            "You are about to explore an undiscovered tile, You Will NOT be able to UNDO this action, would you like to continue?",
+                            new List<Action<GameAPI>>() { Explore_Yes, (a) => { } },
+                            new List<string> { "Yes", "No" },
+                            new List<Color32> { CNAColor.ColorLightGreen, CNAColor.ColorLightRed },
+                            CNAColor.ColorLightBlue);
                     } else {
                         ar.ErrorMsg = "You do not have enough movement to Explore, you need 2 movement points!";
                     }
@@ -509,6 +508,17 @@ namespace cna.ui {
                 }
             }
             ProcessActionResultVO(ar);
+        }
+
+        public void Explore_Yes(GameAPI ar) {
+            int index = D.Scenario.ConvertWorldToIndex(Hex.GridPosition);
+            ar.P.Board.PlayerMap[index] = MapHexId_Enum.Explore;
+            ar.P.WaitOnServer = true;
+            ar.P.UndoLock = true;
+            SelectedCardSlot = null;
+            ar.AddLog("[Explore]");
+            ar.ActionMovement(-2);
+            ar.WaitOnServerPanel();
         }
 
         public void OnClick_ExploreOLD() {
@@ -1009,6 +1019,22 @@ namespace cna.ui {
             ar.Fame(7);
             ar.AddShieldLocation(ar.P.CurrentGridLoc);
             ProcessActionResultVO(ar);
+        }
+
+        public void OnClick_RevealMonster() {
+            GameAPI ar = new GameAPI();
+            ar.AcceptPanel("Warning!",
+                "You are about to reveal new information, You Will NOT be able to UNDO this action, would you like to continue?",
+                new List<Action<GameAPI>>() { RevealMonster_Yes, (a) => { } },
+                new List<string> { "Yes", "No" },
+                new List<Color32> { CNAColor.ColorLightGreen, CNAColor.ColorLightRed },
+                CNAColor.ColorLightBlue);
+        }
+
+        public void RevealMonster_Yes(GameAPI ar) {
+            ar.P.VisableMonsters.Add(Hex.Monsters[0].Uniqueid);
+            D.A.pd_StartOfTurn = ar.P.Clone();
+            ar.PushForce();
         }
 
 
