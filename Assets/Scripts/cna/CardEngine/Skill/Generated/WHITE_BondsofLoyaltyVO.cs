@@ -9,7 +9,7 @@ namespace cna {
             SkillRefresh_Enum.NA,
             Image_Enum.SKW_bonds_of_loyalty,
             Image_Enum.SKW_back,
-            Image_Enum.A_MEEPLE_WHITE,
+            Image_Enum.A_meeple_norowas,
             new List<List<TurnPhase_Enum>> { new List<TurnPhase_Enum>() { } },
             new List<List<BattlePhase_Enum>> { new List<BattlePhase_Enum>() { } },
             false,

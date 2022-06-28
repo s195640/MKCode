@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace cna.poo {
 
@@ -18,10 +16,10 @@ namespace cna.poo {
             gameData = new GameData(gameId, host.Key);
         }
 
-        [SerializeField] private GameData gameData;
-        [SerializeField] private List<PlayerData> players;
-        [SerializeField] private BoardData boardGameData;
-        [SerializeField] private Game_Enum gameStatus;
+        [SerializeField] private GameData gameData = new GameData();
+        [SerializeField] private List<PlayerData> players = new List<PlayerData>();
+        [SerializeField] private BoardData boardGameData = new BoardData();
+        [SerializeField] private Game_Enum gameStatus = Game_Enum.NA;
 
 
 

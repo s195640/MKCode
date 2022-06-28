@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using cna.poo;
 using UnityEngine;
 
@@ -608,7 +607,11 @@ namespace cna {
                 startUpMsg.Add("Both your deed deck and your hand are empty.  Your turn is forfeit and End of Round has been declared.");
             } else {
                 if (endOfRoundDeclared) {
-                    startUpMsg.Add("End of Round has been declared.  This will be your last turn.");
+                    if (BasicUtil.AllCitiesConquered(g)) {
+                        startUpMsg.Add("All Cities have been Conquered.  This will be your last turn before the game ends.");
+                    } else {
+                        startUpMsg.Add("End of Round has been declared.  This will be your last turn this round.");
+                    }
                 }
                 if (isExhausted) {
                     startUpMsg.Add("You are Exhausted, you started your hand without any NON Wound cards in your hand.  You will not be able to take any Move, Influence, or Battle actions this turn, if possible one wound card will be discarded.");
@@ -629,6 +632,24 @@ namespace cna {
             UpdateUI();
             D.Action.WaitOnServerPanel(this);
         }
+
+        public void EndOfGame() {
+            g.GameStatus = Game_Enum.End_Of_Game_Acknowledged;
+            D.ScreenState = ScreenState_Enum.FinalScore;
+            D.A.UpdateUI();
+            bool citiesConquered = BasicUtil.AllCitiesConquered(g);
+            string title = citiesConquered ? "Game Over - Congratulations!" : "Game Over - Failure!";
+            string body = citiesConquered ? "You Successfully conquered all the cities!" : "You have Failed to conquer all the cities!";
+            string buttonText = citiesConquered ? "Success!" : "Failure!";
+            Color buttonColor = citiesConquered ? CNAColor.ColorLightGreen : CNAColor.ColorLightRed;
+            AcceptPanel(title,
+                            body,
+                            new List<Action<GameAPI>>() { (a) => { } },
+                            new List<string> { buttonText },
+                            new List<Color32> { buttonColor },
+                            CNAColor.ColorLightBlue);
+        }
+
         #endregion
 
         #region BattleEffects
@@ -881,17 +902,64 @@ namespace cna {
                 P.ClearEndTurn();
                 P.AddGameEffect(D.Scenario.isDay ? GameEffect_Enum.Day : GameEffect_Enum.Night);
                 drawHand(P.Deck);
-                if (D.Scenario.isDay) {
-                    P.Board.MonsterData.Keys.ForEach(pos => {
-                        P.Board.MonsterData[pos].Values.ForEach(r => {
-                            if (D.Cards[r].CardType != CardType_Enum.Monster) {
-                                P.VisableMonsters.Add(r);
+            }
+        }
+        public void PlayerRebuildVisableMonsters() {
+            List<int> allMonsters = new List<int>();
+            P.Board.MonsterData.Keys.ForEach(pos => {
+                allMonsters.AddRange(P.Board.MonsterData[pos].Values);
+                Image_Enum structure = BasicUtil.GetStructureAtLoc(pos);
+                List<V2IntVO> adj = BasicUtil.GetAdjacentPoints(P.CurrentGridLoc);
+                bool amuletOfSun = P.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfTheSun);
+                switch (structure) {
+                    case Image_Enum.SH_City_Blue:
+                    case Image_Enum.SH_City_Green:
+                    case Image_Enum.SH_City_Red:
+                    case Image_Enum.SH_City_White:
+                    case Image_Enum.SH_MaraudingOrcs:
+                    case Image_Enum.SH_Draconum: {
+                        P.Board.MonsterData[pos].Values.ForEach(m => {
+                            if (!P.VisableMonsters.Contains(m)) {
+                                P.VisableMonsters.Add(m);
                             }
                         });
-                    });
+                        break;
+                    }
+                    case Image_Enum.SH_AncientRuins: {
+                        if (D.Scenario.isDay || amuletOfSun || pos.Equals(P.CurrentGridLoc)) {
+                            P.Board.MonsterData[pos].Values.ForEach(m => {
+                                CardType_Enum cardType = D.Cards[m].CardType;
+                                if (cardType == CardType_Enum.AncientRuins_Alter || cardType == CardType_Enum.AncientRuins_Monster) {
+                                    if (!P.VisableMonsters.Contains(m)) {
+                                        P.VisableMonsters.Add(m);
+                                    }
+                                }
+                            });
+                        }
+                        break;
+                    }
+                    case Image_Enum.SH_MageTower:
+                    case Image_Enum.SH_Keep: {
+                        if (D.Scenario.isDay || amuletOfSun) {
+                            if (adj.Contains(pos)) {
+                                P.Board.MonsterData[pos].Values.ForEach(m => {
+                                    if (!P.VisableMonsters.Contains(m)) {
+                                        P.VisableMonsters.Add(m);
+                                    }
+                                });
+                            }
+                        }
+                        break;
+                    }
+                }
+            });
+            foreach (int m in P.VisableMonsters.ToArray()) {
+                if (!allMonsters.Contains(m)) {
+                    P.VisableMonsters.Remove(m);
                 }
             }
         }
+
         public void PlayerEndOfTurn() {
             if (P.PlayerTurnPhase == TurnPhase_Enum.EndTurn) {
                 P.PlayerTurnPhase = TurnPhase_Enum.NotTurn;

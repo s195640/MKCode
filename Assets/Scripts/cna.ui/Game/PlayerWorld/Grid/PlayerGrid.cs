@@ -30,7 +30,9 @@ namespace cna.ui {
             }
         }
         public bool isPointValid() {
-            return (!ConformationCanvas.Active || ConformationCanvas.Minimized) && RectTransformUtility.RectangleContainsScreenPoint(GameDisplay, Input.mousePosition, WorldCamera);
+            return (!ConformationCanvas.Active || ConformationCanvas.Minimized)
+                && D.ScreenState == ScreenState_Enum.Map
+                && RectTransformUtility.RectangleContainsScreenPoint(GameDisplay, Input.mousePosition, WorldCamera);
         }
 
         public void OnClick_Hex(HexItemDetail hexItemDetail) {
@@ -64,7 +66,11 @@ namespace cna.ui {
                             if (hd.PlayerCostMet) {
                                 if (hd.TriggerCombat) {
                                     SelectionHex.Show(false);
-                                    TriggerBattlePanel.SetupUI(hd, performMovement);
+                                    if (!D.LocalPlayer.VisableMonsters.Contains(hd.Monsters[0].Uniqueid)) {
+                                        TriggerBattlePanel.SetupUI(hd, (hd) => { D.A.pd_StartOfTurn = D.LocalPlayer.Clone(); performMovement(hd); }, TriggerBattlePanel.STANDARD_BATTLE_NO_UNDO);
+                                    } else {
+                                        TriggerBattlePanel.SetupUI(hd, performMovement);
+                                    }
                                 } else {
                                     performMovement(hd);
                                 }
@@ -145,13 +151,17 @@ namespace cna.ui {
                     ar.AddLog("[Flight]");
                     ar.CompleteAction();
                 } else if (hd.Distance == 2) {
-                    GameAPI ar = new GameAPI(hd.G, hd.LocalPlayer);
-                    ar.TurnPhase(TurnPhase_Enum.Move);
-                    ar.RemoveGameEffect(GameEffect_Enum.GREEN_Flight);
-                    ar.SetCurrentLocation(hd.GridPosition, hd.TriggerCombat, hd.Monsters);
-                    ar.AddLog("[Flight]");
-                    ar.ActionMovement(-2);
-                    ar.CompleteAction();
+                    if (hd.LocalPlayer.Movement >= 2) {
+                        GameAPI ar = new GameAPI(hd.G, hd.LocalPlayer);
+                        ar.TurnPhase(TurnPhase_Enum.Move);
+                        ar.RemoveGameEffect(GameEffect_Enum.GREEN_Flight);
+                        ar.SetCurrentLocation(hd.GridPosition, hd.TriggerCombat, hd.Monsters);
+                        ar.AddLog("[Flight]");
+                        ar.ActionMovement(-2);
+                        ar.CompleteAction();
+                    } else {
+                        ActionCard.Msg("Flight costs 2 movement for a distanct of 2, you do not have enough movement!");
+                    }
                 }
             }
         }

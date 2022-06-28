@@ -88,5 +88,12 @@ namespace cna.poo {
             }
             return damage;
         }
+
+        public void UpdateData(AttackData a) {
+            physical = a.physical;
+            fire = a.fire;
+            cold = a.cold;
+            coldFire = a.coldFire;
+        }
     }
 }

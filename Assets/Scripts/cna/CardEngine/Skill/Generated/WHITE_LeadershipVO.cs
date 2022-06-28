@@ -9,7 +9,7 @@ namespace cna {
             SkillRefresh_Enum.Turn,
             Image_Enum.SKW_leadership,
             Image_Enum.SKW_back,
-            Image_Enum.A_MEEPLE_WHITE,
+            Image_Enum.A_meeple_norowas,
             new List<List<TurnPhase_Enum>> { new List<TurnPhase_Enum>() { TurnPhase_Enum.Battle } },
             new List<List<BattlePhase_Enum>> { new List<BattlePhase_Enum>() { BattlePhase_Enum.RangeSiege, BattlePhase_Enum.Block, BattlePhase_Enum.Attack } },
             false,

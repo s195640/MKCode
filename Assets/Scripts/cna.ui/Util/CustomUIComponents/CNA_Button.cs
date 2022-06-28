@@ -32,6 +32,7 @@ namespace cna.ui {
         [SerializeField] private AddressableImage selected;
 
         private bool buttonIsShaking = false;
+        private bool buttonIsBlinking = false;
         private int index = -1;
         private Action<int> onClickCallback;
         public bool Active { get => active; set { active = value; disableFilm.SetActive(!active); } }
@@ -142,6 +143,32 @@ namespace cna.ui {
             if (index >= 0) {
                 onClickCallback(index);
             }
+        }
+
+        public void BlickButton(bool val) {
+            if (buttonIsBlinking == val) {
+                return;
+            }
+            buttonIsBlinking = val;
+            if (buttonIsBlinking) {
+                StartCoroutine(BlickCO(transform));
+            }
+        }
+
+        private IEnumerator BlickCO(Transform t) {
+            float scaleINC = .025f;
+            float scaleVal = 1f;
+            float scaleMax = 1.1f;
+            float scaleMin = .9f;
+            while (buttonIsBlinking) {
+                scaleVal += scaleINC;
+                if (scaleVal >= scaleMax || scaleVal <= scaleMin) {
+                    scaleINC *= -1;
+                }
+                t.localScale = new Vector3(scaleVal, scaleVal, 1);
+                yield return new WaitForSeconds(.05f);
+            }
+            t.localScale = Vector3.one;
         }
     }
 }

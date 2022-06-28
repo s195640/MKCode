@@ -10,6 +10,9 @@ namespace cna.poo {
         Map,
         Offering,
         Combat,
-        Score
+        Legend,
+        Score,
+        Settings,
+        FinalScore,
     }
 }

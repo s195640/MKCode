@@ -13,7 +13,6 @@ namespace cna.poo {
         [SerializeField] private List<int> skillOffering = new List<int>();
         [SerializeField] private List<MapHexId_Enum> playerMap = new List<MapHexId_Enum>();
         [SerializeField] private CNAMap<V2IntVO, WrapList<int>> monsterData = new CNAMap<V2IntVO, WrapList<int>>();
-        [SerializeField] private int monasteryCount = 0;
         [SerializeField] private int unitRegularIndex = 0;
         [SerializeField] private int unitEliteIndex = 0;
         [SerializeField] private int woundIndex = 0;
@@ -22,6 +21,7 @@ namespace cna.poo {
         [SerializeField] private int skillRedIndex = 0;
         [SerializeField] private int skillWhiteIndex = 0;
         [SerializeField] private int advancedIndex = 0;
+        [SerializeField] private int advancedUnitIndex = 0;
         [SerializeField] private int spellIndex = 0;
         [SerializeField] private int artifactIndex = 0;
 
@@ -30,7 +30,6 @@ namespace cna.poo {
         public List<int> SpellOffering { get => spellOffering; set => spellOffering = value; }
         public List<int> AdvancedOffering { get => advancedOffering; set => advancedOffering = value; }
         public List<int> SkillOffering { get => skillOffering; set => skillOffering = value; }
-        public int MonasteryCount { get => monasteryCount; set => monasteryCount = value; }
         public int UnitRegularIndex { get => unitRegularIndex; set => unitRegularIndex = value; }
         public int UnitEliteIndex { get => unitEliteIndex; set => unitEliteIndex = value; }
         public int WoundIndex { get => woundIndex; set => woundIndex = value; }
@@ -43,10 +42,12 @@ namespace cna.poo {
         public int ArtifactIndex { get => artifactIndex; set => artifactIndex = value; }
         public List<MapHexId_Enum> PlayerMap { get => playerMap; set => playerMap = value; }
         public CNAMap<V2IntVO, WrapList<int>> MonsterData { get => monsterData; set => monsterData = value; }
+        public int AdvancedUnitIndex { get => advancedUnitIndex; set => advancedUnitIndex = value; }
+        public int AdvancedIndexTotal { get => advancedIndex + advancedUnitIndex; }
+
 
         public void UpdateData(PlayerBoardData pbd) {
 
-            monasteryCount = pbd.monasteryCount;
             unitRegularIndex = pbd.unitRegularIndex;
             unitEliteIndex = pbd.unitEliteIndex;
             woundIndex = pbd.woundIndex;
@@ -55,6 +56,7 @@ namespace cna.poo {
             skillRedIndex = pbd.skillRedIndex;
             skillWhiteIndex = pbd.skillWhiteIndex;
             advancedIndex = pbd.advancedIndex;
+            advancedUnitIndex = pbd.advancedUnitIndex;
             spellIndex = pbd.spellIndex;
             artifactIndex = pbd.artifactIndex;
 
@@ -84,7 +86,6 @@ namespace cna.poo {
             spellOffering.Clear();
             advancedOffering.Clear();
             skillOffering.Clear();
-            monasteryCount = 0;
             unitRegularIndex = 0;
             unitEliteIndex = 0;
             woundIndex = 0;
@@ -93,6 +94,7 @@ namespace cna.poo {
             skillRedIndex = 0;
             skillWhiteIndex = 0;
             advancedIndex = 0;
+            advancedUnitIndex = 0;
             spellIndex = 0;
             artifactIndex = 0;
             playerMap.Clear();

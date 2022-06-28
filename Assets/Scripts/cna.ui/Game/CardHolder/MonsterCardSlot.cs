@@ -42,17 +42,17 @@ namespace cna.ui {
 
         private MonsterDetailsVO monsterDetails;
 
-        public void SetupUI(int uniqueId) {
-            SetupUI(new MonsterDetailsVO(D.Cards[uniqueId], new CNAMap<GameEffect_Enum, WrapList<int>>()));
+        public void SetupUI(int uniqueId, bool forceVisable = false) {
+            SetupUI(new MonsterDetailsVO(D.Cards[uniqueId], new CNAMap<GameEffect_Enum, WrapList<int>>()), forceVisable);
         }
 
-        public void SetupUI(MonsterDetailsVO monsterDetails) {
-            UpdateUI(monsterDetails);
+        public void SetupUI(MonsterDetailsVO monsterDetails, bool forceVisable = false) {
+            UpdateUI(monsterDetails, forceVisable);
         }
 
-        public void UpdateUI(MonsterDetailsVO monsterDetails) {
+        public void UpdateUI(MonsterDetailsVO monsterDetails, bool forceVisable = false) {
             MonsterDetails = monsterDetails;
-            bool monsterVisable = D.LocalPlayer.VisableMonsters.Contains(monsterDetails.UniqueId);
+            bool monsterVisable = forceVisable || D.LocalPlayer.VisableMonsters.Contains(monsterDetails.UniqueId);
             if (monsterVisable) {
                 if (MonsterDetails.monsterCard.CardType == CardType_Enum.Monster) {
                     MonsterStats.SetActive(true);

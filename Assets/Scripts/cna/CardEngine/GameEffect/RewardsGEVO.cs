@@ -320,10 +320,10 @@ namespace cna {
                 if (D.GLD.DummyPlayer) {
                     int dummySkillCardId = 0;
                     switch (D.DummyPlayer.Avatar) {
-                        case Image_Enum.A_MEEPLE_BLUE: { dummySkillCardId = ar.DrawBlueSkillCard(); break; }
-                        case Image_Enum.A_MEEPLE_GREEN: { dummySkillCardId = ar.DrawGreenSkillCard(); break; }
-                        case Image_Enum.A_MEEPLE_RED: { dummySkillCardId = ar.DrawRedSkillCard(); break; }
-                        case Image_Enum.A_MEEPLE_WHITE: { dummySkillCardId = ar.DrawWhiteSkillCard(); break; }
+                        case Image_Enum.A_meeple_tovak: { dummySkillCardId = ar.DrawBlueSkillCard(); break; }
+                        case Image_Enum.A_meeple_goldyx: { dummySkillCardId = ar.DrawGreenSkillCard(); break; }
+                        case Image_Enum.A_meeple_arythea: { dummySkillCardId = ar.DrawRedSkillCard(); break; }
+                        case Image_Enum.A_meeple_norowas: { dummySkillCardId = ar.DrawWhiteSkillCard(); break; }
                     }
                     if (dummySkillCardId > 0) {
                         ar.P.Board.SkillOffering.Add(dummySkillCardId);
@@ -337,7 +337,7 @@ namespace cna {
                     }));
                 skills.Clear();
                 switch (ar.P.Avatar) {
-                    case Image_Enum.A_MEEPLE_BLUE: {
+                    case Image_Enum.A_meeple_tovak: {
                         if (ar.P.Board.SkillBlueIndex < D.Scenario.BlueSkillDeck.Count) {
                             skills.Add(D.Scenario.BlueSkillDeck[ar.P.Board.SkillBlueIndex]);
                             ar.P.Board.SkillBlueIndex++;
@@ -348,7 +348,7 @@ namespace cna {
                         }
                         break;
                     }
-                    case Image_Enum.A_MEEPLE_GREEN: {
+                    case Image_Enum.A_meeple_goldyx: {
                         if (ar.P.Board.SkillGreenIndex < D.Scenario.GreenSkillDeck.Count) {
                             skills.Add(D.Scenario.GreenSkillDeck[ar.P.Board.SkillGreenIndex]);
                             ar.P.Board.SkillGreenIndex++;
@@ -359,7 +359,7 @@ namespace cna {
                         }
                         break;
                     }
-                    case Image_Enum.A_MEEPLE_RED: {
+                    case Image_Enum.A_meeple_arythea: {
                         if (ar.P.Board.SkillRedIndex < D.Scenario.RedSkillDeck.Count) {
                             skills.Add(D.Scenario.RedSkillDeck[ar.P.Board.SkillRedIndex]);
                             ar.P.Board.SkillRedIndex++;
@@ -370,7 +370,7 @@ namespace cna {
                         }
                         break;
                     }
-                    case Image_Enum.A_MEEPLE_WHITE: {
+                    case Image_Enum.A_meeple_norowas: {
                         if (ar.P.Board.SkillWhiteIndex < D.Scenario.WhiteSkillDeck.Count) {
                             skills.Add(D.Scenario.WhiteSkillDeck[ar.P.Board.SkillWhiteIndex]);
                             ar.P.Board.SkillWhiteIndex++;
@@ -394,7 +394,7 @@ namespace cna {
             ar.P.Board.SkillOffering.AddRange(skills);
             ar.P.Board.SkillOffering.Remove(skillCard);
             ar.P.Board.AdvancedOffering.Remove(actionCard);
-            if (ar.P.Board.AdvancedIndex < D.Scenario.AdvancedDeck.Count) {
+            if (ar.P.Board.AdvancedIndexTotal < D.Scenario.AdvancedDeck.Count) {
                 ar.P.Board.AdvancedOffering.Add(D.Scenario.AdvancedDeck[ar.P.Board.AdvancedIndex]);
                 ar.P.Board.AdvancedIndex++;
             }

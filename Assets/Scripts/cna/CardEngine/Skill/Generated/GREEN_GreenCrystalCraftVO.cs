@@ -9,7 +9,7 @@ namespace cna {
             SkillRefresh_Enum.Round,
             Image_Enum.SKG_green_crystal_craft,
             Image_Enum.SKG_back,
-            Image_Enum.A_MEEPLE_GREEN,
+            Image_Enum.A_meeple_goldyx,
             new List<List<TurnPhase_Enum>> { new List<TurnPhase_Enum>() { TurnPhase_Enum.Move, TurnPhase_Enum.Influence, TurnPhase_Enum.Battle, TurnPhase_Enum.AfterBattle } },
             new List<List<BattlePhase_Enum>> { new List<BattlePhase_Enum>() { BattlePhase_Enum.RangeSiege, BattlePhase_Enum.Block, BattlePhase_Enum.AssignDamage, BattlePhase_Enum.Attack, BattlePhase_Enum.EndOfBattle } },
             false,

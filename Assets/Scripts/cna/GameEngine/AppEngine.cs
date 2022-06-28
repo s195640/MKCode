@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using cna.poo;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 namespace cna {
     public abstract class AppEngine : AppBase {
@@ -11,7 +9,7 @@ namespace cna {
         [SerializeField] internal Data masterGameData = new Data();
         internal ClientState_Enum clientState = ClientState_Enum.NOT_CONNECTED;
 
-        private void Update() {
+        public virtual void Update() {
             if (D.G.GameStatus >= Game_Enum.New_Game) {
                 GameEngine();
             }
@@ -26,6 +24,7 @@ namespace cna {
                 case Game_Enum.Tactics_WaitingOnPlayers: { Tactics_WaitingOnPlayers(masterGameData); break; }
                 case Game_Enum.SaveGame: { SaveGame(masterGameData); break; }
                 case Game_Enum.Player_Turn: { PlayerTurn(masterGameData); break; }
+                case Game_Enum.End_Of_Game: { EndOfGame(masterGameData); break; }
             }
         }
 
@@ -42,7 +41,7 @@ namespace cna {
         private void NewGame_BoardSetup(Data g) {
             g.Board.TurnCounter = 1;
             g.GameData.Seed = Guid.NewGuid().GetHashCode();
-            D.Scenario.buildStartMap();
+            D.Scenario.buildStartMap(g);
             g.Board.PlayerTurnOrder = new List<int>();
             g.Players.ForEach(p => g.Board.PlayerTurnOrder.Add(p.Key));
             g.Board.PlayerTurnOrder.ShuffleDeck();
@@ -82,10 +81,10 @@ namespace cna {
                 p.Deck.Deck.ShuffleDeck();
                 if (p.DummyPlayer) {
                     switch (p.Avatar) {
-                        case Image_Enum.A_MEEPLE_BLUE: { p.Crystal.Blue = 2; p.Crystal.Red = 1; break; }
-                        case Image_Enum.A_MEEPLE_RED: { p.Crystal.Red = 2; p.Crystal.White = 1; break; }
-                        case Image_Enum.A_MEEPLE_GREEN: { p.Crystal.Green = 2; p.Crystal.Blue = 1; break; }
-                        case Image_Enum.A_MEEPLE_WHITE: { p.Crystal.White = 2; p.Crystal.Green = 1; break; }
+                        case Image_Enum.A_meeple_tovak: { p.Crystal.Blue = 2; p.Crystal.Red = 1; break; }
+                        case Image_Enum.A_meeple_arythea: { p.Crystal.Red = 2; p.Crystal.White = 1; break; }
+                        case Image_Enum.A_meeple_goldyx: { p.Crystal.Green = 2; p.Crystal.Blue = 1; break; }
+                        case Image_Enum.A_meeple_norowas: { p.Crystal.White = 2; p.Crystal.Green = 1; break; }
                     }
                 }
             });
@@ -162,7 +161,6 @@ namespace cna {
         private void NewRound_PlayerSetup(Data g) {
             PlayerData hostPlayerData = g.Players.Find(p => p.Key == g.HostPlayerKey);
             D.Scenario.BuildManaOfferingDeck(g, hostPlayerData);
-            D.Scenario.BuildUnitOfferingDeck(g, hostPlayerData);
             D.Scenario.BuildAdvancedOfferingDeck(hostPlayerData);
             D.Scenario.BuildSpellOfferingDeck(hostPlayerData);
             hostPlayerData.Board.PlayerMap.Clear();
@@ -175,6 +173,7 @@ namespace cna {
                 g.Board.MonsterData[k].Values.ForEach(v => value.Add(v));
                 hostPlayerData.Board.MonsterData.Add(key, value);
             });
+            D.Scenario.BuildUnitOfferingDeck(g, hostPlayerData);
             g.Players.ForEach(p => {
                 GameAPI ar = new GameAPI(g, p);
                 ar.PlayerNewRoundSetup();
@@ -191,6 +190,7 @@ namespace cna {
                     ar.P.Board.UnitRegularIndex = hostPlayerData.Board.UnitRegularIndex;
                     ar.P.Board.SpellIndex = hostPlayerData.Board.SpellIndex;
                     ar.P.Board.AdvancedIndex = hostPlayerData.Board.AdvancedIndex;
+                    ar.P.Board.AdvancedUnitIndex = hostPlayerData.Board.AdvancedUnitIndex;
                     ar.P.Board.PlayerMap.AddRange(hostPlayerData.Board.PlayerMap);
                     ar.P.Board.MonsterData.Clear();
                     hostPlayerData.Board.MonsterData.Keys.ForEach(k => {
@@ -199,6 +199,10 @@ namespace cna {
                         g.Board.MonsterData[k].Values.ForEach(v => value.Add(v));
                         ar.P.Board.MonsterData.Add(key, value);
                     });
+                }
+                //  Rebuild VisableMonsters
+                if (!p.DummyPlayer) {
+                    ar.PlayerRebuildVisableMonsters();
                 }
             });
             D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsSelect;
@@ -285,71 +289,35 @@ namespace cna {
             if (D.isHost) {
                 PlayerData waitingOnServer = g.Players.Find(p => p.WaitOnServer);
                 if (waitingOnServer != null) {
-                    Debug.Log("Waiting On Server");
-                    int index = waitingOnServer.Board.PlayerMap.FindIndex(h => h == MapHexId_Enum.Explore);
+                    GameAPI ar = new GameAPI(g, waitingOnServer);
+                    int index = ar.P.Board.PlayerMap.FindIndex(h => h == MapHexId_Enum.Explore);
                     MapHexId_Enum currentMapHex = g.Board.CurrentMap[index];
                     if (currentMapHex == MapHexId_Enum.Basic_Back ||
                         currentMapHex == MapHexId_Enum.Core_Back ||
                         currentMapHex == MapHexId_Enum.Invalid
                         ) {
-                        currentMapHex = D.Scenario.DrawGameHex(index);
+                        currentMapHex = D.Scenario.DrawGameHex(index, g);
                     }
-                    waitingOnServer.Board.PlayerMap[index] = currentMapHex;
-                    D.Scenario.rebuildCurrentMap(waitingOnServer);
-
+                    ar.P.Board.PlayerMap[index] = currentMapHex;
+                    D.Scenario.rebuildCurrentMap(ar.P);
                     V2IntVO centerPos = new V2IntVO(D.Scenario.ConvertIndexToWorld(index));
                     List<V2IntVO> pts = BasicUtil.GetAdjacentPoints(centerPos);
                     pts.Add(centerPos);
-                    bool amuletOfSun = waitingOnServer.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfTheSun);
-                    List<V2IntVO> adj = BasicUtil.GetAdjacentPoints(waitingOnServer.CurrentGridLoc);
-                    pts.ForEach(pt => {
-                        if (g.Board.MonsterData.ContainsKey(pt)) {
+                    pts.ForEach(pos => {
+                        if (g.Board.MonsterData.ContainsKey(pos)) {
                             WrapList<int> value = new WrapList<int>();
-                            g.Board.MonsterData[pt].Values.ForEach(v => value.Add(v));
-                            waitingOnServer.Board.MonsterData.Add(pt, value);
-                            Image_Enum structure = BasicUtil.GetStructureAtLoc(pt);
-                            switch (structure) {
-                                case Image_Enum.SH_City_Blue:
-                                case Image_Enum.SH_City_Green:
-                                case Image_Enum.SH_City_Red:
-                                case Image_Enum.SH_City_White:
-                                case Image_Enum.SH_MaraudingOrcs:
-                                case Image_Enum.SH_Draconum: {
-                                    value.Values.ForEach(m => {
-                                        if (!waitingOnServer.VisableMonsters.Contains(m)) {
-                                            waitingOnServer.VisableMonsters.Add(m);
-                                        }
-                                    });
-                                    break;
-                                }
-                                case Image_Enum.SH_AncientRuins: {
-                                    if (D.Scenario.isDay || amuletOfSun) {
-                                        value.Values.ForEach(m => {
-                                            if (!waitingOnServer.VisableMonsters.Contains(m)) {
-                                                waitingOnServer.VisableMonsters.Add(m);
-                                            }
-                                        });
-                                    }
-                                    break;
-                                }
-                                case Image_Enum.SH_MageTower:
-                                case Image_Enum.SH_Keep: {
-                                    if (D.Scenario.isDay || amuletOfSun) {
-                                        if (adj.Contains(pt)) {
-                                            value.Values.ForEach(m => {
-                                                if (!waitingOnServer.VisableMonsters.Contains(m)) {
-                                                    waitingOnServer.VisableMonsters.Add(m);
-                                                }
-                                            });
-                                        }
-                                    }
-                                    break;
-                                }
+                            g.Board.MonsterData[pos].Values.ForEach(v => value.Add(v));
+                            ar.P.Board.MonsterData.Add(pos, value);
+                        }
+                        if (BasicUtil.GetStructureAtLoc(pos) == Image_Enum.SH_Monastery) {
+                            if (ar.P.Board.AdvancedIndexTotal < D.Scenario.AdvancedDeck.Count) {
+                                ar.P.Board.UnitOffering.Add(D.Scenario.AdvancedDeck[D.Scenario.AdvancedDeck.Count - ar.P.Board.AdvancedUnitIndex - 1]);
+                                ar.P.Board.AdvancedUnitIndex++;
                             }
                         }
                     });
-
-                    waitingOnServer.WaitOnServer = false;
+                    ar.P.WaitOnServer = false;
+                    ar.PlayerRebuildVisableMonsters();
                     D.C.Send_GameData();
                     return;
                 } else {
@@ -365,6 +333,7 @@ namespace cna {
                         int skillRedIndex = -1;
                         int skillWhiteIndex = -1;
                         int advancedIndex = -1;
+                        int advancedUnitIndex = -1;
                         int unitRegularIndex = -1;
                         int unitEliteIndex = -1;
                         int woundIndex = -1;
@@ -410,6 +379,9 @@ namespace cna {
                                     spellOffering.Clear();
                                     spellOffering.AddRange(p.Board.SpellOffering);
                                 }
+                                if (p.Board.AdvancedUnitIndex > advancedUnitIndex) {
+                                    advancedUnitIndex = p.Board.AdvancedUnitIndex;
+                                }
                                 if (p.Board.AdvancedIndex > advancedIndex) {
                                     advancedIndex = p.Board.AdvancedIndex;
                                     advancedOffering.Clear();
@@ -451,6 +423,13 @@ namespace cna {
                                 });
                             }
                         });
+                        g.Board.MonsterData.Keys.ForEach(pos => {
+                            if (BasicUtil.GetStructureAtLoc(pos) == Image_Enum.SH_SpawningGround) {
+                                if (g.Board.MonsterData[pos].Count == 1) {
+                                    g.Board.MonsterData[pos].Add(D.Scenario.DrawMonster(MonsterType_Enum.Brown));
+                                }
+                            }
+                        });
                         g.Players.ForEach(p => {
                             if (!p.DummyPlayer) {
                                 p.Deck.Skill.ForEach(s => skillOffering.Remove(s));
@@ -483,6 +462,7 @@ namespace cna {
                                 ar.P.Board.UnitRegularIndex = unitRegularIndex;
                                 ar.P.Board.SpellIndex = spellIndex;
                                 ar.P.Board.AdvancedIndex = advancedIndex;
+                                ar.P.Board.AdvancedUnitIndex = advancedUnitIndex;
                                 ar.P.Board.ArtifactIndex = artifactIndex;
                                 ar.P.Board.WoundIndex = woundIndex;
                                 ar.P.Board.SkillBlueIndex = skillBlueIndex;
@@ -493,7 +473,6 @@ namespace cna {
                                 ar.P.Board.PlayerMap.Clear();
                                 ar.P.Board.PlayerMap.AddRange(playerMap);
                                 D.Scenario.rebuildCurrentMap(ar.P);
-                                List<V2IntVO> adj = BasicUtil.GetAdjacentPoints(ar.P.CurrentGridLoc);
                                 for (int i = 0; i < playerMap.Count; i++) {
                                     if ((int)playerMap[i] >= 10) {
                                         V2IntVO centerPos = new V2IntVO(D.Scenario.ConvertIndexToWorld(i));
@@ -504,57 +483,23 @@ namespace cna {
                                                 WrapList<int> value = new WrapList<int>();
                                                 g.Board.MonsterData[pos].Values.ForEach(v => value.Add(v));
                                                 ar.P.Board.MonsterData.Add(pos, value);
-                                                Image_Enum structure = BasicUtil.GetStructureAtLoc(pos);
-                                                switch (structure) {
-                                                    case Image_Enum.SH_City_Blue:
-                                                    case Image_Enum.SH_City_Green:
-                                                    case Image_Enum.SH_City_Red:
-                                                    case Image_Enum.SH_City_White:
-                                                    case Image_Enum.SH_MaraudingOrcs:
-                                                    case Image_Enum.SH_Draconum: {
-                                                        value.Values.ForEach(m => {
-                                                            if (!ar.P.VisableMonsters.Contains(m)) {
-                                                                ar.P.VisableMonsters.Add(m);
-                                                            }
-                                                        });
-                                                        break;
-                                                    }
-                                                    case Image_Enum.SH_AncientRuins: {
-                                                        if (D.Scenario.isDay) {
-                                                            value.Values.ForEach(m => {
-                                                                if (!ar.P.VisableMonsters.Contains(m)) {
-                                                                    ar.P.VisableMonsters.Add(m);
-                                                                }
-                                                            });
-                                                        }
-                                                        break;
-                                                    }
-                                                    case Image_Enum.SH_MageTower:
-                                                    case Image_Enum.SH_Keep: {
-                                                        if (D.Scenario.isDay) {
-                                                            if (adj.Contains(pos)) {
-                                                                value.Values.ForEach(m => {
-                                                                    if (!ar.P.VisableMonsters.Contains(m)) {
-                                                                        ar.P.VisableMonsters.Add(m);
-                                                                    }
-                                                                });
-                                                            }
-                                                        }
-                                                        break;
-                                                    }
-                                                }
                                             }
                                         });
                                     }
                                 }
+                                ar.PlayerRebuildVisableMonsters();
                             }
                         });
-
+                        bool allCitiesConquered = BasicUtil.AllCitiesConquered(g);
                         if (g.Board.EndOfRound) {
-                            g.GameStatus = Game_Enum.New_Round;
+                            if (allCitiesConquered || g.Board.GameRoundCounter + 1 >= g.GameData.Rounds) {
+                                g.GameStatus = Game_Enum.End_Of_Game;
+                            } else {
+                                g.GameStatus = Game_Enum.New_Round;
+                            }
                         } else {
                             g.GameStatus = Game_Enum.SaveGame;
-                            g.Board.EndOfRound = !g.Players.TrueForAll(p => p.PlayerTurnPhase == TurnPhase_Enum.EndTurn);
+                            g.Board.EndOfRound = !g.Players.TrueForAll(p => p.PlayerTurnPhase == TurnPhase_Enum.EndTurn) || allCitiesConquered;
                             List<ManaPoolData> rerollmana = new List<ManaPoolData>();
                             g.Players.ForEach(p => {
                                 GameAPI ar = new GameAPI(g, p);
@@ -745,6 +690,13 @@ namespace cna {
 
         #endregion
 
+        #region END OF GAME
+        public void EndOfGame(Data g) {
+            GameAPI ar = new GameAPI(g, D.LocalPlayer);
+            ar.EndOfGame();
+        }
+        #endregion
+
         public virtual void New() {
             screenState = ScreenState_Enum.Map;
             masterGameData = new Data();
@@ -754,381 +706,10 @@ namespace cna {
         //  MIGHT RETHING LOCATION OF THESE
         internal ScenarioBase scenario;
         internal ScreenState_Enum screenState = ScreenState_Enum.Map;
-        public abstract void StartTacticsPanel();
+        public virtual void StartTacticsPanel() { }
         private bool gd_StartOfTurnFlag = false;
         public bool Gd_StartOfTurnFlag { get => gd_StartOfTurnFlag; set => gd_StartOfTurnFlag = value; }
         public PlayerData pd_StartOfTurn = new PlayerData();
-
-
-
-
-
-
-
-
-
-
-        //#region PLAYER TURN
-        //private void PlayerTurn() {
-        //    switch (D.CurrentTurn.PlayerTurnPhase) {
-        //        case TurnPhase_Enum.HostSaveGame: { PlayerTurn_HostSaveGame(); break; }
-        //        case TurnPhase_Enum.SetupTurn: { PlayerTurn_SetupTurn(); break; }
-        //        case TurnPhase_Enum.EndTurn: { PlayerTurn_EndTurn(); break; }
-        //    }
-        //}
-
-        //private void PlayerTurn_HostSaveGame() {
-        //    if (D.isHost) {
-        //        PlayerData currentPlayer = D.CurrentTurn;
-        //        if (currentPlayer.DummyPlayer) {
-        //            currentPlayer.PlayerTurnPhase = TurnPhase_Enum.EndTurn;
-        //        } else {
-        //            currentPlayer.PlayerTurnPhase = TurnPhase_Enum.SetupTurn;
-        //            BasicUtil.SaveGameToFile(D.G);
-        //        }
-        //        D.C.Send_GameData();
-        //    }
-        //}
-
-        //private void PlayerTurn_EndTurn() {
-        //    if (D.isHost) {
-        //        PlayerData currentPlayer = D.CurrentTurn;
-        //        if (currentPlayer.DummyPlayer) {
-        //            if (currentPlayer.Deck.Deck.Count == 0) {
-        //                D.G.EndOfRound = currentPlayer.Key;
-        //            } else {
-        //                CardColor_Enum cardColor = CardColor_Enum.NA;
-        //                int totalCards = 0;
-        //                int cardId = 0;
-        //                for (int i = 0; i < 3; i++) {
-        //                    if (currentPlayer.Deck.Deck.Count > 0) {
-        //                        cardId = BasicUtil.DrawCard(currentPlayer.Deck.Deck);
-        //                        currentPlayer.Deck.Discard.Add(cardId);
-        //                        totalCards++;
-        //                    }
-        //                }
-        //                if (currentPlayer.Deck.Deck.Count > 0) {
-        //                    int extra = 0;
-        //                    cardColor = D.Cards[cardId].CardColor;
-        //                    switch (cardColor) {
-        //                        case CardColor_Enum.Blue: { extra = currentPlayer.Crystal.Blue; break; }
-        //                        case CardColor_Enum.Red: { extra = currentPlayer.Crystal.Red; break; }
-        //                        case CardColor_Enum.Green: { extra = currentPlayer.Crystal.Green; break; }
-        //                        case CardColor_Enum.White: { extra = currentPlayer.Crystal.White; break; }
-        //                    }
-        //                    for (int i = 0; i < extra; i++) {
-        //                        if (currentPlayer.Deck.Deck.Count > 0) {
-        //                            cardId = BasicUtil.DrawCard(currentPlayer.Deck.Deck);
-        //                            currentPlayer.Deck.Discard.Add(cardId);
-        //                            totalCards++;
-        //                        }
-        //                    }
-        //                }
-        //                string msg = "Total Cards " + totalCards;
-        //                if (cardColor != CardColor_Enum.NA) {
-        //                    msg += " (" + cardColor + ")";
-        //                }
-        //                D.C.LogMessageDummy(msg);
-        //            }
-
-        //            D.G.PlayerTurnIndex++;
-        //            if (D.G.EndOfRound == D.CurrentTurn.Key) {
-        //                D.C.LogMessageDummy("End of Round Declared!");
-        //                D.G.GameStatus = Game_Enum.New_Round;
-        //            } else {
-        //                D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
-        //            }
-        //        } else {
-        //            if (currentPlayer.GameEffects.ContainsKey(GameEffect_Enum.CS_TimeBending)) {
-        //                TimeBend(currentPlayer);
-        //            } else {
-        //                bool theRightMoment = currentPlayer.GameEffects.ContainsKey(GameEffect_Enum.T_TheRightMoment02);
-        //                clearHand(currentPlayer.Deck, currentPlayer.GameEffects);
-        //                resetUnit(currentPlayer.Deck);
-        //                resetSkill(currentPlayer.Deck, false);
-        //                int cardsLeftInHand = currentPlayer.Deck.Hand.Count;
-        //                drawHand(currentPlayer.Deck);
-        //                resetManaPool();
-        //                foreach (GameEffect_Enum ge in currentPlayer.GameEffects.Keys.ToArray()) {
-        //                    CardVO c = D.GetGameEffectCard(ge);
-        //                    switch (ge) {
-        //                        case GameEffect_Enum.AC_CrystalMastery: {
-        //                            CrystalData crystal = currentPlayer.Crystal;
-        //                            crystal.Blue += crystal.SpentBlue;
-        //                            crystal.Green += crystal.SpentGreen;
-        //                            crystal.Red += crystal.SpentRed;
-        //                            crystal.White += crystal.SpentWhite;
-        //                            break;
-        //                        }
-        //                        case GameEffect_Enum.SH_CrystalMines_Blue: {
-        //                            D.C.LogMessage("[Blue Crystal Mine] +1 Blue Crystal");
-        //                            currentPlayer.Crystal.Blue++;
-        //                            break;
-        //                        }
-        //                        case GameEffect_Enum.SH_CrystalMines_Red: {
-        //                            D.C.LogMessage("[Red Crystal Mine] +1 Red Crystal");
-        //                            currentPlayer.Crystal.Red++;
-        //                            break;
-        //                        }
-        //                        case GameEffect_Enum.SH_CrystalMines_Green: {
-        //                            D.C.LogMessage("[Green Crystal Mine] +1 Green Crystal");
-        //                            currentPlayer.Crystal.Green++;
-        //                            break;
-        //                        }
-        //                        case GameEffect_Enum.SH_CrystalMines_White: {
-        //                            D.C.LogMessage("[White Crystal Mine] +1 White Crystal");
-        //                            currentPlayer.Crystal.White++;
-        //                            break;
-        //                        }
-        //                        case GameEffect_Enum.T_Planning: {
-        //                            if (cardsLeftInHand >= 2) {
-        //                                D.C.LogMessage("[Planning] +1 Card");
-        //                                if (currentPlayer.Deck.Deck.Count > 0) {
-        //                                    currentPlayer.Deck.Hand.Add(BasicUtil.DrawCard(currentPlayer.Deck.Deck));
-        //                                }
-        //                            }
-        //                            break;
-        //                        }
-        //                        case GameEffect_Enum.T_ManaSearch02: {
-        //                            currentPlayer.RemoveGameEffect(GameEffect_Enum.T_ManaSearch02);
-        //                            currentPlayer.AddGameEffect(GameEffect_Enum.T_ManaSearch01);
-        //                            break;
-        //                        }
-        //                    }
-        //                    if (c.GameEffectDurationId == GameEffectDuration_Enum.Turn) {
-        //                        currentPlayer.RemoveGameEffect(ge);
-        //                    }
-        //                }
-        //                currentPlayer.ClearEndTurn();
-        //                if (theRightMoment) {
-        //                    D.C.LogMessage("[The Right Moment] Taking another turn!");
-        //                } else {
-        //                    D.G.PlayerTurnIndex++;
-        //                }
-        //                D.G.TurnCounter++;
-        //                if (D.G.EndOfRound == D.CurrentTurn.Key) {
-        //                    D.G.GameStatus = Game_Enum.New_Round;
-        //                } else {
-        //                    D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
-        //                }
-        //            }
-        //        }
-        //        D.C.Send_GameData();
-        //    }
-        //}
-
-        //private void TimeBend(PlayerData pd) {
-        //    PlayerDeckData pDeck = pd.Deck;
-        //    pd.ActionTaken = false;
-        //    foreach (int c in pDeck.Hand.ToArray()) {
-        //        if (pDeck.State.ContainsKey(c)) {
-        //            if (pDeck.StateContainsAny(c, CardState_Enum.Discard, CardState_Enum.Trashed)) {
-        //                pDeck.Hand.Remove(c);
-        //                if (!pDeck.StateContains(c, CardState_Enum.Trashed)) {
-        //                    pDeck.Discard.Add(c);
-        //                }
-        //                pDeck.State.Remove(c);
-        //            } else if (pDeck.StateContainsAny(c, CardState_Enum.Basic, CardState_Enum.Normal, CardState_Enum.Advanced)) {
-        //                pDeck.State.Remove(c);
-        //            }
-        //        }
-        //    }
-        //    resetUnit(pd.Deck);
-        //    resetSkill(pd.Deck, false);
-        //    resetManaPool();
-        //    foreach (GameEffect_Enum ge in pd.GameEffects.Keys.ToArray()) {
-        //        CardVO c = D.GetGameEffectCard(ge);
-        //        switch (ge) {
-        //            case GameEffect_Enum.AC_CrystalMastery: {
-        //                CrystalData crystal = pd.Crystal;
-        //                crystal.Blue += crystal.SpentBlue;
-        //                crystal.Green += crystal.SpentGreen;
-        //                crystal.Red += crystal.SpentRed;
-        //                crystal.White += crystal.SpentWhite;
-        //                break;
-        //            }
-        //            case GameEffect_Enum.SH_CrystalMines_Blue: {
-        //                D.C.LogMessage("[Blue Crystal Mine] +1 Blue Crystal");
-        //                pd.Crystal.Blue++;
-        //                break;
-        //            }
-        //            case GameEffect_Enum.SH_CrystalMines_Red: {
-        //                D.C.LogMessage("[Red Crystal Mine] +1 Red Crystal");
-        //                pd.Crystal.Red++;
-        //                break;
-        //            }
-        //            case GameEffect_Enum.SH_CrystalMines_Green: {
-        //                D.C.LogMessage("[Green Crystal Mine] +1 Green Crystal");
-        //                pd.Crystal.Green++;
-        //                break;
-        //            }
-        //            case GameEffect_Enum.SH_CrystalMines_White: {
-        //                D.C.LogMessage("[White Crystal Mine] +1 White Crystal");
-        //                pd.Crystal.White++;
-        //                break;
-        //            }
-        //            case GameEffect_Enum.T_ManaSearch02: {
-        //                pd.RemoveGameEffect(GameEffect_Enum.T_ManaSearch02);
-        //                pd.AddGameEffect(GameEffect_Enum.T_ManaSearch01);
-        //                break;
-        //            }
-        //        }
-        //        if (c.GameEffectDurationId == GameEffectDuration_Enum.Turn) {
-        //            pd.RemoveGameEffect(ge);
-        //        }
-        //    }
-        //    D.G.TurnCounter++;
-        //    pd.ClearEndTurn();
-        //    pd.PlayerTurnPhase = TurnPhase_Enum.HostSaveGame;
-        //}
-
-        //private void PlayerTurn_SetupTurn() {
-        //    PlayerData localPlayer = D.LocalPlayer;
-        //    if (localPlayer.Equals(D.CurrentTurn)) {
-        //        Clear();
-        //        BasicUtil.UpdateMovementGameEffects(localPlayer);
-        //        localPlayer.PlayerTurnPhase = TurnPhase_Enum.NotifyTurn;
-        //        localPlayer.GameEffects.Keys.ForEach(ge => {
-        //            switch (ge) {
-        //                case GameEffect_Enum.SH_MagicGlade: {
-        //                    if (D.Scenario.isDay) {
-        //                        D.C.LogMessage("[Magical Glade] +1 Gold Mana");
-        //                        localPlayer.Mana.Gold++;
-        //                    } else {
-        //                        D.C.LogMessage("[Magical Glade] +1 Black Mana");
-        //                        localPlayer.Mana.Black++;
-        //                    }
-        //                    break;
-        //                }
-        //                case GameEffect_Enum.SH_City_Red_Own:
-        //                case GameEffect_Enum.SH_City_Green_Own:
-        //                case GameEffect_Enum.SH_City_White_Own:
-        //                case GameEffect_Enum.SH_City_Blue_Own: {
-        //                    if (D.G.Monsters.Shield.ContainsKey(localPlayer.CurrentGridLoc)) {
-        //                        Image_Enum AvatarShieldId = D.AvatarMetaDataMap[localPlayer.Avatar].AvatarShieldId;
-        //                        D.G.Monsters.Shield[localPlayer.CurrentGridLoc].Values.ForEach(s => { if (s.Equals(AvatarShieldId)) { localPlayer.Influence++; } });
-        //                    }
-        //                    break;
-        //                }
-        //            }
-        //        });
-        //        D.C.Send_GameData();
-        //        PlayerTurn_SetupTurn_SparingPower(localPlayer);
-        //    }
-        //}
-
-        //private void PlayerTurn_SetupTurn_SparingPower(PlayerData localPlayer) {
-        //    bool sparingPower = localPlayer.GameEffects.ContainsKey(GameEffect_Enum.T_SparingPower);
-        //    if (sparingPower) {
-        //        int powerDeckSize = localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Count - 1;
-        //        int deckSize = localPlayer.Deck.Deck.Count;
-        //        if (powerDeckSize == 0) {
-        //            int topCardFromDeck = BasicUtil.DrawCard(localPlayer.Deck.Deck);
-        //            localPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
-        //            D.C.LogMessage("[Sparing Power] No cards in Sparing Power Deck, +1 Card to Sparing Power Deck!");
-        //        } else if (deckSize == 0) {
-        //            D.C.LogMessage("[Sparing Power] No cards in Deck, Sparing Power Used!");
-        //            localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
-        //                if (c != 0) {
-        //                    localPlayer.Deck.Hand.Add(c);
-        //                }
-        //            });
-        //            localPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
-        //        } else {
-        //            ActionResultVO ar = new ActionResultVO(D.GetGameEffectCard(GameEffect_Enum.T_SparingPower).UniqueId, CardState_Enum.NA);
-        //            ar.ActionIndex = 0;
-        //            D.Action.SelectOptions(ar, null, PlayerTurn_SetupTurn_SparingPower_options, new OptionVO("Use Deck", Image_Enum.I_check), new OptionVO("+1 to Deck", Image_Enum.I_cardBackRounded));
-        //            return;
-        //        }
-        //        D.C.Send_GameData();
-        //    }
-        //    PlayerTurn_SetupTurn_Notification(localPlayer);
-        //}
-
-        //private void PlayerTurn_SetupTurn_SparingPower_options(ActionResultVO ar) {
-        //    switch (ar.SelectedButtonIndex) {
-        //        case 0: {
-        //            ar.AddLog("Sparing Power Used!");
-        //            ar.LocalPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
-        //                if (c != 0) {
-        //                    ar.LocalPlayer.Deck.Hand.Add(c);
-        //                }
-        //            });
-        //            ar.LocalPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
-        //            ar.change();
-        //            ar.CompleteAction();
-        //            break;
-        //        }
-        //        case 1: {
-        //            ar.AddLog("+1 Card to Sparing Power Deck!");
-        //            int topCardFromDeck = BasicUtil.DrawCard(ar.LocalPlayer.Deck.Deck);
-        //            ar.LocalPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
-        //            ar.change();
-        //            ar.CompleteAction();
-        //            break;
-        //        }
-        //    }
-        //    PlayerTurn_SetupTurn_Notification(ar.LocalPlayer);
-        //}
-
-
-        //private void PlayerTurn_SetupTurn_Notification(PlayerData localPlayer) {
-        //    bool forceDeclareEndOfRound = localPlayer.Deck.Deck.Count == 0 && localPlayer.Deck.Hand.Count == 0;
-        //    bool isExhausted = true;
-        //    localPlayer.Deck.Hand.ForEach(c => isExhausted = isExhausted && D.Cards[c].CardType == CardType_Enum.Wound);
-        //    bool endOfRoundDeclared = D.G.EndOfRound != -1;
-        //    StartOfTurnNotification(forceDeclareEndOfRound, isExhausted, endOfRoundDeclared);
-        //}
-
-        //#endregion
-
-
-
-
-        //private void resetSkill(PlayerDeckData p, bool round) {
-        //    foreach (int c in p.Skill.ToArray()) {
-        //        if (p.State.ContainsKey(c)) {
-        //            SkillRefresh_Enum refresh = D.Cards[c].SkillRefresh;
-        //            if (round || refresh == SkillRefresh_Enum.Turn) {
-        //                p.State.Remove(c);
-        //            }
-        //        }
-        //    }
-        //}
-        //private void resetUnit(PlayerDeckData p) {
-        //    foreach (int c in p.Unit.ToArray()) {
-        //        if (p.State.ContainsKey(c)) {
-        //            if (p.State[c].Values.Contains(CardState_Enum.Unit_Paralyzed)) {
-        //                p.State.Remove(c);
-        //                p.Unit.Remove(c);
-        //            }
-        //            p.State[c].Values.Remove(CardState_Enum.Unit_UsedInBattle);
-        //            if (p.State[c].Count == 0) {
-        //                p.State.Remove(c);
-        //            }
-        //        }
-        //    }
-        //}
-        //private void resetManaPool() {
-        //    bool manaSteal = false;
-        //    D.G.Players.ForEach(p => {
-        //        manaSteal |= p.GameEffects.ContainsKey(GameEffect_Enum.T_ManaSteal);
-        //    });
-        //    int totalDie = D.G.Players.Count + 2;
-        //    if (D.GLD.DummyPlayer) {
-        //        totalDie--;
-        //    }
-        //    if (manaSteal) {
-        //        totalDie--;
-        //    }
-        //    int currentManaTotal = D.G.Board.ManaPool.Count;
-        //    for (int i = currentManaTotal; i < totalDie; i++) {
-        //        D.G.Board.ManaPool.Add((Crystal_Enum)UnityEngine.Random.Range(1, 7));
-        //    }
-        //}
-
-
-        //#region GameWorld Buttons
 
         public void OnClick_Undo() {
             D.C.LogMessage("[Undo]");
@@ -1137,7 +718,5 @@ namespace cna {
             Clear();
             D.C.Send_PlayerData();
         }
-        //#endregion
-
     }
 }

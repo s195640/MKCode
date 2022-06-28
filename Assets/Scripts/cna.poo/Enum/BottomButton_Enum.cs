@@ -28,5 +28,6 @@
         LearnSpell,
         Adventure_AncientRuins,
         RevealMonster,
+        Adventure_AncientRuins_RevealMonster,
     }
 }

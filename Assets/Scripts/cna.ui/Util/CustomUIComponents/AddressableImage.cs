@@ -5,10 +5,12 @@ using UnityEngine.UI;
 namespace cna.ui {
     [RequireComponent(typeof(Image))]
     public class AddressableImage : MonoBehaviour {
-        private Image image;
         [SerializeField] private Image_Enum imageEnum = Image_Enum.NA;
+        private Image image;
+
         public Image_Enum ImageEnum { get => imageEnum; set { imageEnum = value; UpdateUI(); } }
         public Image Image { get { if (image == null) { image = gameObject.GetComponent<Image>(); } return image; } }
+
 
         public void Start() {
             UpdateUI();

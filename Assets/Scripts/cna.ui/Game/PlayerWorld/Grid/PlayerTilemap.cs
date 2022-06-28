@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace cna.ui {
     public class PlayerTilemap : MonoBehaviour {
-        private string gameid = "";
+        private int seed = 0;
         [SerializeField] private Grid mainGrid;
         [SerializeField] private PlayerAvatarPrefab PlayerAvatarPrefab_Prefab;
         [SerializeField] private List<PlayerAvatarPrefab> PlayerAvatarList = new List<PlayerAvatarPrefab>();
 
         public void UpdateUI() {
-            if (!D.G.GameId.Equals(gameid)) {
-                gameid = D.G.GameId;
+            if (seed != D.GLD.Seed) {
+                seed = D.GLD.Seed;
                 PlayerAvatarList.ForEach(p => Destroy(p.gameObject));
                 PlayerAvatarList.Clear();
                 D.G.Players.ForEach(p => {

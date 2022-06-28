@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using cna.poo;
 using TMPro;
 using UnityEngine;
@@ -521,47 +522,6 @@ namespace cna.ui {
             ar.WaitOnServerPanel();
         }
 
-        public void OnClick_ExploreOLD() {
-            GameAPI ar = new GameAPI(0, CardState_Enum.NA);
-            if (CheckTurnAndUI(ar)) {
-                if (ar.P.PlayerTurnPhase <= TurnPhase_Enum.Move) {
-                    if (ar.P.Movement >= 2) {
-                        int index = D.Scenario.ConvertWorldToIndex(Hex.GridPosition);
-                        D.Scenario.DrawGameHex(index);
-                        SelectedCardSlot = null;
-                        ar.AddLog("[Explore]");
-                        ar.ActionMovement(-2);
-                        ar.TurnPhase(TurnPhase_Enum.Move);
-                        //  check adj for visable monsters
-                        bool amuletOfSun = ar.P.GameEffects.ContainsKey(GameEffect_Enum.CT_AmuletOfTheSun);
-                        if (D.Scenario.isDay || amuletOfSun) {
-                            List<V2IntVO> adj = BasicUtil.GetAdjacentPoints(ar.P.CurrentGridLoc);
-                            adj.ForEach(pos => {
-                                if (ar.P.Board.MonsterData.ContainsKey(pos)) {
-                                    List<int> monsters = ar.P.Board.MonsterData[pos].Values;
-                                    if (monsters.Count > 0) {
-                                        Image_Enum structure = BasicUtil.GetStructureAtLoc(pos); ;
-                                        if (structure == Image_Enum.SH_Keep || structure == Image_Enum.SH_MageTower) {
-                                            monsters.ForEach(m => {
-                                                if (!ar.P.VisableMonsters.Contains(m)) {
-                                                    ar.P.VisableMonsters.Add(m);
-                                                }
-                                            });
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    } else {
-                        ar.ErrorMsg = "You do not have enough movement to Explore, you need 2 movement points!";
-                    }
-                } else {
-                    ar.ErrorMsg = "You can only Explore during the movement phase!";
-                }
-            }
-            ProcessActionResultVO(ar);
-        }
-
         public void OnClick_Recruit_BondsOfLoyalty() {
             Recruit(true);
         }
@@ -747,7 +707,7 @@ namespace cna.ui {
                     Hex.Monsters.Add(md);
                     Hex.AdventureAction = Image_Enum.SH_Dungeon;
                     ar.AddGameEffect(GameEffect_Enum.SH_Dungeon);
-                    TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.UpdateUI(); });
+                    TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.pd_StartOfTurn = ar.P.Clone(); D.A.UpdateUI(); }, TriggerBattlePanel.STANDARD_BATTLE_NO_UNDO);
                 } else {
                     ar.ErrorMsg = "You can not perform this action during " + D.LocalPlayer.PlayerTurnPhase + " player phase.";
                 }
@@ -764,7 +724,7 @@ namespace cna.ui {
                     Hex.Monsters.Add(md);
                     Hex.AdventureAction = Image_Enum.SH_Tomb;
                     ar.AddGameEffect(GameEffect_Enum.SH_Tomb);
-                    TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.UpdateUI(); });
+                    TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.pd_StartOfTurn = ar.P.Clone(); D.A.UpdateUI(); }, TriggerBattlePanel.STANDARD_BATTLE_NO_UNDO);
                 } else {
                     ar.ErrorMsg = "You can not perform this action during " + D.LocalPlayer.PlayerTurnPhase + " player phase.";
                 }
@@ -781,7 +741,11 @@ namespace cna.ui {
                             return new MonsterMetaData(m, Hex.GridPosition, Hex.Structure);
                         }));
                         Hex.AdventureAction = Image_Enum.SH_SpawningGround;
-                        TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.UpdateUI(); });
+                        if (Hex.Monsters.TrueForAll(m => D.LocalPlayer.VisableMonsters.Contains(m.Uniqueid))) {
+                            TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.UpdateUI(); });
+                        } else {
+                            TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.pd_StartOfTurn = D.LocalPlayer.Clone(); D.A.UpdateUI(); }, TriggerBattlePanel.STANDARD_BATTLE_NO_UNDO);
+                        }
                     } else {
                         Msg("You can not perform this action");
                         BottomButtonContainer.Shake();
@@ -805,7 +769,11 @@ namespace cna.ui {
                             return new MonsterMetaData(m, Hex.GridPosition, Hex.Structure);
                         }));
                         Hex.AdventureAction = Image_Enum.SH_MonsterDen;
-                        TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.UpdateUI(); });
+                        if (Hex.Monsters.TrueForAll(m => D.LocalPlayer.VisableMonsters.Contains(m.Uniqueid))) {
+                            TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.UpdateUI(); });
+                        } else {
+                            TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.pd_StartOfTurn = D.LocalPlayer.Clone(); D.A.UpdateUI(); }, TriggerBattlePanel.STANDARD_BATTLE_NO_UNDO);
+                        }
                     } else {
                         Msg("You can not perform this action");
                         BottomButtonContainer.Shake();
@@ -880,7 +848,7 @@ namespace cna.ui {
                     Hex.AdventureAction = Image_Enum.SH_Monastery;
                     ar.AddGameEffect(GameEffect_Enum.SH_Monastery);
                     ar.Rep(-3);
-                    TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.UpdateUI(); });
+                    TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.pd_StartOfTurn = ar.P.Clone(); D.A.UpdateUI(); }, TriggerBattlePanel.STANDARD_BATTLE_NO_UNDO);
                 } else {
                     ar.ErrorMsg = "You can not perform this action";
                 }
@@ -991,20 +959,26 @@ namespace cna.ui {
                 if (ar.P.PlayerTurnPhase < TurnPhase_Enum.Influence) {
                     SelectedCardSlot = null;
                     CardVO ruinCard = D.Cards[ar.P.Board.MonsterData[ar.P.CurrentGridLoc].Values[0]];
+                    ar.UniqueCardId = ruinCard.UniqueId;
                     if (ruinCard.CardType == CardType_Enum.AncientRuins_Alter) {
                         ar.PayForAction(ruinCard.Costs[0], AncientRuins_AlterPaid);
                     } else {
-                        if (ar.P.Board.MonsterData[ar.P.CurrentGridLoc].Count == 1) {
-                            D.Scenario.AddMonster(ruinCard.Monsters, ar.P.CurrentGridLoc, false);
-                        }
-                        List<MonsterMetaData> mmd = new List<MonsterMetaData>();
-                        for (int i = 1; i < ar.P.Board.MonsterData[ar.P.CurrentGridLoc].Count; i++) {
-                            int m = ar.P.Board.MonsterData[ar.P.CurrentGridLoc].Values[i];
-                            mmd.Add(new MonsterMetaData(m, Hex.GridPosition, Hex.Structure));
-                        }
+                        List<int> monsterIds = new List<int>();
+                        D.Cards[ar.UniqueCardId].Monsters.ForEach(m => {
+                            int randomMonster = 0;
+                            do {
+                                randomMonster = D.Scenario.GetRandomMonster(m);
+                            } while (monsterIds.Contains(randomMonster));
+                            monsterIds.Add(randomMonster);
+                        });
+                        List<MonsterMetaData> mmd = monsterIds.ConvertAll(m => new MonsterMetaData(m, Hex.GridPosition, Hex.Structure));
+                        Hex.Monsters.Clear();
                         Hex.Monsters.AddRange(mmd);
                         Hex.AdventureAction = Image_Enum.SH_AncientRuins;
-                        TriggerBattlePanel.SetupUI(Hex, (h) => { D.A.UpdateUI(); });
+                        TriggerBattlePanel.SetupUI(Hex, (h) => {
+                            D.A.pd_StartOfTurn = D.LocalPlayer.Clone();
+                            D.A.UpdateUI();
+                        }, TriggerBattlePanel.RUIN_BATTLE);
                     }
                 } else {
                     Msg("You can not perform this action");
@@ -1020,6 +994,15 @@ namespace cna.ui {
             ar.AddShieldLocation(ar.P.CurrentGridLoc);
             ProcessActionResultVO(ar);
         }
+        public void OnClick_Adventure_AncientRuins_RevealMonster() {
+            GameAPI ar = new GameAPI();
+            ar.AcceptPanel("Warning!",
+                "You are about to reveal new information, You Will NOT be able to UNDO this action, would you like to continue?",
+                new List<Action<GameAPI>>() { Adventure_AncientRuins_RevealMonster_Yes, (a) => { } },
+                new List<string> { "Yes", "No" },
+                new List<Color32> { CNAColor.ColorLightGreen, CNAColor.ColorLightRed },
+                CNAColor.ColorLightBlue);
+        }
 
         public void OnClick_RevealMonster() {
             GameAPI ar = new GameAPI();
@@ -1033,6 +1016,12 @@ namespace cna.ui {
 
         public void RevealMonster_Yes(GameAPI ar) {
             ar.P.VisableMonsters.Add(Hex.Monsters[0].Uniqueid);
+            D.A.pd_StartOfTurn = ar.P.Clone();
+            ar.PushForce();
+        }
+
+        public void Adventure_AncientRuins_RevealMonster_Yes(GameAPI ar) {
+            ar.P.VisableMonsters.Add(ar.P.Board.MonsterData[ar.P.CurrentGridLoc].Values[0]);
             D.A.pd_StartOfTurn = ar.P.Clone();
             ar.PushForce();
         }

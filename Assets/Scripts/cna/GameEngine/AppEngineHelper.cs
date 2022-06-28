@@ -80,22 +80,10 @@ namespace cna {
                         imageName = string.Format("Assets/Images/card/ruin/ruins_{0}.png", imageName.Substring(2));
                     } else if (imageName.StartsWith("T_")) {
                         imageName = string.Format("Assets/Images/card/tactics/tactics_{0}.jpg", imageName.Substring(2));
-                    } else if (imageName.Equals("A_MEEPLE_GREEN")) {
-                        imageName = "Assets/Images/avatar/meeple/meeple_goldyx.png";
-                    } else if (imageName.Equals("A_MEEPLE_RED")) {
-                        imageName = "Assets/Images/avatar/meeple/meeple_arythea.png";
-                    } else if (imageName.Equals("A_MEEPLE_BLUE")) {
-                        imageName = "Assets/Images/avatar/meeple/meeple_tovak.png";
-                    } else if (imageName.Equals("A_MEEPLE_WHITE")) {
-                        imageName = "Assets/Images/avatar/meeple/meeple_norowas.png";
-                    } else if (imageName.Equals("A_SHIELD_GREEN")) {
-                        imageName = "Assets/Images/avatar/shield/shield_green_goldyx.png";
-                    } else if (imageName.Equals("A_SHIELD_RED")) {
-                        imageName = "Assets/Images/avatar/shield/shield_red_arythea.png";
-                    } else if (imageName.Equals("A_SHIELD_BLUE")) {
-                        imageName = "Assets/Images/avatar/shield/shield_blue_tovak.png";
-                    } else if (imageName.Equals("A_SHIELD_WHITE")) {
-                        imageName = "Assets/Images/avatar/shield/shield_white_norowas.png";
+                    } else if (imageName.StartsWith("A_meeple")) {
+                        imageName = string.Format("Assets/Images/avatar/meeple/{0}.png", imageName.Substring(2));
+                    } else if (imageName.StartsWith("A_shield")) {
+                        imageName = string.Format("Assets/Images/avatar/shield/{0}.png", imageName.Substring(2));
                     }
                     Addressables.LoadAssetAsync<Sprite>(imageName).Completed += ((obj => {
                         if (obj.Status == AsyncOperationStatus.Succeeded) {
@@ -124,10 +112,10 @@ namespace cna {
         public void UpdateAvatarMap() {
             D.AvatarMetaDataMap = new Dictionary<Image_Enum, AvatarMetaData>();
             D.AvatarMetaDataMap.Add(Image_Enum.A_MEEPLE_RANDOM, Resources.Load<AvatarMetaData>("Avatars/Random"));
-            D.AvatarMetaDataMap.Add(Image_Enum.A_MEEPLE_BLUE, Resources.Load<AvatarMetaData>("Avatars/Blue"));
-            D.AvatarMetaDataMap.Add(Image_Enum.A_MEEPLE_GREEN, Resources.Load<AvatarMetaData>("Avatars/Green"));
-            D.AvatarMetaDataMap.Add(Image_Enum.A_MEEPLE_RED, Resources.Load<AvatarMetaData>("Avatars/Red"));
-            D.AvatarMetaDataMap.Add(Image_Enum.A_MEEPLE_WHITE, Resources.Load<AvatarMetaData>("Avatars/White"));
+            D.AvatarMetaDataMap.Add(Image_Enum.A_meeple_tovak, Resources.Load<AvatarMetaData>("Avatars/Blue"));
+            D.AvatarMetaDataMap.Add(Image_Enum.A_meeple_goldyx, Resources.Load<AvatarMetaData>("Avatars/Green"));
+            D.AvatarMetaDataMap.Add(Image_Enum.A_meeple_arythea, Resources.Load<AvatarMetaData>("Avatars/Red"));
+            D.AvatarMetaDataMap.Add(Image_Enum.A_meeple_norowas, Resources.Load<AvatarMetaData>("Avatars/White"));
         }
 
         public void UpdateCardMetaData() {
@@ -140,7 +128,7 @@ namespace cna {
             for (int i = 0; i < 100; i++) {
                 D.Cards.Add(new CardVO(D.Cards.Count, "Wound", Image_Enum.C_wound, CardType_Enum.Wound));
             }
-            Image_Enum[] avatarList = new Image_Enum[] { Image_Enum.A_MEEPLE_GREEN, Image_Enum.A_MEEPLE_RED, Image_Enum.A_MEEPLE_BLUE, Image_Enum.A_MEEPLE_WHITE };
+            Image_Enum[] avatarList = new Image_Enum[] { Image_Enum.A_meeple_goldyx, Image_Enum.A_meeple_arythea, Image_Enum.A_meeple_tovak, Image_Enum.A_meeple_norowas };
             foreach (Image_Enum avatar in avatarList) {
                 D.Cards.Add(new TranquilityVO(D.Cards.Count, avatar));
                 D.Cards.Add(new ThreatenVO(D.Cards.Count, avatar));
@@ -155,28 +143,28 @@ namespace cna {
                 D.Cards.Add(new ImprovisationVO(D.Cards.Count, avatar));
                 D.Cards.Add(new CrystallizeVO(D.Cards.Count, avatar));
                 switch (avatar) {
-                    case Image_Enum.A_MEEPLE_BLUE: {
+                    case Image_Enum.A_meeple_tovak: {
                         D.Cards.Add(new ConcentrationVO(D.Cards.Count, avatar));
                         D.Cards.Add(new PromiseVO(D.Cards.Count, avatar));
                         D.Cards.Add(new ColdToughnessVO(D.Cards.Count, avatar));
                         D.Cards.Add(new RageVO(D.Cards.Count, avatar));
                         break;
                     }
-                    case Image_Enum.A_MEEPLE_GREEN: {
+                    case Image_Enum.A_meeple_goldyx: {
                         D.Cards.Add(new WillFocusVO(D.Cards.Count, avatar));
                         D.Cards.Add(new PromiseVO(D.Cards.Count, avatar));
                         D.Cards.Add(new DeterminationVO(D.Cards.Count, avatar));
                         D.Cards.Add(new RageVO(D.Cards.Count, avatar));
                         break;
                     }
-                    case Image_Enum.A_MEEPLE_RED: {
+                    case Image_Enum.A_meeple_arythea: {
                         D.Cards.Add(new ConcentrationVO(D.Cards.Count, avatar));
                         D.Cards.Add(new PromiseVO(D.Cards.Count, avatar));
                         D.Cards.Add(new DeterminationVO(D.Cards.Count, avatar));
                         D.Cards.Add(new BattleVersatilityVO(D.Cards.Count, avatar));
                         break;
                     }
-                    case Image_Enum.A_MEEPLE_WHITE: {
+                    case Image_Enum.A_meeple_norowas: {
                         D.Cards.Add(new ConcentrationVO(D.Cards.Count, avatar));
                         D.Cards.Add(new NobleMannersVO(D.Cards.Count, avatar));
                         D.Cards.Add(new DeterminationVO(D.Cards.Count, avatar));
@@ -283,12 +271,12 @@ namespace cna {
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Monks", Image_Enum.CMV_monks_x2, 4, 5, 5, new List<UnitEffect_Enum>() { UnitEffect_Enum.Poison }));
 
             //  WHITE
-            D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardians", Image_Enum.CMW_altem_guardians_x2, 8, 5, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
+            //D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardians", Image_Enum.CMW_altem_guardians_x2, 8, 5, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardsmen", Image_Enum.CMW_altem_guardsmen_x2, 8, 6, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Mages", Image_Enum.CMW_altem_mages_x2, 8, 4, 8, new List<UnitEffect_Enum>() { UnitEffect_Enum.ColdFireAttack, UnitEffect_Enum.Fortified, UnitEffect_Enum.PhysicalResistance, UnitEffect_Enum.Poison, UnitEffect_Enum.Brutal }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Freezers", Image_Enum.CMW_freezers_x3, 7, 3, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.ColdAttack, UnitEffect_Enum.FireResistance, UnitEffect_Enum.Paralyze, UnitEffect_Enum.Swiftness }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Gunners", Image_Enum.CMW_gunners_x3, 7, 6, 6, new List<UnitEffect_Enum>() { UnitEffect_Enum.FireAttack, UnitEffect_Enum.IceResistance, UnitEffect_Enum.Brutal }));
-            D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardians", Image_Enum.CMW_altem_guardians_x2, 8, 5, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
+            //D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardians", Image_Enum.CMW_altem_guardians_x2, 8, 5, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardsmen", Image_Enum.CMW_altem_guardsmen_x2, 8, 6, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Mages", Image_Enum.CMW_altem_mages_x2, 8, 4, 8, new List<UnitEffect_Enum>() { UnitEffect_Enum.ColdFireAttack, UnitEffect_Enum.Fortified, UnitEffect_Enum.PhysicalResistance, UnitEffect_Enum.Poison, UnitEffect_Enum.Brutal }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Freezers", Image_Enum.CMW_freezers_x3, 7, 3, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.ColdAttack, UnitEffect_Enum.FireResistance, UnitEffect_Enum.Paralyze, UnitEffect_Enum.Swiftness }));
@@ -296,12 +284,12 @@ namespace cna {
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Freezers", Image_Enum.CMW_freezers_x3, 7, 3, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.ColdAttack, UnitEffect_Enum.FireResistance, UnitEffect_Enum.Paralyze, UnitEffect_Enum.Swiftness }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Gunners", Image_Enum.CMW_gunners_x3, 7, 6, 6, new List<UnitEffect_Enum>() { UnitEffect_Enum.FireAttack, UnitEffect_Enum.IceResistance, UnitEffect_Enum.Brutal }));
 
-            D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardians", Image_Enum.CMW_altem_guardians_x2, 8, 5, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
+            //D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardians", Image_Enum.CMW_altem_guardians_x2, 8, 5, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardsmen", Image_Enum.CMW_altem_guardsmen_x2, 8, 6, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Mages", Image_Enum.CMW_altem_mages_x2, 8, 4, 8, new List<UnitEffect_Enum>() { UnitEffect_Enum.ColdFireAttack, UnitEffect_Enum.Fortified, UnitEffect_Enum.PhysicalResistance, UnitEffect_Enum.Poison, UnitEffect_Enum.Brutal }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Freezers", Image_Enum.CMW_freezers_x3, 7, 3, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.ColdAttack, UnitEffect_Enum.FireResistance, UnitEffect_Enum.Paralyze, UnitEffect_Enum.Swiftness }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Gunners", Image_Enum.CMW_gunners_x3, 7, 6, 6, new List<UnitEffect_Enum>() { UnitEffect_Enum.FireAttack, UnitEffect_Enum.IceResistance, UnitEffect_Enum.Brutal }));
-            D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardians", Image_Enum.CMW_altem_guardians_x2, 8, 5, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
+            //D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardians", Image_Enum.CMW_altem_guardians_x2, 8, 5, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Guardsmen", Image_Enum.CMW_altem_guardsmen_x2, 8, 6, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.Fortified, UnitEffect_Enum.FireResistance, UnitEffect_Enum.IceResistance, UnitEffect_Enum.PhysicalResistance }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Altem Mages", Image_Enum.CMW_altem_mages_x2, 8, 4, 8, new List<UnitEffect_Enum>() { UnitEffect_Enum.ColdFireAttack, UnitEffect_Enum.Fortified, UnitEffect_Enum.PhysicalResistance, UnitEffect_Enum.Poison, UnitEffect_Enum.Brutal }));
             D.Cards.Add(new CardMonsterVO(D.Cards.Count, "Freezers", Image_Enum.CMW_freezers_x3, 7, 3, 7, new List<UnitEffect_Enum>() { UnitEffect_Enum.ColdAttack, UnitEffect_Enum.FireResistance, UnitEffect_Enum.Paralyze, UnitEffect_Enum.Swiftness }));

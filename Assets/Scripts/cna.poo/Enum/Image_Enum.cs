@@ -10,14 +10,14 @@ namespace cna.poo {
         LOGO_002,
 
         //  AVATAR
-        A_MEEPLE_GREEN = 50,
-        A_MEEPLE_RED,
-        A_MEEPLE_BLUE,
-        A_MEEPLE_WHITE,
-        A_SHIELD_GREEN,
-        A_SHIELD_RED,
-        A_SHIELD_BLUE,
-        A_SHIELD_WHITE,
+        A_meeple_goldyx = 50,
+        A_meeple_arythea,
+        A_meeple_tovak,
+        A_meeple_norowas,
+        A_shield_green_goldyx,
+        A_shield_red_arythea,
+        A_shield_blue_tovak,
+        A_shield_white_norowas,
         A_MEEPLE_RANDOM,
 
 
@@ -265,7 +265,7 @@ namespace cna.poo {
 
         // CARD MONSTER WHITE
         CMW_back = 1200,
-        CMW_altem_guardians_x2,
+        //CMW_altem_guardians_x2,
         CMW_altem_guardsmen_x2,
         CMW_altem_mages_x2,
         CMW_freezers_x3,

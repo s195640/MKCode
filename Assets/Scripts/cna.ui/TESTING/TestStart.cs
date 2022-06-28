@@ -5,32 +5,39 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace cna.ui {
-    public class TestStart : AppBase {
+    public class TestStart : AppEngine {
         [SerializeField] private GameObject afterLoad;
-        [SerializeField] private Tilemap TerrainTilemap;
-        [SerializeField] private Tilemap StructureTilemap;
-        [SerializeField] private Tilemap TerrainBoarderTilemap;
-        [SerializeField] private Camera WorldCamera;
-        [SerializeField] private Grid MainGrid;
+        //[SerializeField] private Tilemap TerrainTilemap;
+        //[SerializeField] private Tilemap StructureTilemap;
+        //[SerializeField] private Tilemap TerrainBoarderTilemap;
+        //[SerializeField] private Camera WorldCamera;
+        //[SerializeField] private Grid MainGrid;
 
 
-        private string old;
-        [SerializeField] private int seed;
-        [SerializeField] GameMapLayout_Enum gameMapLayout;
-        [SerializeField] private bool easyStart;
-        [SerializeField] [Range(0, 11)] private int basic;
-        [SerializeField] [Range(0, 4)] private int core;
-        [SerializeField] [Range(0, 4)] private int city;
+        //private string old;
+        //[SerializeField] private int seed;
+        //[SerializeField] GameMapLayout_Enum gameMapLayout;
+        //[SerializeField] private bool easyStart;
+        //[SerializeField] [Range(0, 11)] private int basic;
+        //[SerializeField] [Range(0, 4)] private int core;
+        //[SerializeField] [Range(0, 4)] private int city;
 
 
-        [SerializeField] private ScenarioBase scenario;
-        [SerializeField] private List<MapHexId_Enum> mapDeck;
-        [SerializeField] private int mapDeckIndex;
-        [SerializeField] private List<MapHexId_Enum> currentMap;
+        //[SerializeField] private ScenarioBase scenario;
+        //[SerializeField] private List<MapHexId_Enum> mapDeck;
+        //[SerializeField] private int mapDeckIndex;
+        //[SerializeField] private List<MapHexId_Enum> currentMap;
+
+        public void Start() {
+        }
+
+        public override void Update() {
+
+        }
 
         public override void UpdateUI() {
             afterLoad.SetActive(true);
-            FindObjectOfType<PlayerWorld>().UpdateUI();
+            //FindObjectOfType<PlayerWorld>().UpdateUI();
         }
 
         public override void Clear() { }

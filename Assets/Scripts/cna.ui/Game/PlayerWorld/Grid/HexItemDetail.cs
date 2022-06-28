@@ -106,7 +106,7 @@ namespace cna.ui {
             Terrain = BasicUtil.GetTilemapId(GridPosition, TerrainTilemap);
             Structure = BasicUtil.GetTilemapId(GridPosition, StructureTilemap);
             PlayerMovementCost = calculateMovementCost();
-            IsLegalMovement = PlayerMovementCost >= 0;
+            IsLegalMovement = PlayerMovementCost >= 0 && Distance > 0;
             PlayerCostMet = PlayerMovementCost >= 0 && LocalPlayer.Movement >= PlayerMovementCost;
             TriggerCombatNoRamp = (Structure == Image_Enum.SH_Keep || Structure == Image_Enum.SH_MageTower || Structure == Image_Enum.SH_City_Blue || Structure == Image_Enum.SH_City_Red || Structure == Image_Enum.SH_City_Green || Structure == Image_Enum.SH_City_White) && LocalPlayer.Board.MonsterData.ContainsKey(GridPosition);
             IsFlight = LocalPlayer.GameEffects.Keys.Contains(GameEffect_Enum.GREEN_Flight);

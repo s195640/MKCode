@@ -8,7 +8,7 @@ namespace cna.poo {
         public BoardData() { }
 
         [SerializeField] public int mapDeckIndex = 0;
-        [SerializeField] private List<MapHexId_Enum> currentMap;
+        [SerializeField] private List<MapHexId_Enum> currentMap = new List<MapHexId_Enum>();
         [SerializeField] private CNAMap<V2IntVO, WrapList<int>> monsterData = new CNAMap<V2IntVO, WrapList<int>>();
         [SerializeField] private int greenIndex = 0;
         [SerializeField] private int greyIndex = 0;

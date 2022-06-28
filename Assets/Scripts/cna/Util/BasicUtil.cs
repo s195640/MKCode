@@ -570,5 +570,18 @@ namespace cna {
         public static int RandomRange(int a, int b) {
             return UnityEngine.Random.Range(a, b);
         }
+
+        public static bool AllCitiesConquered(Data g) {
+            int totalCitiesConquered = 0;
+            for (int i = 0; i < g.Board.CurrentMap.Count; i++) {
+                if (g.Board.CurrentMap[i] >= MapHexId_Enum.City_Green) {
+                    V2IntVO pos = new V2IntVO(D.Scenario.ConvertIndexToWorld(i));
+                    if (!g.Board.MonsterData.ContainsKey(pos)) {
+                        totalCitiesConquered++;
+                    }
+                }
+            }
+            return totalCitiesConquered >= g.GameData.CityTiles;
+        }
     }
 }

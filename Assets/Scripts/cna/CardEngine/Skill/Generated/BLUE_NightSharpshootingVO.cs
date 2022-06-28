@@ -9,7 +9,7 @@ namespace cna {
             SkillRefresh_Enum.Turn,
             Image_Enum.SKB_night_shooting,
             Image_Enum.SKB_back,
-            Image_Enum.A_MEEPLE_BLUE,
+            Image_Enum.A_meeple_tovak,
             new List<List<TurnPhase_Enum>> { new List<TurnPhase_Enum>() { TurnPhase_Enum.Battle } },
             new List<List<BattlePhase_Enum>> { new List<BattlePhase_Enum>() { BattlePhase_Enum.RangeSiege, BattlePhase_Enum.Attack } },
             false,

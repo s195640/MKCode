@@ -39,12 +39,18 @@ namespace cna.poo {
 
         public void UpdateData(BattleData b) {
             battlePhase = b.battlePhase;
-            monsters = b.monsters;
-            selectedMonsters = b.selectedMonsters;
-            siege = b.siege;
-            range = b.range;
-            shield = b.shield;
-            attack = b.attack;
+            monsters.Clear();
+            b.monsters.Keys.ForEach(key => {
+                MonsterMetaData mmd = new MonsterMetaData();
+                mmd.UpdateData(b.monsters[key]);
+                monsters.Add(key, mmd);
+            });
+            selectedMonsters.Clear();
+            selectedMonsters.AddRange(b.selectedMonsters);
+            siege.UpdateData(b.siege);
+            range.UpdateData(b.range);
+            shield.UpdateData(b.shield);
+            attack.UpdateData(b.attack);
         }
     }
 }

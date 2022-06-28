@@ -4,6 +4,9 @@ using UnityEngine;
 using cna.poo;
 using cna;
 using System;
+using cna.ui;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace cna.editor {
     [InitializeOnLoad]
@@ -15,11 +18,10 @@ namespace cna.editor {
 
         static void PlayModeStateChanged(PlayModeStateChange state) {
             if (state.Equals(PlayModeStateChange.EnteredEditMode)) {
-                AppEngineHelper.UpdateSpriteMap();
+                //AppEngineHelper.UpdateSpriteMap();
+                DisplayAllImages_ToWork();
             }
         }
-
-
 
         [MenuItem("Tools/Rebuild")]
         static void REBUILD() {
@@ -29,6 +31,35 @@ namespace cna.editor {
             }
             AppEngineHelper.UpdateSpriteMap();
         }
+
+        [MenuItem("Tools/DisplayImages")]
+        static void DisplayAllImages() {
+            DisplayAllImages_ToWork();
+        }
+        async static void DisplayAllImages_ToWork() {
+            if (D.SpriteMap == null || D.SpriteMap.Keys.Count < 300) {
+                AppEngineHelper.UpdateSpriteMap();
+                await Task.Delay(3000);
+            }
+            AddressableImage[] addressableImages = Resources.FindObjectsOfTypeAll<AddressableImage>();
+            foreach (AddressableImage ai in addressableImages) {
+                ai.UpdateUI();
+            }
+        }
+
+        [MenuItem("ExMenu/Use Delay")]
+        static void UseDelayAsync() {
+            DelayUseAsync();
+        }
+
+        async static void DelayUseAsync() {
+            Debug.Log("Waiting 1 second...");
+            await Task.Delay(1000);
+            Debug.Log("After 1 second...");
+        }
+
+
+
 
         #region LobbyGame
         [MenuItem("Tools/WS/LobbyGame/100")]

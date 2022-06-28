@@ -9,7 +9,7 @@ namespace cna {
             SkillRefresh_Enum.Turn,
             Image_Enum.SKB_i_feel_no_pain,
             Image_Enum.SKB_back,
-            Image_Enum.A_MEEPLE_BLUE,
+            Image_Enum.A_meeple_tovak,
             new List<List<TurnPhase_Enum>> { new List<TurnPhase_Enum>() { TurnPhase_Enum.Move, TurnPhase_Enum.Influence, TurnPhase_Enum.AfterBattle } },
             new List<List<BattlePhase_Enum>> { new List<BattlePhase_Enum>() { } },
             false,

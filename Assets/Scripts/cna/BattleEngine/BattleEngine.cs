@@ -10,11 +10,11 @@ namespace cna {
         public Dictionary<int, MonsterDetailsVO> MonsterDetails { get => monsterDetails; set => monsterDetails = value; }
         public GameAPI AR { get => ar; set => ar = value; }
 
-        [SerializeField] internal PlayerData gdProvoke;
-        [SerializeField] internal PlayerData gdRange;
-        [SerializeField] internal PlayerData gdBlock;
-        [SerializeField] internal PlayerData gdDamage;
-        [SerializeField] internal PlayerData gdAttack;
+        [SerializeField] protected PlayerData gdProvoke;
+        [SerializeField] protected PlayerData gdRange;
+        [SerializeField] protected PlayerData gdBlock;
+        [SerializeField] protected PlayerData gdDamage;
+        [SerializeField] protected PlayerData gdAttack;
 
         private Dictionary<int, MonsterDetailsVO> monsterDetails = new Dictionary<int, MonsterDetailsVO>();
 
@@ -129,22 +129,36 @@ namespace cna {
             }
         }
         protected virtual void OnClick_UndoProvoke() {
-            gdRange = null;
-            gdBlock = null;
-            gdDamage = null;
-            gdAttack = null;
-            AR.AddLog("[Undo - Provoke]");
-            AR.P.UpdateData(gdProvoke);
+            if (gdProvoke.Battle.BattlePhase == BattlePhase_Enum.Block) {
+                gdDamage = null;
+                gdAttack = null;
+                AR.AddLog("[Undo - Block]");
+                AR.P.UpdateData(gdProvoke);
+            } else {
+                gdRange = null;
+                gdBlock = null;
+                gdDamage = null;
+                gdAttack = null;
+                AR.AddLog("[Undo - Provoke]");
+                AR.P.UpdateData(gdProvoke);
+            }
             D.Action.Clear();
             UpdateMonsterDetails();
             AR.PushForce();
         }
         protected virtual void OnClick_UndoRange() {
-            gdBlock = null;
-            gdDamage = null;
-            gdAttack = null;
-            AR.AddLog("[Undo - Range]");
-            AR.P.UpdateData(gdRange);
+            if (gdProvoke.Battle.BattlePhase == BattlePhase_Enum.Block) {
+                gdDamage = null;
+                gdAttack = null;
+                AR.AddLog("[Undo - Block]");
+                AR.P.UpdateData(gdProvoke);
+            } else {
+                gdBlock = null;
+                gdDamage = null;
+                gdAttack = null;
+                AR.AddLog("[Undo - Range]");
+                AR.P.UpdateData(gdRange);
+            }
             D.Action.Clear();
             UpdateMonsterDetails();
             AR.PushForce();

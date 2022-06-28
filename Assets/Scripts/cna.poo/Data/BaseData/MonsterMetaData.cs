@@ -44,5 +44,17 @@ namespace cna.poo {
                 return Structure == Image_Enum.SH_City_Blue || Structure == Image_Enum.SH_City_Green || Structure == Image_Enum.SH_City_White || Structure == Image_Enum.SH_City_Red;
             }
         }
+
+        public void UpdateData(MonsterMetaData m) {
+            uniqueid = m.uniqueid;
+            dead = m.dead;
+            blocked = m.blocked;
+            assigned = m.assigned;
+            summoned = m.summoned;
+            summoner = m.summoner;
+            provoked = m.provoked;
+            location = m.location.Clone();
+            structure = m.structure;
+        }
     }
 }

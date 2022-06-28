@@ -8,6 +8,8 @@
         Tactics_WaitingOnPlayers,
         SaveGame,
         Player_Turn,
+        End_Of_Game,
+        End_Of_Game_Acknowledged,
         TESTING,
     }
 }

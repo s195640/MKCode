@@ -9,7 +9,7 @@ namespace cna {
             SkillRefresh_Enum.Round,
             Image_Enum.SKG_potion_making,
             Image_Enum.SKG_back,
-            Image_Enum.A_MEEPLE_GREEN,
+            Image_Enum.A_meeple_goldyx,
             new List<List<TurnPhase_Enum>> { new List<TurnPhase_Enum>() { TurnPhase_Enum.Move, TurnPhase_Enum.Influence, TurnPhase_Enum.AfterBattle } },
             new List<List<BattlePhase_Enum>> { new List<BattlePhase_Enum>() { } },
             false,
