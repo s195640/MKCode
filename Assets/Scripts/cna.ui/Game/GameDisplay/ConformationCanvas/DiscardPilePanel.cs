@@ -9,7 +9,7 @@ namespace cna.ui {
         [SerializeField] private List<NormalCardSlot> cardSlots = new List<NormalCardSlot>();
         [SerializeField] private Transform content;
 
-        public override void SetupUI() {
+        public override void SetupUI(PlayerData pd) {
             foreach (NormalCardSlot n in cardSlots.ToArray()) {
                 Destroy(n.gameObject);
                 cardSlots.Remove(n);
@@ -18,7 +18,7 @@ namespace cna.ui {
                 NormalCardSlot normalCardSlot = Instantiate(normalCardSlot_Prefab, Vector3.zero, Quaternion.identity);
                 normalCardSlot.transform.SetParent(content);
                 normalCardSlot.transform.localScale = Vector3.one;
-                normalCardSlot.SetupUI(c, CardHolder_Enum.DiscardDeck);
+                normalCardSlot.SetupUI(pd, c, CardHolder_Enum.DiscardDeck);
                 cardSlots.Add(normalCardSlot);
             });
         }
@@ -32,7 +32,7 @@ namespace cna.ui {
                 gameObject.SetActive(false);
             } else {
                 gameObject.SetActive(true);
-                SetupUI();
+                SetupUI(D.LocalPlayer);
             }
         }
     }

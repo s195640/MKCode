@@ -98,6 +98,9 @@ namespace cna.ui {
             if (D.G.GameData.EasyStart != easyStartToggle.isOn) {
                 easyStartToggle.isOn = D.G.GameData.EasyStart;
             }
+            if (D.G.GameData.Rounds != (int)rounds.Value) {
+                rounds.Value = D.G.GameData.Rounds;
+            }
             if (D.G.GameData.BasicTiles != (int)basicTiles.Value) {
                 basicTiles.Value = D.G.GameData.BasicTiles;
             }

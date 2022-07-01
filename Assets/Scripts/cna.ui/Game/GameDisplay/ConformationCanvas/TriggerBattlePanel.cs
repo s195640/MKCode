@@ -38,7 +38,7 @@ namespace cna.ui {
             MonsterCardSlot c = Instantiate(prefab, Vector3.zero, Quaternion.identity);
             c.transform.SetParent(content);
             c.transform.localScale = Vector3.one;
-            c.SetupUI(m.Uniqueid);
+            c.SetupUI(D.LocalPlayer, m.Uniqueid);
             c.IsButtonInteractable(false);
             cardSlots.Add(c);
         }

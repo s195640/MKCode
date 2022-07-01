@@ -16,10 +16,10 @@ namespace cna.ui {
                     NormalCardSlot normalCardSlot = Instantiate(normalCardSlot_Prefab, Vector3.zero, Quaternion.identity);
                     normalCardSlot.transform.SetParent(unitContent);
                     normalCardSlot.transform.localScale = Vector3.one;
-                    normalCardSlot.SetupUI(c, CardHolder_Enum.UnitOffering);
+                    normalCardSlot.SetupUI(pd, c, CardHolder_Enum.UnitOffering);
                     cardSlots.Add(normalCardSlot);
                 } else {
-                    p.UpdateUI();
+                    p.UpdateUI(pd);
                 }
             });
             foreach (NormalCardSlot n in cardSlots.ToArray()) {

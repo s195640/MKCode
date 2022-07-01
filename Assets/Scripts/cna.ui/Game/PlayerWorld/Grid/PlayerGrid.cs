@@ -67,7 +67,7 @@ namespace cna.ui {
                                 if (hd.TriggerCombat) {
                                     SelectionHex.Show(false);
                                     if (!D.LocalPlayer.VisableMonsters.Contains(hd.Monsters[0].Uniqueid)) {
-                                        TriggerBattlePanel.SetupUI(hd, (hd) => { D.A.pd_StartOfTurn = D.LocalPlayer.Clone(); performMovement(hd); }, TriggerBattlePanel.STANDARD_BATTLE_NO_UNDO);
+                                        TriggerBattlePanel.SetupUI(hd, (hd) => { performMovement(hd); D.A.pd_StartOfTurn = D.LocalPlayer.Clone();  }, TriggerBattlePanel.STANDARD_BATTLE_NO_UNDO);
                                     } else {
                                         TriggerBattlePanel.SetupUI(hd, performMovement);
                                     }
@@ -114,7 +114,12 @@ namespace cna.ui {
         public void UndergroundAttack(HexItemDetail hd) {
             if (hd.IsLegalMovement && hd.TriggerCombatNoRamp && hd.IsSiteFortified) {
                 if (hd.Distance <= 3) {
-                    TriggerBattlePanel.SetupUI(hd, UndergroundAttack_move);
+                    if (!D.LocalPlayer.VisableMonsters.Contains(hd.Monsters[0].Uniqueid)) {
+                        TriggerBattlePanel.SetupUI(hd, (hd) => { UndergroundAttack_move(hd); D.A.pd_StartOfTurn = D.LocalPlayer.Clone(); }, TriggerBattlePanel.STANDARD_BATTLE_NO_UNDO);
+                    } else {
+                        TriggerBattlePanel.SetupUI(hd, UndergroundAttack_move);
+                    }
+                    //TriggerBattlePanel.SetupUI(hd, UndergroundAttack_move);
                 }
             }
         }

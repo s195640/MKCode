@@ -23,14 +23,48 @@ namespace cna.editor {
             }
         }
 
-        [MenuItem("Tools/Rebuild")]
-        static void REBUILD() {
-            if (D.SpriteMap != null) {
-                D.SpriteMap.Clear();
-                D.SpriteMap = null;
-            }
-            AppEngineHelper.UpdateSpriteMap();
+        [MenuItem("Tools/ButtonsImages")]
+        static void Fix_CNA_Buttons() {
+            Fix_CNA_Buttons_ToWork();
         }
+
+        async static void Fix_CNA_Buttons_ToWork() {
+            if (D.SpriteMap == null || D.SpriteMap.Keys.Count < 300) {
+                AppEngineHelper.UpdateSpriteMap();
+                await Task.Delay(3000);
+            }
+            AddressableImage[] addressableImages = Resources.FindObjectsOfTypeAll<AddressableImage>();
+            foreach (AddressableImage ai in addressableImages) {
+                ai.UpdateUI();
+            }
+
+            CNA_Button[] cna_buttons = Resources.FindObjectsOfTypeAll<CNA_Button>();
+            foreach (CNA_Button b in cna_buttons) {
+                foreach (RectTransform g in b.GetComponentsInChildren<RectTransform>(true)) {
+                    if (g.name.Equals("TextAndImage")) {
+                        RectTransform i = null;
+                        RectTransform t = null;
+                        foreach (RectTransform TextAndImage in b.GetComponentsInChildren<RectTransform>(true)) {
+                            if (TextAndImage.name.Equals("Image")) {
+                                i = TextAndImage;
+                            } else if (TextAndImage.name.Equals("TextWithImage")) {
+                                t = TextAndImage;
+
+                            }
+                        }
+                        if (t != null) {
+                            float width = t.parent.GetComponent<RectTransform>().rect.width - i.rect.width;
+                            t.anchorMin = new Vector2(1, 0);
+                            t.anchorMax = new Vector2(1, 1);
+                            t.offsetMax = new Vector2(0, 0);
+                            t.offsetMin = new Vector2(-1 * width, 0);
+                        }
+                    }
+                }
+            }
+        }
+
+
 
         [MenuItem("Tools/DisplayImages")]
         static void DisplayAllImages() {

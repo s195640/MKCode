@@ -151,7 +151,7 @@ namespace cna {
                 //D.G.Board.SkillOffering.Add(D.Cards.Find(c => c.CardImage == Image_Enum.SKB_forward_march).UniqueId);
                 //D.G.Board.SkillOffering.Add(D.Cards.Find(c => c.CardImage == Image_Enum.SKR_dark_paths).UniqueId);
 
-                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CA_learning).UniqueId);
+                pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CS_underground_travel).UniqueId);
                 //pd.Deck.Unit.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CUE_altem_guardians_x3).UniqueId);
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CS_fireball).UniqueId);
                 //D.G.Board.ManaPool.Add(Crystal_Enum.Gold);
@@ -348,8 +348,8 @@ namespace cna {
                         }
                         g.Players.ForEach(p => {
                             if (!p.DummyPlayer) {
-                                for (int i = 0; i < g.Board.CurrentMap.Count; i++) {
-                                    if (g.Board.CurrentMap[i] >= MapHexId_Enum.Basic_01) {
+                                for (int i = 0; i < p.Board.PlayerMap.Count; i++) {
+                                    if (p.Board.PlayerMap[i] >= MapHexId_Enum.Basic_01) {
                                         V2IntVO centerPos = new V2IntVO(D.Scenario.ConvertIndexToWorld(i));
                                         List<V2IntVO> pts = BasicUtil.GetAdjacentPoints(centerPos);
                                         pts.Add(centerPos);
@@ -370,7 +370,7 @@ namespace cna {
                                 }
                                 for (int i = 0; i < p.Board.PlayerMap.Count; i++) {
                                     MapHexId_Enum m = p.Board.PlayerMap[i];
-                                    if ((int)m >= 10) {
+                                    if (m >= MapHexId_Enum.Start_A) {
                                         playerMap[i] = m;
                                     }
                                 }

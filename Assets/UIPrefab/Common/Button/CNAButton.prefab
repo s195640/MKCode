@@ -57,9 +57,10 @@ MonoBehaviour:
   textAndImage: {fileID: 6335938530393321200}
   textWithImage: {fileID: 9173268472261930030}
   textWithNoImage: {fileID: 6303679006418510174}
-  rectTransforms:
-  - {fileID: 5820113769411196691}
-  - {fileID: 63740713367244483}
+  _text: {fileID: 63740713367244483}
+  _parent: {fileID: 6838441141979761083}
+  _image: {fileID: 5820113769411196691}
+  _button: {fileID: 0}
   active: 1
   cursorActive: {fileID: 2800000, guid: dda2207dd99d71f458b86e8d8af83716, type: 3}
   hotspotActive: {x: 10, y: 0}
@@ -285,7 +286,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 392, y: 0}
+  m_SizeDelta: {x: 391.5797, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &4391868752218703242
 CanvasRenderer:
@@ -608,7 +609,7 @@ GameObject:
   - component: {fileID: 5820113769411196689}
   - component: {fileID: 4660068775282020638}
   - component: {fileID: 1843449015804068865}
-  - component: {fileID: 4229343783092847880}
+  - component: {fileID: 3933076851939314008}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -687,7 +688,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageEnum: 0
---- !u!114 &4229343783092847880
+--- !u!114 &3933076851939314008
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -700,7 +701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AspectMode: 3
-  m_AspectRatio: 1.0000001
+  m_AspectRatio: 1
 --- !u!1 &6335938530393321200
 GameObject:
   m_ObjectHideFlags: 0

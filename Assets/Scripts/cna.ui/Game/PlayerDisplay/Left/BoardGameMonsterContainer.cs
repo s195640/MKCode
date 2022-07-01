@@ -1,17 +1,18 @@
 using System.Collections.Generic;
+using cna.poo;
 using UnityEngine;
 
 namespace cna.ui {
     public class BoardGameMonsterContainer : MonoBehaviour {
         [SerializeField] private MonsterCardSlot prefab;
         [SerializeField] private List<MonsterCardSlot> cardSlots = new List<MonsterCardSlot>();
-        public void UpdateUI(HexItemDetail hex) {
+        public void UpdateUI(PlayerData pd, HexItemDetail hex) {
             cardSlots.ForEach(c => c.gameObject.SetActive(false));
             List<int> monsters = hex.LocalPlayer.Board.MonsterData[hex.GridPosition].Values;
             for (int i = 0; i < monsters.Count; i++) {
                 RectTransform t = cardSlots[i].GetComponent<RectTransform>();
                 setTransform(t, i, monsters.Count);
-                cardSlots[i].SetupUI(monsters[i]);
+                cardSlots[i].SetupUI(pd, monsters[i]);
                 cardSlots[i].gameObject.SetActive(true);
             }
         }

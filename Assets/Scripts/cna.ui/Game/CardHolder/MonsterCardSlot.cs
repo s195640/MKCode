@@ -42,17 +42,17 @@ namespace cna.ui {
 
         private MonsterDetailsVO monsterDetails;
 
-        public void SetupUI(int uniqueId, bool forceVisable = false) {
-            SetupUI(new MonsterDetailsVO(D.Cards[uniqueId], new CNAMap<GameEffect_Enum, WrapList<int>>()), forceVisable);
+        public void SetupUI(PlayerData pd, int uniqueId, bool forceVisable = false) {
+            SetupUI(pd, new MonsterDetailsVO(D.Cards[uniqueId], new CNAMap<GameEffect_Enum, WrapList<int>>()), forceVisable);
         }
 
-        public void SetupUI(MonsterDetailsVO monsterDetails, bool forceVisable = false) {
-            UpdateUI(monsterDetails, forceVisable);
+        public void SetupUI(PlayerData pd, MonsterDetailsVO monsterDetails, bool forceVisable = false) {
+            UpdateUI(pd, monsterDetails, forceVisable);
         }
 
-        public void UpdateUI(MonsterDetailsVO monsterDetails, bool forceVisable = false) {
+        public void UpdateUI(PlayerData pd, MonsterDetailsVO monsterDetails, bool forceVisable = false) {
             MonsterDetails = monsterDetails;
-            bool monsterVisable = forceVisable || D.LocalPlayer.VisableMonsters.Contains(monsterDetails.UniqueId);
+            bool monsterVisable = forceVisable || pd.VisableMonsters.Contains(monsterDetails.UniqueId);
             if (monsterVisable) {
                 if (MonsterDetails.monsterCard.CardType == CardType_Enum.Monster) {
                     MonsterStats.SetActive(true);
@@ -112,15 +112,15 @@ namespace cna.ui {
                 MonsterName.SetActive(false);
             }
 
-            Selected.SetActive(D.LocalPlayer.Battle.SelectedMonsters.Contains(MonsterDetails.UniqueId));
+            Selected.SetActive(pd.Battle.SelectedMonsters.Contains(MonsterDetails.UniqueId));
             deadImage.SetActive(false);
             blockImage.SetActive(false);
             summonImage.SetActive(false);
             assignImage.SetActive(false);
-            if (D.LocalPlayer.Battle.BattlePhase > BattlePhase_Enum.Provoke && D.LocalPlayer.Battle.Monsters.ContainsKey(MonsterDetails.UniqueId)) {
-                MonsterMetaData monsterMetaData = D.LocalPlayer.Battle.Monsters[MonsterDetails.UniqueId];
+            if (pd.Battle.BattlePhase > BattlePhase_Enum.Provoke && pd.Battle.Monsters.ContainsKey(MonsterDetails.UniqueId)) {
+                MonsterMetaData monsterMetaData = pd.Battle.Monsters[MonsterDetails.UniqueId];
                 deadImage.SetActive(monsterMetaData.Dead);
-                switch (D.LocalPlayer.Battle.BattlePhase) {
+                switch (pd.Battle.BattlePhase) {
                     case BattlePhase_Enum.RangeSiege: {
                         blockImage.SetActive(false);
                         summonImage.SetActive(false);
@@ -155,6 +155,10 @@ namespace cna.ui {
 
         public void IsButtonInteractable(bool val) {
             button.interactable = val;
+        }
+        public void UpdateUI_DisableClick() {
+            GetComponentInChildren<Button>().enabled = false;
+            //GetComponentInChildren<CustomCursor>().enabled = false;
         }
     }
 }

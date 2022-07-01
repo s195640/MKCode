@@ -1,3 +1,4 @@
+using cna.poo;
 using UnityEngine;
 
 namespace cna.ui {
@@ -10,10 +11,11 @@ namespace cna.ui {
 
 
         public void UpdateUI() {
-            playerDeckPanel.UpdateUI();
-            playerHandPanel.UpdateUI();
-            playerUnitPanel.UpdateUI();
-            playerSkillPanel.UpdateUI();
+            PlayerData pd = D.LocalPlayer;
+            playerDeckPanel.UpdateUI(pd);
+            playerHandPanel.UpdateUI(pd, Vector3.one);
+            playerUnitPanel.UpdateUI(pd, Vector3.one);
+            playerSkillPanel.UpdateUI(pd);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace cna.ui {
                 NormalCardSlot cardSlot = Instantiate(cardSlot_Prefab, Vector3.zero, Quaternion.identity);
                 cardSlot.transform.SetParent(content);
                 cardSlot.transform.localScale = Vector3.one;
-                cardSlot.SetupUI(c, CardHolder_Enum.Rewards);
+                cardSlot.SetupUI(ar.P, c, CardHolder_Enum.Rewards);
                 cardSlot.SelectionImage.ImageEnum = selectionImage;
                 cardSlot.GetComponent<Button>().onClick.AddListener(() => {
                     OnClick_SelectCard(cardSlot);

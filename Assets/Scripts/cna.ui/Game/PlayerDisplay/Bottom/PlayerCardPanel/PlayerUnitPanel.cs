@@ -10,23 +10,26 @@ namespace cna.ui {
         [SerializeField] private List<NormalCardSlot> cardSlots = new List<NormalCardSlot>();
         [SerializeField] private Transform content;
 
-        public void UpdateUI() {
-            unitSizeText.text = "Units (" + D.LocalPlayer.Deck.Unit.Count + " of " + D.LocalPlayer.Deck.UnitHandLimit + ")";
+        public void UpdateUI(PlayerData pd, Vector3 scale, bool disableClick = false) {
+            unitSizeText.text = "Units (" + pd.Deck.Unit.Count + " of " + pd.Deck.UnitHandLimit + ")";
 
-            D.LocalPlayer.Deck.Unit.ForEach(c => {
+            pd.Deck.Unit.ForEach(c => {
                 NormalCardSlot p = cardSlots.Find(p => p.UniqueCardId == c);
                 if (p == null) {
                     NormalCardSlot normalCardSlot = Instantiate(normalCardSlot_Prefab, Vector3.zero, Quaternion.identity);
                     normalCardSlot.transform.SetParent(content);
-                    normalCardSlot.transform.localScale = Vector3.one;
-                    normalCardSlot.SetupUI(c, CardHolder_Enum.PlayerUnitHand);
+                    normalCardSlot.transform.localScale = scale;
+                    normalCardSlot.SetupUI(pd, c, CardHolder_Enum.PlayerUnitHand);
+                    if (disableClick) {
+                        normalCardSlot.UpdateUI_DisableClick();
+                    }
                     cardSlots.Add(normalCardSlot);
                 } else {
-                    p.UpdateUI();
+                    p.UpdateUI(pd);
                 }
             });
             foreach (NormalCardSlot n in cardSlots.ToArray()) {
-                if (!D.LocalPlayer.Deck.Unit.Contains(n.UniqueCardId)) {
+                if (!pd.Deck.Unit.Contains(n.UniqueCardId)) {
                     if (n.ActionCard.UniqueCardId == n.UniqueCardId) {
                         n.ActionCard.SelectedCardSlot = null;
                     }

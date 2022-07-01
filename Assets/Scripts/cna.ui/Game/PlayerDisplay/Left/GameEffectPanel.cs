@@ -45,8 +45,8 @@ namespace cna.ui {
                     string text = cardGameEffect.CardTitle;
                     Color color = cardGameEffect.GameEffectColor;
                     slot.SetupUI(text, color, image, true);
-                    slot.UpdateUI_TextWidthFromLeft(98);
                     slot.addButtonClick(slots.Count, OnClick_GameEffect);
+                    slot.SetupUI_SetSize(98f);
                     slots.Add(slot);
                 });
                 effectCountText.text = "Game Effects (" + slotData.Count + ")";

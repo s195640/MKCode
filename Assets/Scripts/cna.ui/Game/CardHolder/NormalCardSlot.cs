@@ -45,7 +45,6 @@ namespace cna.ui {
         [SerializeField] public GameObject SpecialCardSelection;
         [SerializeField] public AddressableImage SelectionImage;
 
-
         protected GameObject EmptyCardContainer { get => emptyCardContainer; set => emptyCardContainer = value; }
         protected GameObject CardContainer { get => cardContainer; set => cardContainer = value; }
         public GameObject ActionTaken { get => actionTaken; set => actionTaken = value; }
@@ -60,12 +59,12 @@ namespace cna.ui {
         public List<CardState_Enum> CardState { get => cardState; }
         public int Banner { get => banner; set => banner = value; }
 
-        public override void SetupUI(int key, CardHolder_Enum holder) {
+        public override void SetupUI(PlayerData pd, int key, CardHolder_Enum holder) {
             CardHolder = holder;
             UniqueCardId = key;
             Card = D.Cards[UniqueCardId];
             SetupUI();
-            UpdateUI();
+            UpdateUI(pd);
         }
 
         private void SetupUI() {
@@ -118,15 +117,15 @@ namespace cna.ui {
                 }
             }
         }
-        public override void UpdateUI() {
-            UpdateUI_CardState();
+        public override void UpdateUI(PlayerData pd) {
+            UpdateUI_CardState(pd);
         }
-        private void UpdateUI_CardState() {
+        private void UpdateUI_CardState(PlayerData pd) {
             if (CardHolder == CardHolder_Enum.PlayerHand ||
                 CardHolder == CardHolder_Enum.PlayerUnitHand ||
                 CardHolder == CardHolder_Enum.PlayerSkillHand
                 ) {
-                if (UpdateCardState()) {
+                if (UpdateCardState(pd)) {
                     actionTaken.SetActive(false);
                     switch (Card.CardType) {
                         case CardType_Enum.Wound:
@@ -162,10 +161,10 @@ namespace cna.ui {
             }
         }
 
-        private bool UpdateCardState() {
+        private bool UpdateCardState(PlayerData pd) {
             bool forReturn = false;
             List<CardState_Enum> currentCardState = new List<CardState_Enum>();
-            CNAMap<int, WrapList<CardState_Enum>> states = D.LocalPlayer.Deck.State;
+            CNAMap<int, WrapList<CardState_Enum>> states = pd.Deck.State;
             if (states.ContainsKey(UniqueCardId)) {
                 currentCardState = states[UniqueCardId].Values;
             }
@@ -176,8 +175,8 @@ namespace cna.ui {
             cardState.AddRange(currentCardState);
 
             int currentBanner = 0;
-            if (D.LocalPlayer.Deck.Banners.ContainsKey(UniqueCardId)) {
-                currentBanner = D.LocalPlayer.Deck.Banners[UniqueCardId];
+            if (pd.Deck.Banners.ContainsKey(UniqueCardId)) {
+                currentBanner = pd.Deck.Banners[UniqueCardId];
             }
             if (currentBanner != banner) {
                 banner = currentBanner;
@@ -269,6 +268,11 @@ namespace cna.ui {
                     }
                 }
             }
+        }
+
+        public void UpdateUI_DisableClick() {
+            GetComponentInChildren<Button>().enabled = false;
+            GetComponentInChildren<CustomCursor>().enabled = false;
         }
     }
 }

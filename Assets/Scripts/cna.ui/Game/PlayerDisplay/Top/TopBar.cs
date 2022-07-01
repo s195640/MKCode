@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using cna.poo;
 using UnityEngine;
 
@@ -13,7 +14,10 @@ namespace cna.ui {
         [SerializeField] private CNA_Button mapButton;
         [SerializeField] private CNA_Button boardButton;
         [SerializeField] private CNA_Button battleButton;
-        [SerializeField] private CNA_Button ledendButton;
+        [SerializeField] private CNA_Button multiBattleButton;
+        [SerializeField] private List<CNA_Button> ledendMonsterButton;
+        [SerializeField] private List<CNA_Button> ledendRuinsButton;
+        [SerializeField] private List<CNA_Button> ledendIconButton;
         [SerializeField] private CNA_Button scoreButton;
         [SerializeField] private CNA_Button settingsButton;
         [SerializeField] private CNA_Button finalScoreButton;
@@ -22,8 +26,14 @@ namespace cna.ui {
         [SerializeField] private NotificationCanvas Notification;
         [SerializeField] private YesNoPanel YesNoPanel;
 
+        public override void SetupUI() {
+            if (D.HostPlayer.Key != D.LocalPlayerKey) {
+                settingsButton.gameObject.SetActive(false);
+            }
+        }
 
         public void UpdateUI() {
+            CheckSetupUI();
             UpdateEndTurnButton();
             UpdateUI_ButtonActive(D.ScreenState);
         }
@@ -32,7 +42,10 @@ namespace cna.ui {
             mapButton.Active = screenState != ScreenState_Enum.Map;
             boardButton.Active = screenState != ScreenState_Enum.Offering;
             battleButton.Active = screenState != ScreenState_Enum.Combat;
-            ledendButton.Active = screenState != ScreenState_Enum.Legend;
+            multiBattleButton.Active = screenState != ScreenState_Enum.MultiCombat;
+            ledendMonsterButton.ForEach(z => z.Active = screenState != ScreenState_Enum.Legend_Monsters);
+            ledendRuinsButton.ForEach(z => z.Active = screenState != ScreenState_Enum.Legend_Ruins);
+            ledendIconButton.ForEach(z => z.Active = screenState != ScreenState_Enum.Legend_Icons);
             scoreButton.Active = screenState != ScreenState_Enum.Score;
             settingsButton.Active = screenState != ScreenState_Enum.Settings;
             battleButton.BlickButton(D.LocalPlayer.PlayerTurnPhase == TurnPhase_Enum.Battle && screenState != ScreenState_Enum.Combat);
@@ -57,8 +70,24 @@ namespace cna.ui {
             ScreensCanvas.UpdateUI();
         }
 
-        public void OnClick_Legend() {
-            D.ScreenState = ScreenState_Enum.Legend;
+        public void OnClick_MultiCombat() {
+            D.ScreenState = ScreenState_Enum.MultiCombat;
+            UpdateUI_ButtonActive(D.ScreenState);
+            ScreensCanvas.UpdateUI();
+        }
+
+        public void OnClick_LedendMonster() {
+            D.ScreenState = ScreenState_Enum.Legend_Monsters;
+            UpdateUI_ButtonActive(D.ScreenState);
+            ScreensCanvas.UpdateUI();
+        }
+        public void OnClick_LedendRuins() {
+            D.ScreenState = ScreenState_Enum.Legend_Ruins;
+            UpdateUI_ButtonActive(D.ScreenState);
+            ScreensCanvas.UpdateUI();
+        }
+        public void OnClick_LedendIcons() {
+            D.ScreenState = ScreenState_Enum.Legend_Icons;
             UpdateUI_ButtonActive(D.ScreenState);
             ScreensCanvas.UpdateUI();
         }
@@ -80,6 +109,8 @@ namespace cna.ui {
             UpdateUI_ButtonActive(D.ScreenState);
             ScreensCanvas.UpdateUI();
         }
+
+
 
         public void Msg(string msg) {
             Notification.Msg(msg);

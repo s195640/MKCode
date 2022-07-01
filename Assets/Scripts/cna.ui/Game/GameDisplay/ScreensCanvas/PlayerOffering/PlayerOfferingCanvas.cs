@@ -45,7 +45,7 @@ namespace cna.ui {
                 if (spellIds.Count > i) {
                     spellSlots[i].gameObject.SetActive(true);
                     if (spellSlots[i].UniqueCardId != spellIds[i]) {
-                        spellSlots[i].SetupUI(spellIds[i], CardHolder_Enum.SpellOffering);
+                        spellSlots[i].SetupUI(pd, spellIds[i], CardHolder_Enum.SpellOffering);
                     }
                 } else {
                     spellSlots[i].gameObject.SetActive(false);
@@ -60,7 +60,7 @@ namespace cna.ui {
                 advancedSlots[i].gameObject.SetActive(true);
                 if (advancedIds.Count > i) {
                     if (advancedSlots[i].UniqueCardId != advancedIds[i]) {
-                        advancedSlots[i].SetupUI(advancedIds[i], CardHolder_Enum.AdvancedOffering);
+                        advancedSlots[i].SetupUI(pd, advancedIds[i], CardHolder_Enum.AdvancedOffering);
                     }
                 } else {
                     advancedSlots[i].gameObject.SetActive(false);
@@ -74,7 +74,7 @@ namespace cna.ui {
                     tacticsSlots[i].gameObject.SetActive(false);
                 } else {
                     if (tacticsSlots[i].UniqueCardId != D.G.Players[i].Deck.TacticsCardId) {
-                        tacticsSlots[i].SetupUI(D.G.Players[i].Deck.TacticsCardId, CardHolder_Enum.TacticsBoard);
+                        tacticsSlots[i].SetupUI(D.G.Players[i], D.G.Players[i].Deck.TacticsCardId, CardHolder_Enum.TacticsBoard);
                     }
                 }
             }

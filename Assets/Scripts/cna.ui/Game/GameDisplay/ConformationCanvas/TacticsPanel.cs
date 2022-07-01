@@ -18,7 +18,7 @@ namespace cna.ui {
                         gameObject.SetActive(true);
                         cards = D.Scenario.isDay ? D.Scenario.TacticsDayDeck : D.Scenario.TacticsNightDeck;
                         for (int i = 0; i < 6; i++) {
-                            cardSlots[i].SetupUI(cards[i], CardHolder_Enum.TacticsOffering);
+                            cardSlots[i].SetupUI(D.LocalPlayer, cards[i], CardHolder_Enum.TacticsOffering);
                         }
                     }
                 } else {

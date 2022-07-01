@@ -60,7 +60,7 @@ namespace cna.ui {
             avatarArmorText[1].text = "" + avatarArmor;
             if (unitIdUsedForCombat > 0) {
                 defendingUnitCardSlot.gameObject.SetActive(true);
-                defendingUnitCardSlot.SetupUI(unitIdUsedForCombat, CardHolder_Enum.AssignDamageContent);
+                defendingUnitCardSlot.SetupUI(ar.P, unitIdUsedForCombat, CardHolder_Enum.AssignDamageContent);
             } else {
                 defendingUnitCardSlot.gameObject.SetActive(false);
             }

@@ -12,29 +12,34 @@ namespace cna.ui {
         [SerializeField] private RepCell[] repCellList;
         private int[] playerFameVal;
         private int[] playerRepVal;
+        private List<int> playerKeys = new List<int>();
 
         public override void SetupUI() {
             playerFameVal = new int[] { -1, -1, -1, -1 };
             playerRepVal = new int[] { -1, -1, -1, -1 };
+            playerKeys.Clear();
             for (int i = 0; i < 4; i++) {
                 playerFames[i].gameObject.SetActive(false);
                 playerReps[i].gameObject.SetActive(false);
             }
-            for (int i = 0; i < D.G.Players.Count; i++) {
-                Image_Enum shieldId = D.AvatarMetaDataMap[D.G.Players[i].Avatar].AvatarShieldId;
-                playerFames[i].ImageEnum = shieldId;
-                playerReps[i].ImageEnum = shieldId;
-                playerFames[i].gameObject.SetActive(true);
-                playerReps[i].gameObject.SetActive(true);
-            }
+            D.G.Players.ForEach(p => {
+                if (!p.DummyPlayer) {
+                    Image_Enum shieldId = D.AvatarMetaDataMap[p.Avatar].AvatarShieldId;
+                    playerFames[playerKeys.Count].ImageEnum = shieldId;
+                    playerReps[playerKeys.Count].ImageEnum = shieldId;
+                    playerFames[playerKeys.Count].gameObject.SetActive(true);
+                    playerReps[playerKeys.Count].gameObject.SetActive(true);
+                    playerKeys.Add(p.Key);
+                }
+            });
         }
 
         public void UpdateUI() {
             CheckSetupUI();
-            List<PlayerData> p = D.G.Players;
-            for (int i = 0; i < p.Count; i++) {
-                int fame = p[i].TotalFame;
-                int rep = p[i].RepLevel + 7;
+            for (int i = 0; i < playerKeys.Count; i++) {
+                PlayerData p = D.GetPlayerByKey(playerKeys[i]);
+                int fame = p.TotalFame;
+                int rep = p.RepLevel + 7;
                 if (playerFameVal[i] != fame) {
                     playerFameVal[i] = fame;
                     UpdateUI_Fame(i);

@@ -42,7 +42,7 @@ namespace cna.ui {
                             provokeMonstersAvailable = true;
                             provokeMonsterIds[i] = mList[0];
                             monsterHexes[i].gameObject.SetActive(true);
-                            monsterHexes[i].SetupUI(mList[0]);
+                            monsterHexes[i].SetupUI(pd, mList[0]);
                             provokeButtons[i].SetActive(true);
                         }
                     }

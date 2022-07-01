@@ -37,14 +37,14 @@ namespace cna.ui {
         }
 
         public void ResetUI() {
-            NormalCardSlot.SetupUI(0, CardHolder_Enum.NA);
+            NormalCardSlot.SetupUI(ar.P, 0, CardHolder_Enum.NA);
         }
 
         #region Actions
         public void OnClick_SelectCard(NormalCardSlot cardSlot) {
             string msg = card.IsSelectionAllowed(cardSlot.Card, cardSlot.CardHolder, ar);
             if (msg.Length == 0) {
-                NormalCardSlot.SetupUI(cardSlot.Card.UniqueId, cardSlot.CardHolder);
+                NormalCardSlot.SetupUI(ar.P, cardSlot.Card.UniqueId, cardSlot.CardHolder);
             } else {
                 Message(msg);
             }

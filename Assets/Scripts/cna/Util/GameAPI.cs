@@ -61,6 +61,7 @@ namespace cna {
         }
 
         public GameAPI(Data gd, PlayerData localPlayer) {
+            status = true;
             G = gd;
             P = localPlayer;
             log = new List<string>();
@@ -86,23 +87,12 @@ namespace cna {
         public void PushForce(bool withLog = true) {
             stale = false;
             if (withLog) {
-                D.C.LogMessage(string.Join(", ", log));
-                log.Clear();
+                SendLogs();
             }
             D.C.Send_PlayerData();
         }
         public void CompleteAction() {
-            //if (Card.CardType == CardType_Enum.Spell) {
-            //    P.GameEffects.Keys.ForEach(ge => {
-            //        switch (ge) {
-            //            case GameEffect_Enum.CT_RubyRing: { if (Card.CardColor == CardColor_Enum.Red) Fame(1); break; }
-            //            case GameEffect_Enum.CT_EmeraldRing: { if (Card.CardColor == CardColor_Enum.Green) Fame(1); break; }
-            //            case GameEffect_Enum.CT_SapphireRing: { if (Card.CardColor == CardColor_Enum.Blue) Fame(1); break; }
-            //            case GameEffect_Enum.CT_DiamondRing: { if (Card.CardColor == CardColor_Enum.White) Fame(1); break; }
-            //        }
-            //    });
-            //}
-            D.C.LogMessage(string.Join(", ", log));
+            SendLogs();
             Push();
         }
         public void Rollback() {
@@ -981,28 +971,28 @@ namespace cna {
                                 break;
                             }
                             case GameEffect_Enum.SH_CrystalMines_Blue: {
-                                D.C.LogMessage("[Blue Crystal Mine] +1 Blue Crystal");
+                                log.Add("[Blue Crystal Mine] +1 Blue Crystal");
                                 P.Crystal.Blue++;
                                 break;
                             }
                             case GameEffect_Enum.SH_CrystalMines_Red: {
-                                D.C.LogMessage("[Red Crystal Mine] +1 Red Crystal");
+                                log.Add("[Red Crystal Mine] +1 Red Crystal");
                                 P.Crystal.Red++;
                                 break;
                             }
                             case GameEffect_Enum.SH_CrystalMines_Green: {
-                                D.C.LogMessage("[Green Crystal Mine] +1 Green Crystal");
+                                log.Add("[Green Crystal Mine] +1 Green Crystal");
                                 P.Crystal.Green++;
                                 break;
                             }
                             case GameEffect_Enum.SH_CrystalMines_White: {
-                                D.C.LogMessage("[White Crystal Mine] +1 White Crystal");
+                                log.Add("[White Crystal Mine] +1 White Crystal");
                                 P.Crystal.White++;
                                 break;
                             }
                             case GameEffect_Enum.T_Planning: {
                                 if (cardsLeftInHand >= 2) {
-                                    D.C.LogMessage("[Planning] +1 Card");
+                                    log.Add("[Planning] +1 Card");
                                     if (P.Deck.Deck.Count > 0) {
                                         P.Deck.Hand.Add(BasicUtil.DrawCard(P.Deck.Deck));
                                     }
@@ -1019,6 +1009,7 @@ namespace cna {
                             P.RemoveGameEffect(ge);
                         }
                     }
+                    SendLogs();
                     P.ClearEndTurn();
                 }
             }
@@ -1148,5 +1139,13 @@ namespace cna {
             return woundId;
         }
         #endregion
+
+
+        public void SendLogs() {
+            if (log.Count > 0) {
+                D.C.LogMessage(string.Join(", ", log));
+                log.Clear();
+            }
+        }
     }
 }

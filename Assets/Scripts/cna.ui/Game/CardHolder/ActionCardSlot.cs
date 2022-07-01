@@ -332,7 +332,7 @@ namespace cna.ui {
                     }
                     if (D.LocalPlayer.Board.MonsterData.ContainsKey(Hex.GridPosition)) {
                         BoardGameMonsterContainer.gameObject.SetActive(true);
-                        BoardGameMonsterContainer.UpdateUI(Hex);
+                        BoardGameMonsterContainer.UpdateUI(D.LocalPlayer, Hex);
                     } else {
                         BoardGameMonsterContainer.gameObject.SetActive(false);
                     }
@@ -996,22 +996,28 @@ namespace cna.ui {
         }
         public void OnClick_Adventure_AncientRuins_RevealMonster() {
             GameAPI ar = new GameAPI();
-            ar.AcceptPanel("Warning!",
-                "You are about to reveal new information, You Will NOT be able to UNDO this action, would you like to continue?",
-                new List<Action<GameAPI>>() { Adventure_AncientRuins_RevealMonster_Yes, (a) => { } },
-                new List<string> { "Yes", "No" },
-                new List<Color32> { CNAColor.ColorLightGreen, CNAColor.ColorLightRed },
-                CNAColor.ColorLightBlue);
+            if (CheckTurnAndUI(ar)) {
+                ar.AcceptPanel("Warning!",
+                    "You are about to reveal new information, You Will NOT be able to UNDO this action, would you like to continue?",
+                    new List<Action<GameAPI>>() { Adventure_AncientRuins_RevealMonster_Yes, (a) => { } },
+                    new List<string> { "Yes", "No" },
+                    new List<Color32> { CNAColor.ColorLightGreen, CNAColor.ColorLightRed },
+                    CNAColor.ColorLightBlue);
+            }
+            ProcessActionResultVO(ar);
         }
 
         public void OnClick_RevealMonster() {
             GameAPI ar = new GameAPI();
-            ar.AcceptPanel("Warning!",
-                "You are about to reveal new information, You Will NOT be able to UNDO this action, would you like to continue?",
-                new List<Action<GameAPI>>() { RevealMonster_Yes, (a) => { } },
-                new List<string> { "Yes", "No" },
-                new List<Color32> { CNAColor.ColorLightGreen, CNAColor.ColorLightRed },
-                CNAColor.ColorLightBlue);
+            if (CheckTurnAndUI(ar)) {
+                ar.AcceptPanel("Warning!",
+                    "You are about to reveal new information, You Will NOT be able to UNDO this action, would you like to continue?",
+                    new List<Action<GameAPI>>() { RevealMonster_Yes, (a) => { } },
+                    new List<string> { "Yes", "No" },
+                    new List<Color32> { CNAColor.ColorLightGreen, CNAColor.ColorLightRed },
+                    CNAColor.ColorLightBlue);
+            }
+            ProcessActionResultVO(ar);
         }
 
         public void RevealMonster_Yes(GameAPI ar) {

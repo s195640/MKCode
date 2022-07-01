@@ -8,21 +8,24 @@ namespace cna.ui {
         [SerializeField] private List<SkillCardSlot> cardSlots = new List<SkillCardSlot>();
         [SerializeField] private Transform content;
 
-        public void UpdateUI() {
-            D.LocalPlayer.Deck.Skill.ForEach(c => {
+        public void UpdateUI(PlayerData pd, bool disableClick = false) {
+            pd.Deck.Skill.ForEach(c => {
                 SkillCardSlot p = cardSlots.Find(p => p.UniqueCardId == c);
                 if (p == null) {
                     SkillCardSlot normalCardSlot = Instantiate(prefab, Vector3.zero, Quaternion.identity);
                     normalCardSlot.transform.SetParent(content);
                     normalCardSlot.transform.localScale = Vector3.one;
-                    normalCardSlot.SetupUI(c, CardHolder_Enum.PlayerSkillHand);
+                    normalCardSlot.SetupUI(pd, c, CardHolder_Enum.PlayerSkillHand);
+                    if (disableClick) {
+                        normalCardSlot.UpdateUI_DisableClick();
+                    }
                     cardSlots.Add(normalCardSlot);
                 } else {
-                    p.UpdateUI();
+                    p.UpdateUI(pd);
                 }
             });
             foreach (SkillCardSlot n in cardSlots.ToArray()) {
-                if (!D.LocalPlayer.Deck.Skill.Contains(n.UniqueCardId)) {
+                if (!pd.Deck.Skill.Contains(n.UniqueCardId)) {
                     if (n.ActionCard.UniqueCardId == n.UniqueCardId) {
                         n.ActionCard.SelectedCardSlot = null;
                     }

@@ -15,7 +15,9 @@ namespace cna.ui {
         [SerializeField] private TextMeshProUGUI textWithImage;
         [SerializeField] private TextMeshProUGUI textWithNoImage;
 
-        [SerializeField] private RectTransform[] rectTransforms;
+        [SerializeField] RectTransform _text;
+        [SerializeField] RectTransform _parent;
+        [SerializeField] RectTransform _image;
 
         [SerializeField] private bool active = true;
         private bool setPointer = false;
@@ -74,6 +76,19 @@ namespace cna.ui {
             }
         }
 
+        public void SetupUI_SetSize(float w = 0f) {
+            _text.anchorMin = new Vector2(1, 0);
+            _text.anchorMax = new Vector2(1, 1);
+            _text.offsetMax = new Vector2(0, 0);
+            if (w > 0) {
+                _text.offsetMin = new Vector2(-1 * w, 0);
+            } else {
+                float width = _parent.rect.width - _image.rect.width;
+                _text.offsetMin = new Vector2(-1 * width, 0);
+            }
+        }
+
+
         public void UpdateUI_Image(Image_Enum buttonImageid) {
             SetupUI(ButtonText, ButtonColor, buttonImageid, Active);
         }
@@ -84,9 +99,9 @@ namespace cna.ui {
         public void UpdateUI_TextAndImage(string buttonText, Image_Enum buttonImageid) {
             SetupUI(buttonText, ButtonColor, buttonImageid, Active);
         }
-        public void UpdateUI_TextWidthFromLeft(int width) {
-            rectTransforms[1].sizeDelta = new Vector2(width, 0);
-        }
+        //public void UpdateUI_TextWidthFromLeft(int width) {
+        //    rectTransforms[1].sizeDelta = new Vector2(width, 0);
+        //}
 
         public void OnPointerEnter(PointerEventData eventData) {
             setCustomPointer();
@@ -170,5 +185,6 @@ namespace cna.ui {
             }
             t.localScale = Vector3.one;
         }
+
     }
 }

@@ -26,7 +26,7 @@ namespace cna.ui {
             if (AR != null && L.PlayerTurnPhase == TurnPhase_Enum.Battle) {
                 battleOn.SetActive(true);
                 battleOff.SetActive(false);
-                BattleEffectPanel.UpdateUI();
+                BattleEffectPanel.UpdateUI(L);
                 battleEngine();
             } else {
                 battleOn.SetActive(false);
@@ -37,7 +37,7 @@ namespace cna.ui {
         protected override void battleEngine() {
             base.battleEngine();
             BattleUndoButtonPanel.UpdateUI();
-            MonsterHandPanel.UpdateUI();
+            MonsterHandPanel.UpdateUI(L, MonsterDetails, Vector3.one);
             MonsterSelectionPanel.UpdateUI();
             BattleContributionPanel.UpdateUI();
         }

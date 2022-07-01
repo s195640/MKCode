@@ -21,7 +21,7 @@ namespace cna {
                 if (wsQueue.Count > 0) {
                     wsData m = wsQueue.Dequeue();
                     latestMsgReceive = m;
-                    Debug.Log(m.ToString());
+                    //Debug.Log(m.ToString());
                     switch (m.type) {
                         case mType_Enum.OnConnect: {
                             D.Connector.Player.Key = m.intMsg;
@@ -238,7 +238,6 @@ namespace cna {
 
         public void UpdateGameData(Data data) {
             D.G.UpdateData(data);
-            //D.Scenario.Check();
         }
         public void UpdatePlayerData(PlayerData playerData) {
             D.G.Players.Find(p => p.Key == playerData.Key).UpdateData(playerData);
@@ -334,10 +333,10 @@ namespace cna {
             Send_GameLog(log);
         }
         private void Send_GameLog(LogData log) {
-            wsMsg msg = new wsMsg();
-            msg.d = new wsData(mType_Enum.GameLog, D.G.GameId, log, D.LocalPlayerKey);
-            D.LogQueue.Enqueue(log);
-            Send(msg);
+            //wsMsg msg = new wsMsg();
+            //msg.d = new wsData(mType_Enum.GameLog, D.G.GameId, log, D.LocalPlayerKey);
+            //D.LogQueue.Enqueue(log);
+            //Send(msg);
         }
 
         #region send player data

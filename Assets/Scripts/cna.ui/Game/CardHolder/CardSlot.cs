@@ -21,8 +21,8 @@ namespace cna.ui {
             GetComponent<Outline>().enabled = isSelected;
         }
 
-        public abstract void SetupUI(int key, CardHolder_Enum holder);
-        public abstract void UpdateUI();
+        public abstract void SetupUI(PlayerData pd, int key, CardHolder_Enum holder);
+        public abstract void UpdateUI(PlayerData pd);
         public abstract void OnClickCard();
 
     }

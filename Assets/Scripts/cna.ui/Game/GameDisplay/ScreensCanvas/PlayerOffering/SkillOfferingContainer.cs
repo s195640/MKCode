@@ -15,10 +15,10 @@ namespace cna.ui {
                     SkillCardSlot cardSlot = Instantiate(prefab, Vector3.zero, Quaternion.identity);
                     cardSlot.transform.SetParent(content);
                     cardSlot.transform.localScale = Vector3.one;
-                    cardSlot.SetupUI(c, CardHolder_Enum.SkillOffering);
+                    cardSlot.SetupUI(pd, c, CardHolder_Enum.SkillOffering);
                     slots.Add(cardSlot);
                 } else {
-                    p.UpdateUI();
+                    p.UpdateUI(pd);
                 }
             });
             foreach (SkillCardSlot n in slots.ToArray()) {

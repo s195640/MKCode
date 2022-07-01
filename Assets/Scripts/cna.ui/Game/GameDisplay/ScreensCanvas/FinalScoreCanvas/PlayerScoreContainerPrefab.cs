@@ -50,8 +50,10 @@ namespace cna.ui {
 
         public void SetupUI(int playerkey) {
             PlayerKey = playerkey;
-            PlayerName.text = D.G.Players[PlayerKey].Name;
-            AvatarMetaData amd = D.AvatarMetaDataMap[D.G.Players[PlayerKey].Avatar];
+            Data g = D.G;
+            PlayerData pd = g.Players.Find(p => p.Key == PlayerKey);
+            PlayerName.text = pd.Name;
+            AvatarMetaData amd = D.AvatarMetaDataMap[pd.Avatar];
             ShieldImage.ImageEnum = amd.AvatarShieldId;
             ImageColor.ForEach(i => {
                 i.color = amd.AvatarColor;

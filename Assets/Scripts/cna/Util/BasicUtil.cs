@@ -248,7 +248,7 @@ namespace cna {
         public static void SaveGameToFile(Data gd) {
             string gameid = gd.GameId;
             string turnCounter = "" + gd.Board.TurnCounter;
-            string hostName = gd.Players[gd.HostPlayerKey].Name;
+            string hostName = gd.Players.Find(p => p.Key == gd.HostPlayerKey).Name;
             string SAVED_GAME_PATH = SAVED_GAME_FILE_PATH + gameid + "/";
             string fileName = string.Format("{0}_{1}.gd", turnCounter.PadLeft(4, '0'), hostName);
             DirectoryInfo info = Directory.CreateDirectory(SAVED_GAME_PATH);

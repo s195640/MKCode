@@ -13,12 +13,12 @@ namespace cna.ui {
         [SerializeField] private List<GameEffect_Enum> slotData = new List<GameEffect_Enum>();
 
 
-        public void UpdateUI() {
-            UpdateUI_BattleEffects();
+        public void UpdateUI(PlayerData pd, int beSize = 200) {
+            UpdateUI_BattleEffects(pd, beSize);
         }
 
-        private void UpdateUI_BattleEffects() {
-            CNAMap<GameEffect_Enum, WrapList<int>> gameEffects = D.LocalPlayer.GameEffects;
+        private void UpdateUI_BattleEffects(PlayerData pd, int beSize) {
+            CNAMap<GameEffect_Enum, WrapList<int>> gameEffects = pd.GameEffects;
             List<GameEffect_Enum> data = new List<GameEffect_Enum>();
             gameEffects.Keys.ForEach(ge => {
                 CardVO geCard = D.GetGameEffectCard(ge);
@@ -44,7 +44,7 @@ namespace cna.ui {
                     string text = cardGameEffect.CardTitle;
                     Color color = cardGameEffect.GameEffectColor;
                     slot.SetupUI(text, color, image, true);
-                    slot.UpdateUI_TextWidthFromLeft(200);
+                    slot.SetupUI_SetSize(beSize);
                     slot.addButtonClick(slots.Count, OnClick_GameEffect);
                     slots.Add(slot);
                 });

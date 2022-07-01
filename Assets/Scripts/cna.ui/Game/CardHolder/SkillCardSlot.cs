@@ -1,5 +1,6 @@
 using cna.poo;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace cna.ui {
     public class SkillCardSlot : CardSlot {
@@ -13,12 +14,12 @@ namespace cna.ui {
 
         public CardState_Enum CardState { get => cardState; set => cardState = value; }
 
-        public override void SetupUI(int key, CardHolder_Enum holder) {
+        public override void SetupUI(PlayerData pd, int key, CardHolder_Enum holder) {
             CardHolder = holder;
             UniqueCardId = key;
             Card = D.Cards[UniqueCardId];
             SetupUI();
-            UpdateUI();
+            UpdateUI(pd);
         }
 
         private void SetupUI() {
@@ -35,7 +36,7 @@ namespace cna.ui {
             }
         }
 
-        public override void UpdateUI() {
+        public override void UpdateUI(PlayerData pd) {
             if (CardHolder == CardHolder_Enum.PlayerSkillHand) {
                 if (UpdateCardState()) {
                     actionTaken.SetActive(cardState != CardState_Enum.NA);
@@ -62,6 +63,11 @@ namespace cna.ui {
 
         public override void OnClickCard() {
             ActionCard.SelectedCardSlot = this;
+        }
+
+        public void UpdateUI_DisableClick() {
+            GetComponentInChildren<Button>().enabled = false;
+            GetComponentInChildren<CustomCursor>().enabled = false;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace cna.ui {
         //    //StartOfTurnPanel.SetupUI(forceDeclareEndOfRound, isExhausted, endOfRoundDeclared);
         //}
         public override void StartTacticsPanel() {
-            TacticsPanel.SetupUI();
+            TacticsPanel.SetupUI(D.LocalPlayer);
         }
     }
 }

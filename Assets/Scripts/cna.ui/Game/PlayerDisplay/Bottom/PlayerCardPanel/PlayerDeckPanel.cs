@@ -7,14 +7,17 @@ namespace cna.ui {
         [SerializeField] private TextMeshProUGUI playerDrawSize;
         [SerializeField] private NormalCardSlot playerDiscardSlot;
 
-        public void UpdateUI() {
-            PlayerDeckData pDeck = D.LocalPlayer.Deck;
+        public void UpdateUI(PlayerData pd, bool disableClick = false) {
+            PlayerDeckData pDeck = pd.Deck;
             playerDrawSize.text = "" + pDeck.Deck.Count;
             int discordDeckCount = pDeck.Discard.Count;
             if (discordDeckCount > 0) {
-                playerDiscardSlot.SetupUI(pDeck.Discard[discordDeckCount - 1], CardHolder_Enum.DiscardDeck);
+                playerDiscardSlot.SetupUI(pd, pDeck.Discard[discordDeckCount - 1], CardHolder_Enum.DiscardDeck);
             } else {
-                playerDiscardSlot.SetupUI(0, CardHolder_Enum.NA);
+                playerDiscardSlot.SetupUI(pd, 0, CardHolder_Enum.NA);
+            }
+            if (disableClick) {
+                playerDiscardSlot.UpdateUI_DisableClick();
             }
         }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using cna.poo;
+using TMPro;
 using UnityEngine;
 
 namespace cna.ui {
@@ -18,8 +19,10 @@ namespace cna.ui {
         private BookmarkGamePrefab selectedBookmark;
 
         [SerializeField] private CNA_Button loadGameButton;
+        [SerializeField] private TextMeshProUGUI gameId;
 
         public void UpdateUI() {
+            gameId.text = "Game Id - " + D.G.GameId;
         }
 
         public SavedGamePrefab SelectedGame {
