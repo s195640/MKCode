@@ -1,4 +1,6 @@
+﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace cna.ui {
@@ -17,6 +19,7 @@ namespace cna.ui {
             soloGameButton.onClick.AddListener(SoloGameButtonCallback);
             multiGameButton.onClick.AddListener(MultiGameButtonCallback);
             exitButton.onClick.AddListener(Exit_OnClick);
+            StartCoroutine(getServerURL());
         }
 
         public void UpdateUI() { }
@@ -37,6 +40,14 @@ namespace cna.ui {
 
         public void Exit_OnClick() {
             Application.Quit();
+        }
+
+        IEnumerator getServerURL() {
+            //serverText.InputValue = "ws://localhost:8080/​";
+            UnityWebRequest www = new UnityWebRequest("https://raw.githubusercontent.com/s195640/MKCode/master/README.md");
+            www.downloadHandler = new DownloadHandlerBuffer();
+            yield return www.SendWebRequest();
+            serverText.InputValue = www.downloadHandler.text.Trim();
         }
     }
 }
