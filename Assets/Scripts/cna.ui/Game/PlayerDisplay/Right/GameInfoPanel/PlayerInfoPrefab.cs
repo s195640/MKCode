@@ -1,3 +1,4 @@
+using System;
 using cna.poo;
 using TMPro;
 using UnityEngine;
@@ -76,6 +77,8 @@ namespace cna.ui {
         [SerializeField] private TextMeshProUGUI AttackVal;
         [SerializeField] private PlayerInfoMagicPrefab AttackMagic;
 
+        [SerializeField] private TextMeshProUGUI GameClock;
+
         private static Color TURN_COLOR = new Color(0f, 1f, 0f, 1f);
         private static Color NOT_TURN_COLOR = new Color(0.9215686f, 8352941f, 7411765f, 1f);
 
@@ -83,6 +86,15 @@ namespace cna.ui {
 
         [SerializeField] private PlayerData player = null;
         public PlayerData Player { get { if (player == null) { player = D.G.Players.Find(p => p.Key == playerKey); } return player; } }
+
+        public void Update() {
+            if (player == null) {
+                return;
+            }
+            if (!player.DummyPlayer) {
+                GameClock.text = player.GetTime();
+            }
+        }
 
         public void SetupUI(int key) {
             player = null;
@@ -181,12 +193,11 @@ namespace cna.ui {
             if (D.G.GameStatus == Game_Enum.Tactics || D.G.GameStatus == Game_Enum.Tactics_WaitingOnPlayers) {
                 PlayerTurnImage.color = D.CurrentTurn.Key == playerKey ? TURN_COLOR : NOT_TURN_COLOR;
             } else if (D.G.GameStatus == Game_Enum.Player_Turn) {
-                PlayerData pd = D.GetPlayerByKey(playerKey);
-                if (pd.DummyPlayer) {
+                if (Player.DummyPlayer) {
                     PlayerTurnImage.color = NOT_TURN_COLOR;
                 } else {
-                    TurnPhase_Enum turnPhase_Enum = pd.PlayerTurnPhase;
-                    if (turnPhase_Enum >= TurnPhase_Enum.StartTurn || turnPhase_Enum <= TurnPhase_Enum.EndTurn) {
+                    TurnPhase_Enum turnPhase_Enum = Player.PlayerTurnPhase;
+                    if (turnPhase_Enum >= TurnPhase_Enum.SetupTurn && turnPhase_Enum < TurnPhase_Enum.EndTurn) {
                         PlayerTurnImage.color = TURN_COLOR;
                     } else {
                         PlayerTurnImage.color = NOT_TURN_COLOR;

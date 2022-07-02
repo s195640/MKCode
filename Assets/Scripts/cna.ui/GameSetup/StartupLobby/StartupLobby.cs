@@ -19,7 +19,11 @@ namespace cna.ui {
             soloGameButton.onClick.AddListener(SoloGameButtonCallback);
             multiGameButton.onClick.AddListener(MultiGameButtonCallback);
             exitButton.onClick.AddListener(Exit_OnClick);
+#if UNITY_EDITOR
+            setupUnityEditor();
+#else
             StartCoroutine(getServerURL());
+#endif
         }
 
         public void UpdateUI() { }
@@ -48,6 +52,11 @@ namespace cna.ui {
             www.downloadHandler = new DownloadHandlerBuffer();
             yield return www.SendWebRequest();
             serverText.InputValue = www.downloadHandler.text.Trim();
+        }
+
+        private void setupUnityEditor() {
+            serverText.InputValue = "ws://localhost:8080/​";
+            loginText.InputValue = "login";
         }
     }
 }

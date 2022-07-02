@@ -31,6 +31,8 @@ namespace cna.poo {
         [SerializeField] private PlayerBoardData board = new PlayerBoardData();
         [SerializeField] private bool waitOnServer = false;
         [SerializeField] private bool undoLock = false;
+        [SerializeField] private long time01 = 0;
+        [SerializeField] private long time02 = 0;
 
         public string Name { get => playerName; set => playerName = value; }
         public int Key { get => playerKey; set => playerKey = value; }
@@ -61,6 +63,8 @@ namespace cna.poo {
         public PlayerBoardData Board { get => board; set => board = value; }
         public bool WaitOnServer { get => waitOnServer; set => waitOnServer = value; }
         public bool UndoLock { get => undoLock; set => undoLock = value; }
+        public long Time01 { get => time01; set => time01 = value; }
+        public long Time02 { get => time02; set => time02 = value; }
 
         public void AddGameEffect(GameEffect_Enum ge, params int[] cards) {
             if (cards.Length == 0) cards = new int[] { 0 };
@@ -119,6 +123,8 @@ namespace cna.poo {
             board.Clear();
             WaitOnServer = false;
             UndoLock = false;
+            time01 = 0;
+            time02 = 0;
         }
 
         public void ClearEndTurn() {
@@ -176,11 +182,36 @@ namespace cna.poo {
             board.UpdateData(p.board);
             waitOnServer = p.waitOnServer;
             undoLock = p.undoLock;
+            time01 = p.time01;
+            time02 = p.time02;
         }
 
         public PlayerData Clone() {
             PlayerData pd = JsonUtility.FromJson<PlayerData>(JsonUtility.ToJson(this));
             return pd;
+        }
+
+        public void UpdateTime() {
+            if (Time02 > 0) {
+                Time01 += (long)(DateTime.Now - new DateTime(Time02)).TotalSeconds;
+                Time02 = 0;
+            }
+        }
+        public void SetTime() {
+            Time02 = DateTime.Now.Ticks;
+        }
+
+        public string GetTime() {
+            long totalSec = Time01;
+            if (Time02 > 0) {
+                DateTime playerTurnStart = new DateTime(Time02);
+                DateTime currentTime = DateTime.Now;
+                totalSec += (long)(currentTime - playerTurnStart).TotalSeconds;
+            }
+            long hour = totalSec / 3600;
+            long min = (totalSec - (3600 * hour)) / 60;
+            long sec = totalSec - (3600 * hour) - (60 * min);
+            return string.Format("{0}:{1}:{2}", ("" + hour).PadLeft(1, '0'), ("" + min).PadLeft(2, '0'), ("" + sec).PadLeft(2, '0'));
         }
     }
 }

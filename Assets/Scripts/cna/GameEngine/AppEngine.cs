@@ -206,6 +206,7 @@ namespace cna {
                 }
             });
             D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsSelect;
+            D.CurrentTurn.SetTime();
         }
 
         #endregion
@@ -217,6 +218,9 @@ namespace cna {
                 switch (D.CurrentTurn.PlayerTurnPhase) {
                     case TurnPhase_Enum.TacticsEnd:
                     case TurnPhase_Enum.TacticsAction: {
+                        if (D.CurrentTurn.PlayerTurnPhase == TurnPhase_Enum.TacticsEnd) {
+                            D.CurrentTurn.UpdateTime();
+                        }
                         if (g.Players.TrueForAll(p => p.PlayerTurnPhase == TurnPhase_Enum.TacticsEnd || p.PlayerTurnPhase == TurnPhase_Enum.TacticsAction)) {
                             //  reorder turns
                             bool swapped = true;
@@ -239,6 +243,7 @@ namespace cna {
                         } else {
                             g.Board.PlayerTurnIndex++;
                             D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsSelect;
+                            D.CurrentTurn.SetTime();
                         }
                         D.C.Send_GameData();
                         break;
@@ -264,7 +269,7 @@ namespace cna {
         private void Tactics_WaitingOnPlayers(Data g) {
             if (D.isHost) {
                 if (g.Players.TrueForAll(p => p.PlayerTurnPhase == TurnPhase_Enum.TacticsEnd)) {
-                    g.Players.ForEach(p => p.PlayerTurnPhase = TurnPhase_Enum.PlayerNotTurn);
+                    g.Players.ForEach(p => { p.PlayerTurnPhase = TurnPhase_Enum.PlayerNotTurn; p.UpdateTime(); });
                     g.GameStatus = Game_Enum.SaveGame;
                     D.C.Send_GameData();
                 }
@@ -277,7 +282,7 @@ namespace cna {
         public void SaveGame(Data g) {
             if (D.isHost) {
                 g.GameStatus = Game_Enum.Player_Turn;
-                g.Players.ForEach(p => { if (p.PlayerTurnPhase != TurnPhase_Enum.EndOfRound) { p.PlayerTurnPhase = TurnPhase_Enum.SetupTurn; } });
+                g.Players.ForEach(p => { if (p.PlayerTurnPhase != TurnPhase_Enum.EndOfRound) { p.PlayerTurnPhase = TurnPhase_Enum.SetupTurn; p.SetTime(); } });
                 BasicUtil.SaveGameToFile(D.G);
                 D.C.Send_GameData();
             }

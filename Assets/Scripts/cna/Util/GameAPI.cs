@@ -114,6 +114,9 @@ namespace cna {
 
         public void TurnPhase(TurnPhase_Enum t) {
             if (P.PlayerTurnPhase < t) {
+                if (t == TurnPhase_Enum.EndTurn || t == TurnPhase_Enum.EndOfRound) {
+                    P.UpdateTime();
+                }
                 if (t == TurnPhase_Enum.Influence) {
                     int val = BasicUtil.GetRepForLevel(P.RepLevel);
                     P.Influence += val;

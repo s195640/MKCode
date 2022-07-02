@@ -22,15 +22,19 @@ namespace cna {
                     wsData m = wsQueue.Dequeue();
                     latestMsgReceive = m;
                     //Debug.Log(m.ToString());
+                    //Debug.Log(m.type);
                     switch (m.type) {
                         case mType_Enum.OnConnect: {
-                            D.Connector.Player.Key = m.intMsg;
-                            D.ClientState = ClientState_Enum.CONNECTED;
-                            Send_RequestGameList();
-                            D.A.UpdateUI();
+                            if (D.Connector.Player.Key != m.intMsg || D.ClientState < ClientState_Enum.CONNECTED) {
+                                D.Connector.Player.Key = m.intMsg;
+                                D.ClientState = ClientState_Enum.CONNECTED;
+                                Send_RequestGameList();
+                                D.A.UpdateUI();
+                            }
                             break;
                         }
                         case mType_Enum.OnDisconnect: {
+                            //Debug.Log("OnDisconnect");
                             switch (D.ClientState) {
                                 case ClientState_Enum.CONNECTED_JOINING_GAME:
                                 case ClientState_Enum.CONNECTED: {
@@ -58,9 +62,26 @@ namespace cna {
                             break;
                         }
                         case mType_Enum.OnServerDisconnect: {
-
-                            Debug.Log("OnServerDisconnect");
-                            CloseConnection();
+                            Reconnect();
+                            break;
+                        }
+                        case mType_Enum.OnReconnect: {
+                            //Debug.Log("App OnReconnect " + D.ClientState);
+                            switch (D.ClientState) {
+                                case ClientState_Enum.CONNECTED_JOINING_GAME:
+                                case ClientState_Enum.CONNECTED: {
+                                    break;
+                                }
+                                case ClientState_Enum.CONNECTED_PLAYER: {
+                                    Send_JoinGame(D.G.HostPlayerKey, D.G.GameId);
+                                    break;
+                                }
+                                case ClientState_Enum.CONNECTED_HOST: {
+                                    Send_HostSendsGameDataToClients();
+                                    D.A.UpdateUI();
+                                    break;
+                                }
+                            }
                             break;
                         }
                         case mType_Enum.RequestGameList: {
@@ -209,6 +230,11 @@ namespace cna {
             D.Connector.Close();
             D.A.UpdateUI();
         }
+
+        public void Reconnect() {
+            ((MultiConnector)D.Connector).Reconnect();
+        }
+
         public void QuitGame() {
             switch (D.ClientState) {
                 case ClientState_Enum.SINGLE_PLAYER: {

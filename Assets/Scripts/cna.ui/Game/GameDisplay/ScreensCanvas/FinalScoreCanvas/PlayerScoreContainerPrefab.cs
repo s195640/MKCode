@@ -46,7 +46,15 @@ namespace cna.ui {
 
         Dictionary<int, int[]> points = new Dictionary<int, int[]>();
 
-        private int PlayerKey;
+        private int PlayerKey = -1;
+
+
+        public void Update() {
+            if (PlayerKey < 0) {
+                return;
+            }
+            PlayerTime.text = "0" + D.GetPlayerByKey(PlayerKey).GetTime();
+        }
 
         public void SetupUI(int playerkey) {
             PlayerKey = playerkey;

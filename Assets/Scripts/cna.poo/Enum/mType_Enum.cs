@@ -4,6 +4,7 @@ namespace cna.poo {
         OnConnect = 1,
         OnDisconnect = 2,
         OnServerDisconnect,
+        OnReconnect,
         RequestGameList,
         LobbyGame,
         RequestJoinGame,
