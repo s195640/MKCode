@@ -1,1 +1,1 @@
-wss://moody-poems-juggle-76-73-232-139.loca.lt
+wss://old-buckets-march-76-73-232-139.loca.lt
