@@ -191,6 +191,7 @@ namespace cna {
                     ar.P.Board.SpellIndex = hostPlayerData.Board.SpellIndex;
                     ar.P.Board.AdvancedIndex = hostPlayerData.Board.AdvancedIndex;
                     ar.P.Board.AdvancedUnitIndex = hostPlayerData.Board.AdvancedUnitIndex;
+                    ar.P.Board.PlayerMap.Clear();
                     ar.P.Board.PlayerMap.AddRange(hostPlayerData.Board.PlayerMap);
                     ar.P.Board.MonsterData.Clear();
                     hostPlayerData.Board.MonsterData.Keys.ForEach(k => {
@@ -573,125 +574,6 @@ namespace cna {
             pd_StartOfTurn = ar.P.Clone();
             ar.Push();
         }
-
-
-        //public void PlayerTurn_SetupTurn(PlayerData localPlayer) {
-        //    Clear();
-        //    BasicUtil.UpdateMovementGameEffects(localPlayer);
-        //    localPlayer.PlayerTurnPhase = TurnPhase_Enum.NotifyTurn;
-        //    localPlayer.GameEffects.Keys.ForEach(ge => {
-        //        switch (ge) {
-        //            case GameEffect_Enum.SH_MagicGlade: {
-        //                if (D.Scenario.isDay) {
-        //                    D.C.LogMessage("[Magical Glade] +1 Gold Mana");
-        //                    localPlayer.Mana.Gold++;
-        //                } else {
-        //                    D.C.LogMessage("[Magical Glade] +1 Black Mana");
-        //                    localPlayer.Mana.Black++;
-        //                }
-        //                break;
-        //            }
-        //            case GameEffect_Enum.SH_City_Red_Own:
-        //            case GameEffect_Enum.SH_City_Green_Own:
-        //            case GameEffect_Enum.SH_City_White_Own:
-        //            case GameEffect_Enum.SH_City_Blue_Own: {
-        //                if (D.G.Monsters.Shield.ContainsKey(localPlayer.CurrentGridLoc)) {
-        //                    Image_Enum AvatarShieldId = D.AvatarMetaDataMap[localPlayer.Avatar].AvatarShieldId;
-        //                    D.G.Monsters.Shield[localPlayer.CurrentGridLoc].Values.ForEach(s => { if (s.Equals(AvatarShieldId)) { localPlayer.Influence++; } });
-        //                }
-        //                break;
-        //            }
-        //        }
-        //    });
-        //    D.C.Send_GameData();
-        //    PlayerTurn_SetupTurn_SparingPower(localPlayer);
-        //}
-
-        //private void PlayerTurn_SetupTurn_SparingPower(PlayerData localPlayer) {
-        //    bool sparingPower = localPlayer.GameEffects.ContainsKey(GameEffect_Enum.T_SparingPower);
-        //    if (sparingPower) {
-        //        int powerDeckSize = localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Count - 1;
-        //        int deckSize = localPlayer.Deck.Deck.Count;
-        //        if (powerDeckSize == 0) {
-        //            int topCardFromDeck = BasicUtil.DrawCard(localPlayer.Deck.Deck);
-        //            localPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
-        //            D.C.LogMessage("[Sparing Power] No cards in Sparing Power Deck, +1 Card to Sparing Power Deck!");
-        //        } else if (deckSize == 0) {
-        //            D.C.LogMessage("[Sparing Power] No cards in Deck, Sparing Power Used!");
-        //            localPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
-        //                if (c != 0) {
-        //                    localPlayer.Deck.Hand.Add(c);
-        //                }
-        //            });
-        //            localPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
-        //        } else {
-        //            ActionResultVO ar = new ActionResultVO(D.GetGameEffectCard(GameEffect_Enum.T_SparingPower).UniqueId, CardState_Enum.NA);
-        //            ar.ActionIndex = 0;
-        //            D.Action.SelectOptions(ar, null, PlayerTurn_SetupTurn_SparingPower_options, new OptionVO("Use Deck", Image_Enum.I_check), new OptionVO("+1 to Deck", Image_Enum.I_cardBackRounded));
-        //            return;
-        //        }
-        //        D.C.Send_GameData();
-        //    }
-        //    PlayerTurn_SetupTurn_Notification(localPlayer);
-        //}
-
-        //private void PlayerTurn_SetupTurn_SparingPower_options(ActionResultVO ar) {
-        //    switch (ar.SelectedButtonIndex) {
-        //        case 0: {
-        //            ar.AddLog("Sparing Power Used!");
-        //            ar.LocalPlayer.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
-        //                if (c != 0) {
-        //                    ar.LocalPlayer.Deck.Hand.Add(c);
-        //                }
-        //            });
-        //            ar.LocalPlayer.RemoveGameEffect(GameEffect_Enum.T_SparingPower);
-        //            ar.change();
-        //            ar.CompleteAction();
-        //            break;
-        //        }
-        //        case 1: {
-        //            ar.AddLog("+1 Card to Sparing Power Deck!");
-        //            int topCardFromDeck = BasicUtil.DrawCard(ar.LocalPlayer.Deck.Deck);
-        //            ar.LocalPlayer.AddGameEffect(GameEffect_Enum.T_SparingPower, topCardFromDeck);
-        //            ar.change();
-        //            ar.CompleteAction();
-        //            break;
-        //        }
-        //    }
-        //    PlayerTurn_SetupTurn_Notification(ar.LocalPlayer);
-        //}
-
-
-        //private void PlayerTurn_SetupTurn_Notification(PlayerData localPlayer) {
-        //    bool forceDeclareEndOfRound = localPlayer.Deck.Deck.Count == 0 && localPlayer.Deck.Hand.Count == 0;
-        //    bool isExhausted = true;
-        //    localPlayer.Deck.Hand.ForEach(c => isExhausted = isExhausted && D.Cards[c].CardType == CardType_Enum.Wound);
-        //    bool endOfRoundDeclared = D.G.EndOfRound != -1;
-        //    StartOfTurnNotification(forceDeclareEndOfRound, isExhausted, endOfRoundDeclared);
-        //}
-
-        //public abstract void StartOfTurnNotification(bool forceDeclareEndOfRound, bool isExhausted, bool endOfRoundDeclared);
-
-        //public void OnClick_StartofTurnOkay(bool forceDeclareEndOfRound, bool isExhausted, bool endOfRoundDeclared) {
-        //    if (forceDeclareEndOfRound) {
-        //        if (D.G.EndOfRound == -1) {
-        //            D.G.EndOfRound = D.CurrentTurn.Key;
-        //        }
-        //        D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.EndTurn;
-        //    } else {
-        //        if (isExhausted) {
-        //            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.Exhaustion;
-        //            int cardid = D.LocalPlayer.Deck.Hand.Find(c => D.Cards[c].CardType == CardType_Enum.Wound);
-        //            if (cardid > 0) {
-        //                D.LocalPlayer.Deck.AddState(cardid, CardState_Enum.Discard);
-        //            }
-        //        } else {
-        //            D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.StartTurn;
-        //        }
-        //        gd_StartOfTurn = D.G.Clone();
-        //    }
-        //    D.C.Send_GameData();
-        //}
 
         #endregion
 

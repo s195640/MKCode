@@ -59,7 +59,17 @@ namespace cna {
                 return l.PlayerTurnPhase >= TurnPhase_Enum.StartTurn && l.PlayerTurnPhase < TurnPhase_Enum.EndTurn;
             }
         }
-        public static bool hasCoreBeenDrawn { get { return false; } }
+        public static bool hasCoreBeenDrawn {
+            get {
+                bool foundCore = false;
+                D.Board.CurrentMap.ForEach(m => {
+                    if (m >= MapHexId_Enum.Core_01) {
+                        foundCore = true;
+                    }
+                });
+                return foundCore;
+            }
+        }
         public static BaseConnector Connector { get => connector; set => connector = value; }
         public static Queue<ChatItemData> ChatQueue { get => C.chatQueue; set => C.chatQueue = value; }
         public static Queue<LogData> LogQueue { get => C.logQueue; set => C.logQueue = value; }

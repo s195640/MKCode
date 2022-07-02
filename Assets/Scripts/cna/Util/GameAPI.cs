@@ -551,6 +551,7 @@ namespace cna {
         public void StartOfTurnPanel(Action<GameAPI> callback) {
             BasicUtil.UpdateMovementGameEffects(P);
             List<string> startUpMsg = new List<string>();
+            bool sparingPower = false;
             P.GameEffects.Keys.ForEach(ge => {
                 switch (ge) {
                     case GameEffect_Enum.SH_MagicGlade: {
@@ -574,6 +575,10 @@ namespace cna {
                                 ActionInfluence(influenceAdded);
                             }
                         }
+                        break;
+                    }
+                    case GameEffect_Enum.T_SparingPower: {
+                        sparingPower = true;
                         break;
                     }
                 }
@@ -612,12 +617,44 @@ namespace cna {
             }
             string head = "Start of Turn";
             string body = "It is your turn!\n";
-            startUpMsg.ForEach(s => body += ("\n" + s));
-            List<Action<GameAPI>> callbacks = new List<Action<GameAPI>>() { callback };
-            List<string> buttonText = new List<string>() { "Okay" };
-            List<Color32> buttonColor = new List<Color32>() { CNAColor.ColorLightGreen };
-            Color32 backgroundColor = CNAColor.BlueBackgroundColor;
 
+            List<Action<GameAPI>> callbacks = new List<Action<GameAPI>>();
+            List<string> buttonText = new List<string>();
+            List<Color32> buttonColor = new List<Color32>();
+            Color32 backgroundColor = CNAColor.BlueBackgroundColor;
+            if (sparingPower) {
+                int powerDeckSize = P.GameEffects[GameEffect_Enum.T_SparingPower].Count - 1;
+                int deckSize = P.Deck.Deck.Count;
+                if (powerDeckSize > 0) {
+                    callbacks.Add((ar) => {
+                        P.GameEffects[GameEffect_Enum.T_SparingPower].Values.ForEach(c => {
+                            if (c != 0) {
+                                P.Deck.Hand.Add(c);
+                            }
+                        });
+                        RemoveGameEffect(GameEffect_Enum.T_SparingPower);
+                        callback(ar);
+                    });
+                    buttonText.Add("Collect Cards");
+                    buttonColor.Add(CNAColor.ColorLightRed);
+                }
+                if (deckSize > 0) {
+                    callbacks.Add((ar) => {
+                        int card = BasicUtil.DrawCard(P.Deck.Deck);
+                        P.AddGameEffect(GameEffect_Enum.T_SparingPower, card);
+                        callback(ar);
+                    });
+                    buttonText.Add("Add Card");
+                    buttonColor.Add(CNAColor.ColorLightGreen);
+                }
+                startUpMsg.Add("[Sparing Power] Curent Pool Size (" + powerDeckSize + ")");
+                startUpMsg.Add(" - You may chose to add a card to the pool from your deck OR take all the cards from the pool and place them in your hand.  Note if your deck is empty or you have no cards in the pool these options will not be available to you.");
+            } else {
+                callbacks.Add(callback);
+                buttonText.Add("Okay");
+                buttonColor.Add(CNAColor.ColorLightGreen);
+            }
+            startUpMsg.ForEach(s => body += ("\n" + s));
             AcceptPanel(head, body, callbacks, buttonText, buttonColor, backgroundColor);
         }
 

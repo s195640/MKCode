@@ -45,5 +45,15 @@ namespace cna {
                 }
             }
         }
+
+        public override string IsSelectionAllowed(CardVO card, CardHolder_Enum cardHolder, GameAPI ar) {
+            string msg = base.IsSelectionAllowed(card, cardHolder, ar);
+            if (msg.Length == 0) {
+                if (card.CardType == CardType_Enum.Wound) {
+                    msg = "You can only play Action cards!";
+                }
+            }
+            return msg;
+        }
     }
 }

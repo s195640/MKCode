@@ -41,8 +41,16 @@ namespace cna.ui {
 
         public void scrollWheel() {
             if (Input.mouseScrollDelta.y != 0.0) {
-                if ((Input.mouseScrollDelta.y < 0.0 && Cam.orthographicSize < ZOOM.y) || (Input.mouseScrollDelta.y > 0.0 && Cam.orthographicSize > ZOOM.x))
+                if ((Input.mouseScrollDelta.y < 0.0 && Cam.orthographicSize < ZOOM.y) ||
+                    (Input.mouseScrollDelta.y > 0.0 && Cam.orthographicSize > ZOOM.x)) {
                     Cam.orthographicSize += (Input.mouseScrollDelta.y * -0.5f);
+                    if (Cam.orthographicSize < ZOOM.x) {
+                        Cam.orthographicSize = ZOOM.x;
+                    }
+                    if (Cam.orthographicSize > ZOOM.y) {
+                        Cam.orthographicSize = ZOOM.y;
+                    }
+                }
             }
         }
     }
