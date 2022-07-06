@@ -127,13 +127,30 @@ namespace cna {
         private void NewRound_TESTING() {
             PlayerData pd = D.CurrentTurn;
             if (!pd.DummyPlayer) {
-                //pd.Deck.HandSize.X = 10;
                 pd.Movement = 49;
-                pd.Battle.Siege.Physical += 49;
-                pd.Crystal.Blue += 3;
-                pd.Crystal.Red += 3;
-                pd.Crystal.Green += 3;
-                pd.Crystal.White += 3;
+                pd.Influence = 49;
+                //pd.Battle.Siege.Physical += 49;
+
+                pd.Crystal.Blue += 1;
+                pd.Crystal.Red += 1;
+                pd.Crystal.Green += 1;
+                pd.Crystal.White += 1;
+
+                pd.Mana.Blue += 1;
+                pd.Mana.Red += 1;
+                pd.Mana.Green += 1;
+                pd.Mana.White += 1;
+                pd.Mana.Gold += 1;
+                pd.Mana.Black += 1;
+
+                //  Basic Cards
+                //pd.Deck.Deck.Clear();
+                //pd.Deck.Hand.Clear();
+                //pd.Deck.Hand.AddRange(D.Cards.FindAll(c => c.CardType == CardType_Enum.Basic && c.Avatar == pd.Avatar).ConvertAll(c => c.UniqueId));
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound).UniqueId);
+
+                pd.Deck.Skill.AddRange(D.Cards.FindAll(c => c.CardType == CardType_Enum.Skill && c.Avatar == pd.Avatar).ConvertAll(c => c.UniqueId));
+
 
 
                 //WrapList<Image_Enum> shields = new WrapList<Image_Enum>();
@@ -151,7 +168,7 @@ namespace cna {
                 //D.G.Board.SkillOffering.Add(D.Cards.Find(c => c.CardImage == Image_Enum.SKB_forward_march).UniqueId);
                 //D.G.Board.SkillOffering.Add(D.Cards.Find(c => c.CardImage == Image_Enum.SKR_dark_paths).UniqueId);
 
-                pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CS_underground_travel).UniqueId);
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CS_underground_travel).UniqueId);
                 //pd.Deck.Unit.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CUE_altem_guardians_x3).UniqueId);
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CS_fireball).UniqueId);
                 //D.G.Board.ManaPool.Add(Crystal_Enum.Gold);

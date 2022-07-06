@@ -1183,7 +1183,11 @@ namespace cna {
 
         public void SendLogs() {
             if (log.Count > 0) {
-                D.C.LogMessage(string.Join(", ", log));
+                string msg = string.Join(", ", log);
+                DateTime dt = DateTime.Now;
+                long t = dt.Ticks;
+                LogData logData = new LogData(P.Key, msg, t);
+                D.LogQueue.Enqueue(logData);
                 log.Clear();
             }
         }
