@@ -18,6 +18,7 @@
         Resting,
         Exhaustion,
         Reward,
+        EndTurn_TheRightMoment,
         EndTurn,
         EndOfRound,
     }

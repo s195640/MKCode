@@ -18,6 +18,7 @@ namespace cna.ui {
         [SerializeField] private CNA_Slider basicTiles;
         [SerializeField] private CNA_Slider coreTiles;
         [SerializeField] private CNA_Slider cityTiles;
+        [SerializeField] private CNA_Slider cityLevel;
         [SerializeField] private Toggle dummyPlayerToggle;
 
         [Header("Prefab")]
@@ -40,6 +41,7 @@ namespace cna.ui {
             basicTiles.Setup(0, 8, D.G.GameData.BasicTiles, BasicTileSliderCallback);
             coreTiles.Setup(0, 4, D.G.GameData.CoreTiles, CoreTileSliderCallback);
             cityTiles.Setup(1, 4, D.G.GameData.CityTiles, CityTileSliderCallback);
+            cityLevel.Setup(1, 11, D.G.GameData.Level, CityLevelSliderCallback);
             rounds.Setup(1, 10, D.G.GameData.Rounds, RoundSliderCallback);
             dummyPlayerToggle.onValueChanged.AddListener(delegate { DummyPlayerToggleCallback(dummyPlayerToggle.isOn); });
         }
@@ -110,6 +112,9 @@ namespace cna.ui {
             if (D.G.GameData.CityTiles != (int)cityTiles.Value) {
                 cityTiles.Value = D.G.GameData.CityTiles;
             }
+            if (D.G.GameData.Level != (int)cityLevel.Value) {
+                cityLevel.Value = D.G.GameData.Level;
+            }
             if (D.G.GameData.DummyPlayer != dummyPlayerToggle.isOn) {
                 dummyPlayerToggle.isOn = D.G.GameData.DummyPlayer;
             }
@@ -171,6 +176,13 @@ namespace cna.ui {
         private void CityTileSliderCallback(float value) {
             if (D.G.GameData.CityTiles != (int)value) {
                 D.G.GameData.CityTiles = (int)value;
+                D.C.Send_GameData();
+            }
+        }
+
+        private void CityLevelSliderCallback(float value) {
+            if (D.G.GameData.Level != (int)value) {
+                D.G.GameData.Level = (int)value;
                 D.C.Send_GameData();
             }
         }

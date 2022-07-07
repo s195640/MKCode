@@ -149,9 +149,16 @@ namespace cna {
                 //pd.Deck.Hand.AddRange(D.Cards.FindAll(c => c.CardType == CardType_Enum.Basic && c.Avatar == pd.Avatar).ConvertAll(c => c.UniqueId));
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound).UniqueId);
 
-                pd.Deck.Skill.AddRange(D.Cards.FindAll(c => c.CardType == CardType_Enum.Skill && c.Avatar == pd.Avatar).ConvertAll(c => c.UniqueId));
+                //pd.Deck.Skill.AddRange(D.Cards.FindAll(c => c.CardType == CardType_Enum.Skill && c.Avatar == pd.Avatar).ConvertAll(c => c.UniqueId));
 
-
+                //  Specific Cards
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CT_golden_grail).UniqueId);
 
                 //WrapList<Image_Enum> shields = new WrapList<Image_Enum>();
                 //shields.Add(Image_Enum.AVATAR_GREEN_SHIELD);
@@ -576,6 +583,13 @@ namespace cna {
                         pd_StartOfTurn = localPlayer.Clone();
                         D.C.Send_PlayerData();
                     }
+                    break;
+                }
+                case TurnPhase_Enum.EndTurn_TheRightMoment: {
+                    GameAPI ar = new GameAPI(g, localPlayer);
+                    ar.PlayerEndOfTurn();
+                    ar.P.PlayerTurnPhase = TurnPhase_Enum.SetupTurn;
+                    ar.PushForce();
                     break;
                 }
             }

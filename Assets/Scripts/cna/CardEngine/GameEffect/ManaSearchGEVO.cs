@@ -28,12 +28,12 @@ namespace cna {
             ar.AddGameEffect(GameEffect_Enum.T_ManaSearch02);
 
             string title = "Mana Search";
-            string description = "Select one or two mana die to re-roll";
+            string description = "Select one or two mana die to re-roll.  NOTE this will prevent you from using the UNDO action!";
             V2IntVO selectCount = new V2IntVO(1, 2);
-            List<string> buttonText = new List<string>() { "Accept" };
-            List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightGreen };
-            List<Action<GameAPI>> buttonActions = new List<Action<GameAPI>>() { acceptCallback_00 };
-            List<bool> buttonForce = new List<bool>() { true };
+            List<string> buttonText = new List<string>() { "Accept", "Cancel" };
+            List<Color> buttonColor = new List<Color>() { CNAColor.ColorLightGreen, CNAColor.ColorLightRed };
+            List<Action<GameAPI>> buttonActions = new List<Action<GameAPI>>() { acceptCallback_00, (a) => { a.Rollback(); } };
+            List<bool> buttonForce = new List<bool>() { true, false };
             List<Image_Enum> die = ar.P.ManaPool.ConvertAll(mp => BasicUtil.Convert_CrystalToManaDieImageId(mp.ManaColor));
             ar.SelectManaDie(die, title, description, selectCount, Image_Enum.I_check, buttonText, buttonColor, buttonActions, buttonForce);
         }
@@ -51,6 +51,7 @@ namespace cna {
                 c.Status = ManaPool_Enum.ManaSearch;
                 ar.AddLog("ManaDie " + oldDie + " rerolled to " + newDie);
             });
+            D.A.pd_StartOfTurn = ar.P.Clone();
             ar.change();
             ar.FinishCallback(ar);
         }

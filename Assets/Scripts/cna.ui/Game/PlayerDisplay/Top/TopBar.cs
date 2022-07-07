@@ -254,7 +254,12 @@ namespace cna.ui {
                 Card.OnClick_ActionButton(ar);
             } else {
                 GameAPI ar = new GameAPI();
-                ar.TurnPhase(TurnPhase_Enum.EndTurn);
+                if (ar.P.GameEffects.ContainsKey(GameEffect_Enum.T_TheRightMoment02)) {
+                    ar.RemoveGameEffect(GameEffect_Enum.T_TheRightMoment02);
+                    ar.TurnPhase(TurnPhase_Enum.EndTurn_TheRightMoment);
+                } else {
+                    ar.TurnPhase(TurnPhase_Enum.EndTurn);
+                }
                 ar.CompleteAction();
             }
         }

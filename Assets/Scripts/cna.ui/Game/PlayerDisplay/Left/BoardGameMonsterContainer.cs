@@ -62,22 +62,22 @@ namespace cna.ui {
                     break;
                 }
                 case 4: {
-                    scale = .70f;
+                    scale = .55f;
                     switch (index) {
                         case 0: {
-                            t.anchoredPosition = new Vector3(0f, 140f, 1f);
+                            t.anchoredPosition = new Vector3(0f, 175f, 1f);
                             break;
                         }
                         case 1: {
-                            t.anchoredPosition = new Vector3(140f, 140f, 1f);
+                            t.anchoredPosition = new Vector3(170f, 175f, 1f);
                             break;
                         }
                         case 2: {
-                            t.anchoredPosition = new Vector3(70f, 80f, 1f);
+                            t.anchoredPosition = new Vector3(0, 0, 1f);
                             break;
                         }
                         case 3: {
-                            t.anchoredPosition = new Vector3(210f, 80f, 1f);
+                            t.anchoredPosition = new Vector3(170f, 0, 1f);
                             break;
                         }
                     }
@@ -95,15 +95,15 @@ namespace cna.ui {
                             break;
                         }
                         case 2: {
-                            t.anchoredPosition = new Vector3(55f, 63f, 1f);
+                            t.anchoredPosition = new Vector3(0, 0, 1f);
                             break;
                         }
                         case 3: {
-                            t.anchoredPosition = new Vector3(225f, 63f, 1f);
+                            t.anchoredPosition = new Vector3(170f, 0, 1f);
                             break;
                         }
                         case 4: {
-                            t.anchoredPosition = new Vector3(145f, 155f, 1f);
+                            t.anchoredPosition = new Vector3(90f, 90f, 1f);
                             break;
                         }
                     }

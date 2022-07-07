@@ -52,7 +52,7 @@ namespace cna {
                     break;
                 }
                 case Image_Enum.T_day_5: {
-                    ar.DrawCard(2, Finish);
+                    ar.DrawCard(2, Finish, false);
                     break;
                 }
                 case Image_Enum.T_day_6: {
@@ -108,7 +108,7 @@ namespace cna {
         }
 
         private void Day02(GameAPI ar) {
-            ar.DrawCard(ar.SelectedCardIds.Count, Day02b);
+            ar.DrawCard(ar.SelectedCardIds.Count, Day02b, false);
         }
 
         private void Day02b(GameAPI ar) {

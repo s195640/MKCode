@@ -297,7 +297,20 @@ namespace cna {
         private int cardDraw_LongNight_owed = 0;
         private Action<GameAPI> cardDraw_LongNight_callback;
 
-        public void DrawCard(int val, Action<GameAPI> callback) {
+        public void DrawCard(int val, Action<GameAPI> callback, bool lockUndo = true) {
+            if (lockUndo) {
+                AcceptPanel("Warning!",
+                    "You are about to reveal new information, You Will NOT be able to UNDO this action, would you like to continue?",
+                    new List<Action<GameAPI>>() { (a) => { DrawCard_Yes(val, callback, lockUndo); }, (a) => { Rollback(); } },
+                    new List<string> { "Yes", "No" },
+                    new List<Color32> { CNAColor.ColorLightGreen, CNAColor.ColorLightRed },
+                    CNAColor.ColorLightBlue);
+            } else {
+                DrawCard_Yes(val, callback, lockUndo);
+            }
+        }
+
+        public void DrawCard_Yes(int val, Action<GameAPI> callback, bool lockUndo) {
             change();
             int cardDrawn = 0;
             for (int i = 0; i < val; i++) {
@@ -313,9 +326,14 @@ namespace cna {
                 SelectYesNo("Long Night", "Your deck is empty and you still have cards owed to you. Do you want to use Long Night?", DrawCard_LongNight_Yes, DrawCard_LongNight_No);
             } else {
                 log.Add("+" + cardDrawn + " Card");
+                if (lockUndo) {
+                    D.A.pd_StartOfTurn = P.Clone();
+                }
                 callback(this);
             }
         }
+
+
 
         public void DrawCard_LongNight_Yes() {
             change();
@@ -332,10 +350,12 @@ namespace cna {
             }
             log.Add("[Long Night]");
             log.Add("+" + cardDraw_LongNight_drawn + " Card");
+            D.A.pd_StartOfTurn = P.Clone();
             cardDraw_LongNight_callback(this);
         }
         public void DrawCard_LongNight_No() {
             log.Add("+" + cardDraw_LongNight_drawn + " Card");
+            D.A.pd_StartOfTurn = P.Clone();
             cardDraw_LongNight_callback(this);
         }
 
@@ -991,7 +1011,7 @@ namespace cna {
         }
 
         public void PlayerEndOfTurn() {
-            if (P.PlayerTurnPhase == TurnPhase_Enum.EndTurn) {
+            if (P.PlayerTurnPhase == TurnPhase_Enum.EndTurn || P.PlayerTurnPhase == TurnPhase_Enum.EndTurn_TheRightMoment) {
                 P.PlayerTurnPhase = TurnPhase_Enum.NotTurn;
                 if (!P.DummyPlayer) {
                     clearHand(P.Deck, P.GameEffects);

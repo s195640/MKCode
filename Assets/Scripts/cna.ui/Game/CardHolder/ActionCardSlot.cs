@@ -809,12 +809,13 @@ namespace cna.ui {
         public void OnClick_VillageRaid() {
             GameAPI ar = new GameAPI(0, CardState_Enum.NA);
             if (CheckTurnAndUI(ar)) {
-                if (ar.P.PlayerTurnPhase < TurnPhase_Enum.Move) {
+                if (ar.P.PlayerTurnPhase < TurnPhase_Enum.Move && !ar.P.ActionTaken) {
+                    ar.P.ActionTaken = true;
                     ar.Rep(-1);
                     ar.DrawCard(2, ProcessActionResultVO);
                     return;
                 } else {
-                    ar.ErrorMsg = "you can not recruit during the " + D.LocalPlayer.PlayerTurnPhase + " player phase.";
+                    ar.ErrorMsg = "The Raid action must be the first action of your turn.";
                 }
             }
             ProcessActionResultVO(ar);

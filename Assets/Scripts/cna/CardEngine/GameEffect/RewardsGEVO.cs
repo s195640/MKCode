@@ -407,7 +407,12 @@ namespace cna {
 
 
         public void EndReward(GameAPI ar) {
-            ar.TurnPhase(TurnPhase_Enum.EndTurn);
+            if (ar.P.GameEffects.ContainsKey(GameEffect_Enum.T_TheRightMoment02)) {
+                ar.RemoveGameEffect(GameEffect_Enum.T_TheRightMoment02);
+                ar.TurnPhase(TurnPhase_Enum.EndTurn_TheRightMoment);
+            } else {
+                ar.TurnPhase(TurnPhase_Enum.EndTurn);
+            }
             ar.FinishCallback(ar);
         }
     }

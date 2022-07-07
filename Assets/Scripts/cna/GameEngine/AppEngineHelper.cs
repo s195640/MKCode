@@ -462,7 +462,7 @@ namespace cna {
             D.Cards.Add(new RED_InvocationVO(D.Cards.Count));
             D.Cards.Add(new RED_PolarizationVO(D.Cards.Count));
             D.Cards.Add(new RED_MotivationVO(D.Cards.Count));
-            D.Cards.Add(new RED_HealingRitualVO(D.Cards.Count));
+            //D.Cards.Add(new RED_HealingRitualVO(D.Cards.Count));
 
 
             //  Advanced Cards
