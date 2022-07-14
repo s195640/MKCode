@@ -10,6 +10,7 @@ namespace cna.poo {
         SINGLE_PLAYER = 100,
         MULTI_PLAYER = 200,
         CONNECTING,
+        CONNECTING_FAILED,
         CONNECTED,
         CONNECTED_JOINING_GAME,
         CONNECTED_HOST,

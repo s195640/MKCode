@@ -1,4 +1,5 @@
 using System;
+using cna.poo;
 using TMPro;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ namespace cna.ui {
     public class ServerMessage : UnityEngine.MonoBehaviour {
         [SerializeField] private TextMeshProUGUI systemText;
         [SerializeField] private GameObject disableScreen;
+
+
 
         public void DisplaySystemMessage(int code) {
             disableScreen.SetActive(false);
@@ -20,6 +23,8 @@ namespace cna.ui {
         }
 
         public void OK_OnClick() {
+            D.ClientState = ClientState_Enum.NOT_CONNECTED;
+            D.A.UpdateUI();
             //gameObject.SetActive(false);
             //GE.Clean();
             //GE.UpdateUI();

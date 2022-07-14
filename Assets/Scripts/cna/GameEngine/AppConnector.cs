@@ -62,7 +62,12 @@ namespace cna {
                             break;
                         }
                         case mType_Enum.OnServerDisconnect: {
-                            Reconnect();
+                            if (D.ClientState == ClientState_Enum.CONNECTING) {
+                                D.ClientState = ClientState_Enum.CONNECTING_FAILED;
+                                D.A.UpdateUI();
+                            } else {
+                                Reconnect();
+                            }
                             break;
                         }
                         case mType_Enum.OnReconnect: {

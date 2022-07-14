@@ -30,7 +30,7 @@ namespace cna.ui {
             OverlayCanvas.gameObject.SetActive(true);
             ScreensCanvas.gameObject.SetActive(true);
             ConformationCanvas.gameObject.SetActive(true);
-            ConformationCanvas.Clean();
+            ConformationCanvas.Clear();
             NotificationCanvas.SetActive(true);
             ScreensCanvas.Clear();
         }

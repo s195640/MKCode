@@ -24,7 +24,7 @@ namespace cna.ui {
             get { return minPanel.activeSelf; }
         }
 
-        public void Clean() {
+        public void Clear() {
             minPanel.SetActive(false);
             maxPanel.SetActive(true);
             foreach (BasePanel panel in panels) {
