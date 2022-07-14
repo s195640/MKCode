@@ -14,6 +14,11 @@ namespace cna.poo {
         public static V2IntVO one { get { return new V2IntVO(1, 1); } }
 
         public V2IntVO() { }
+        public V2IntVO(string data) {
+            string[] d = data.Split(":");
+            x = Convert.ToInt32(d[0]);
+            y = Convert.ToInt32(d[1]);
+        }
         public V2IntVO(int x, int y) {
             this.x = x;
             this.y = y;
@@ -58,6 +63,15 @@ namespace cna.poo {
 
         public V2IntVO Clone() {
             return new V2IntVO(x, y);
+        }
+
+        public override string Serialize() {
+            return x + ":" + y;
+        }
+        public override void Deserialize(string data) {
+            string[] d = data.Split(":");
+            x = Convert.ToInt32(d[0]);
+            y = Convert.ToInt32(d[1]);
         }
     }
 }

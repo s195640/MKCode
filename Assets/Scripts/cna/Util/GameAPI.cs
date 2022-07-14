@@ -1074,7 +1074,7 @@ namespace cna {
                 }
             }
         }
-        private void clearHand(PlayerDeckData p, CNAMap<GameEffect_Enum, WrapList<int>> gameEffects) {
+        private void clearHand(PlayerDeckData p, CNAMap<GameEffect_Enum, CNAList<int>> gameEffects) {
             foreach (int c in p.Hand.ToArray()) {
                 if (p.State.ContainsKey(c)) {
                     if (p.StateContainsAny(c, CardState_Enum.Discard, CardState_Enum.Basic, CardState_Enum.Normal, CardState_Enum.Advanced, CardState_Enum.Trashed)) {

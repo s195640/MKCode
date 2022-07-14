@@ -95,5 +95,21 @@ namespace cna.poo {
             cold = a.cold;
             coldFire = a.coldFire;
         }
+
+        public override string Serialize() {
+            string data = physical + ":"
+                + fire + ":"
+                + cold + ":"
+                + coldFire + ":";
+            return data;
+        }
+
+        public override void Deserialize(string data) {
+            string[] d = data.Split(":");
+            CNASerialize.Dz(d[0], out physical);
+            CNASerialize.Dz(d[1], out fire);
+            CNASerialize.Dz(d[2], out cold);
+            CNASerialize.Dz(d[3], out coldFire);
+        }
     }
 }

@@ -16,6 +16,9 @@ namespace cna.ui {
             }
         }
 
-        public virtual void Clear() { }
+        public virtual void Clear() {
+            seed = 0;
+            gameid = "";
+        }
     }
 }

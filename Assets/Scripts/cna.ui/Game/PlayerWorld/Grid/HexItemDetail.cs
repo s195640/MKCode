@@ -168,7 +168,7 @@ namespace cna.ui {
 
         private int calculateMovementCost() {
             int baseMovementCost = D.Scenario.getTerrainMovementCost(Terrain);
-            CNAMap<GameEffect_Enum, WrapList<int>> gameEffect = LocalPlayer.GameEffects;
+            CNAMap<GameEffect_Enum, CNAList<int>> gameEffect = LocalPlayer.GameEffects;
             gameEffect.Keys.ForEach(ge => {
                 int count = gameEffect[ge].Count;
                 switch (ge) {

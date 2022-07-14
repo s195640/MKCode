@@ -43,7 +43,7 @@ namespace cna.ui {
         private MonsterDetailsVO monsterDetails;
 
         public void SetupUI(PlayerData pd, int uniqueId, bool forceVisable = false) {
-            SetupUI(pd, new MonsterDetailsVO(D.Cards[uniqueId], new CNAMap<GameEffect_Enum, WrapList<int>>()), forceVisable);
+            SetupUI(pd, new MonsterDetailsVO(D.Cards[uniqueId], new CNAMap<GameEffect_Enum, CNAList<int>>()), forceVisable);
         }
 
         public void SetupUI(PlayerData pd, MonsterDetailsVO monsterDetails, bool forceVisable = false) {

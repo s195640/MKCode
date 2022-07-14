@@ -25,7 +25,7 @@ namespace cna.poo {
         [SerializeField] private int healpoints;
         [SerializeField] private int manaPoolAvailable;
         [SerializeField] private bool dummyPlayer;
-        [SerializeField] private CNAMap<GameEffect_Enum, WrapList<int>> gameEffects = new CNAMap<GameEffect_Enum, WrapList<int>>();
+        [SerializeField] private CNAMap<GameEffect_Enum, CNAList<int>> gameEffects = new CNAMap<GameEffect_Enum, CNAList<int>>();
         [SerializeField] private List<V2IntVO> shields = new List<V2IntVO>();
         [SerializeField] private List<ManaPoolData> manaPool = new List<ManaPoolData>();
         [SerializeField] private PlayerBoardData board = new PlayerBoardData();
@@ -55,7 +55,7 @@ namespace cna.poo {
         public int Armor { get => armor; set => armor = value; }
         public int Healpoints { get => healpoints; set => healpoints = value; }
         public int ManaPoolAvailable { get => manaPoolAvailable; set => manaPoolAvailable = value; }
-        public CNAMap<GameEffect_Enum, WrapList<int>> GameEffects { get => gameEffects; set => gameEffects = value; }
+        public CNAMap<GameEffect_Enum, CNAList<int>> GameEffects { get => gameEffects; set => gameEffects = value; }
         public bool DummyPlayer { get => dummyPlayer; set => dummyPlayer = value; }
         public List<V2IntVO> Shields { get => shields; set => shields = value; }
         public List<ManaPoolData> ManaPoolFull { get => manaPool; set => manaPool = value; }
@@ -69,7 +69,7 @@ namespace cna.poo {
         public void AddGameEffect(GameEffect_Enum ge, params int[] cards) {
             if (cards.Length == 0) cards = new int[] { 0 };
             if (!gameEffects.ContainsKey(ge)) {
-                gameEffects.Add(ge, new WrapList<int>());
+                gameEffects.Add(ge, new CNAList<int>());
             }
             gameEffects[ge].AddRange(cards);
         }
@@ -171,7 +171,7 @@ namespace cna.poo {
             dummyPlayer = p.dummyPlayer;
             gameEffects.Clear();
             p.gameEffects.Keys.ForEach(key => {
-                WrapList<int> value = new WrapList<int>();
+                CNAList<int> value = new CNAList<int>();
                 p.gameEffects[key].Values.ForEach(v => value.Add(v));
                 gameEffects.Add(key, value);
             });
@@ -212,6 +212,71 @@ namespace cna.poo {
             long min = (totalSec - (3600 * hour)) / 60;
             long sec = totalSec - (3600 * hour) - (60 * min);
             return string.Format("{0}:{1}:{2}", ("" + hour).PadLeft(1, '0'), ("" + min).PadLeft(2, '0'), ("" + sec).PadLeft(2, '0'));
+        }
+
+        public override string Serialize() {
+            string data = CNASerialize.Sz(playerName) + "%"
+                + CNASerialize.Sz(playerKey) + "%"
+                + CNASerialize.Sz(avatar) + "%"
+                + CNASerialize.Sz(playerReady) + "%"
+                + CNASerialize.Sz(playerTurnPhase) + "%"
+                + CNASerialize.Sz(playerDeckData) + "%"
+                + CNASerialize.Sz(playerMovementCount) + "%"
+                + CNASerialize.Sz(playerInfluenceCount) + "%"
+                + CNASerialize.Sz(gridLocationHistory) + "%"
+                + CNASerialize.Sz(visableMonsters) + "%"
+                + CNASerialize.Sz(battle) + "%"
+                + CNASerialize.Sz(fame) + "%"
+                + CNASerialize.Sz(repLevel) + "%"
+                + CNASerialize.Sz(actionTaken) + "%"
+                + CNASerialize.Sz(crystal) + "%"
+                + CNASerialize.Sz(mana) + "%"
+                + CNASerialize.Sz(armor) + "%"
+                + CNASerialize.Sz(healpoints) + "%"
+                + CNASerialize.Sz(manaPoolAvailable) + "%"
+                + CNASerialize.Sz(dummyPlayer) + "%"
+                + CNASerialize.Sz(gameEffects) + "%"
+                + CNASerialize.Sz(shields) + "%"
+                + CNASerialize.Sz(manaPool) + "%"
+                + CNASerialize.Sz(board) + "%"
+                + CNASerialize.Sz(waitOnServer) + "%"
+                + CNASerialize.Sz(undoLock) + "%"
+                + CNASerialize.Sz(time01) + "%"
+                + CNASerialize.Sz(time02);
+            return "[" + data + "]";
+        }
+
+        public override void Deserialize(string data) {
+            List<string> d = CNASerialize.DeserizlizeSplit(data.Substring(1, data.Length - 2));
+            CNASerialize.Dz(d[0], out playerName);
+            CNASerialize.Dz(d[1], out playerKey);
+            CNASerialize.Dz(d[2], out avatar);
+            CNASerialize.Dz(d[3], out playerReady);
+            CNASerialize.Dz(d[4], out playerTurnPhase);
+            CNASerialize.Dz(d[5], out playerDeckData);
+            CNASerialize.Dz(d[6], out playerMovementCount);
+            CNASerialize.Dz(d[7], out playerInfluenceCount);
+            CNASerialize.Dz(d[8], out gridLocationHistory);
+            CNASerialize.Dz(d[9], out visableMonsters);
+            CNASerialize.Dz(d[10], out battle);
+            CNASerialize.Dz(d[11], out fame);
+            CNASerialize.Dz(d[12], out repLevel);
+            CNASerialize.Dz(d[13], out actionTaken);
+            CNASerialize.Dz(d[14], out crystal);
+            CNASerialize.Dz(d[15], out mana);
+            CNASerialize.Dz(d[16], out armor);
+            CNASerialize.Dz(d[17], out healpoints);
+            CNASerialize.Dz(d[18], out manaPoolAvailable);
+            CNASerialize.Dz(d[19], out dummyPlayer);
+            CNASerialize.Dz(d[20], out gameEffects);
+            CNASerialize.Dz(d[21], out shields);
+            CNASerialize.Dz(d[22], out manaPool);
+            CNASerialize.Dz(d[23], out board);
+            CNASerialize.Dz(d[24], out waitOnServer);
+            CNASerialize.Dz(d[25], out undoLock);
+            CNASerialize.Dz(d[26], out time01);
+            CNASerialize.Dz(d[27], out time02);
+
         }
     }
 }

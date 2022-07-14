@@ -1,12 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using cna.connector;
 using cna.poo;
 using TMPro;
 using UnityEngine;
 
 namespace cna.ui {
     public class SettingsCanvas : BaseCanvas {
+
+        private SortedDictionary<long, List<LoadGameVO>> games = new SortedDictionary<long, List<LoadGameVO>>();
+
 
         [SerializeField] private Transform savedGameContent;
         [SerializeField] private SavedGamePrefab prefab;
@@ -56,14 +61,27 @@ namespace cna.ui {
         public void OnClick_LoadGameList() {
             savedGameList.ForEach(s => Destroy(s.gameObject));
             savedGameList.Clear();
+            bookmarkList.ForEach(s => Destroy(s.gameObject));
+            bookmarkList.Clear();
             SelectedGame = null;
             SelectedBookmark = null;
-            DirectoryInfo[] dir = BasicUtil.LoadGameList();
-            foreach (DirectoryInfo di in dir) {
+            games.Clear();
+            List<string> fileNames = SaveLoadUtil.LoadGameNames();
+            fileNames.ForEach(fileName => {
+                LoadGameVO lg = new LoadGameVO(fileName);
+                if (lg.verison.Equals(Application.version)) {
+                    if (!games.ContainsKey(lg.time)) {
+                        games.Add(lg.time, new List<LoadGameVO>());
+                    }
+                    games[lg.time].Add(lg);
+                }
+            });
+
+            foreach (var x in games.Reverse()) {
                 SavedGamePrefab p = Instantiate(prefab, Vector3.zero, Quaternion.identity);
                 p.transform.SetParent(savedGameContent);
                 p.transform.localScale = Vector3.one;
-                p.SetupUI(di, OnClick_SelectGame);
+                p.SetupUI(x.Key, x.Value[0], OnClick_SelectGame);
                 savedGameList.Add(p);
             }
         }
@@ -73,14 +91,13 @@ namespace cna.ui {
             bookmarkList.ForEach(s => Destroy(s.gameObject));
             bookmarkList.Clear();
             SelectedBookmark = null;
-            FileInfo[] files = BasicUtil.LoadGameBookmarks(SelectedGame.GameId);
-            foreach (FileInfo fi in files) {
+            games[savedGame.Time].OrderByDescending(lg => lg.turn).ToList().ForEach(lg => {
                 BookmarkGamePrefab p = Instantiate(prefab2, Vector3.zero, Quaternion.identity);
                 p.transform.SetParent(bookMarkContent);
                 p.transform.localScale = Vector3.one;
-                p.SetupUI(fi, OnClick_SelectBookmark);
+                p.SetupUI(lg, OnClick_SelectBookmark);
                 bookmarkList.Add(p);
-            }
+            });
         }
 
         public void OnClick_SelectBookmark(BookmarkGamePrefab bookmark) {
@@ -93,14 +110,17 @@ namespace cna.ui {
             if (dummy != null) {
                 D.G.Players.Remove(dummy);
             }
+            D.GLD.GameStartTime = DateTime.Now.Ticks;
+            D.GLD.GameId = Guid.NewGuid().ToString();
             D.G.GameStatus = Game_Enum.CHAR_CREATION;
             D.C.Send_GameData();
         }
 
         public void OnClick_LoadGame() {
-            D.G = BasicUtil.LoadGameFromFile(selectedBookmark.fullFileName);
+            D.G = SaveLoadUtil.LoadGame(selectedBookmark.FileName);
             SelectedGame = null;
             D.C.Send_GameData();
         }
     }
+
 }

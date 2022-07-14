@@ -19,6 +19,7 @@ namespace cna.ui {
                     gameSetup.gameObject.SetActive(true);
                     playerWorld.gameObject.SetActive(false);
                     game.gameObject.SetActive(false);
+                    Clear();
                     gameSetup.UpdateUI();
                     break;
                 }
@@ -36,12 +37,8 @@ namespace cna.ui {
         public override void Clear() {
             D.ScreenState = ScreenState_Enum.Map;
             game.Clear();
-            playerWorld.Clear();
         }
 
-        //public override void StartOfTurnNotification(bool forceDeclareEndOfRound, bool isExhausted, bool endOfRoundDeclared) {
-        //    //StartOfTurnPanel.SetupUI(forceDeclareEndOfRound, isExhausted, endOfRoundDeclared);
-        //}
         public override void StartTacticsPanel() {
             TacticsPanel.SetupUI(D.LocalPlayer);
         }

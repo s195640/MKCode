@@ -8,12 +8,12 @@ namespace cna.poo {
         public override string ToString() {
             return JsonUtility.ToJson(this, true);
         }
-        public string ToJson() {
-            return JsonUtility.ToJson(this);
+        public virtual string ToDataStr() {
+            return CNASerialize.Zip(CNASerialize.Sz(Serialize()));
         }
 
-        public void Deserialize(string text) {
-            JsonUtility.FromJsonOverwrite(text, this);
-        }
+        public abstract string Serialize();
+
+        public abstract void Deserialize(string data);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace cna.poo {
@@ -19,6 +20,18 @@ namespace cna.poo {
 
         public ManaPoolData Clone() {
             return new ManaPoolData(manaColor, status);
+        }
+
+        public override string Serialize() {
+            string data = CNASerialize.Sz(manaColor) + "%"
+                + CNASerialize.Sz(status) + "%";
+            return "[" + data + "]";
+        }
+
+        public override void Deserialize(string data) {
+            List<string> d = CNASerialize.DeserizlizeSplit(data.Substring(1, data.Length - 2));
+            CNASerialize.Dz(d[0], out manaColor);
+            CNASerialize.Dz(d[1], out status);
         }
     }
 }

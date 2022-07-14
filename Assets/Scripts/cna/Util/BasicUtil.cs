@@ -243,33 +243,7 @@ namespace cna {
             }
             return Crystal_Enum.NA;
         }
-        public static string SAVED_GAME_FILE_PATH = "./SavedGames/";
 
-        public static void SaveGameToFile(Data gd) {
-            string gameid = gd.GameId;
-            string turnCounter = "" + gd.Board.TurnCounter;
-            string hostName = gd.Players.Find(p => p.Key == gd.HostPlayerKey).Name;
-            string SAVED_GAME_PATH = SAVED_GAME_FILE_PATH + gameid + "/";
-            string fileName = string.Format("{0}_{1}.gd", turnCounter.PadLeft(4, '0'), hostName);
-            DirectoryInfo info = Directory.CreateDirectory(SAVED_GAME_PATH);
-            File.WriteAllText(SAVED_GAME_PATH + fileName, JsonUtility.ToJson(gd));
-        }
-
-        public static Data LoadGameFromFile(string path) {
-            string data = File.ReadAllText(path);
-            Data gd = JsonUtility.FromJson<Data>(data);
-            return gd;
-        }
-
-        public static DirectoryInfo[] LoadGameList() {
-            DirectoryInfo info = new DirectoryInfo(SAVED_GAME_FILE_PATH);
-            return info.GetDirectories().OrderByDescending(p => p.CreationTime).ToArray();
-        }
-
-        public static FileInfo[] LoadGameBookmarks(string gameid) {
-            DirectoryInfo info = new DirectoryInfo(SAVED_GAME_FILE_PATH + gameid);
-            return info.GetFiles().OrderByDescending(p => p.Name).ToArray();
-        }
 
         public static Image_Enum GetStructureAtLoc(V2IntVO loc) {
             int mapIndex = D.Scenario.ConvertWorldToIndex(loc);

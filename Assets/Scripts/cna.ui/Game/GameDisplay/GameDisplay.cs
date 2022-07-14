@@ -11,7 +11,7 @@ namespace cna.ui {
         [SerializeField] private GameObject NotificationCanvas;
 
         public override void SetupUI() {
-            Clear();
+            _Clear();
         }
 
         public void UpdateUI() {
@@ -22,11 +22,17 @@ namespace cna.ui {
         }
 
         public override void Clear() {
+            base.Clear();
+            _Clear();
+        }
+
+        private void _Clear() {
             OverlayCanvas.gameObject.SetActive(true);
             ScreensCanvas.gameObject.SetActive(true);
             ConformationCanvas.gameObject.SetActive(true);
             ConformationCanvas.Clean();
             NotificationCanvas.SetActive(true);
+            ScreensCanvas.Clear();
         }
     }
 }

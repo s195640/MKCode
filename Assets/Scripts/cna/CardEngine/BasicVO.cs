@@ -15,7 +15,7 @@ namespace cna {
             ) { }
 
         private int val = 1;
-        private CNAMap<GameEffect_Enum, WrapList<int>> gameEffects;
+        private CNAMap<GameEffect_Enum, CNAList<int>> gameEffects;
         private TurnPhase_Enum playerPhase;
         private BattlePhase_Enum playerBattlePhase;
 

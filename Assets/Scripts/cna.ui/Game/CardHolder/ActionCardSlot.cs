@@ -304,7 +304,7 @@ namespace cna.ui {
         }
         private void UpdateCardState() {
             cardState.Clear();
-            CNAMap<int, WrapList<CardState_Enum>> states = D.LocalPlayer.Deck.State;
+            CNAMap<int, CNAList<CardState_Enum>> states = D.LocalPlayer.Deck.State;
             if (states.ContainsKey(UniqueCardId)) {
                 List<CardState_Enum> currentCardState = states[UniqueCardId].Values;
                 cardState.AddRange(currentCardState);

@@ -27,7 +27,13 @@ namespace cna.ui {
         }
 
         public override void Clear() {
-            ActionCardSlot.SelectedCardSlot = null;
+            base.Clear();
+            TopBar.Clear();
+            GameRoundPanel.Clear();
+            GameEffectPanel.Clear();
+            ActionCardSlot.Clear();
+            GameInfoPanel.Clear();
+            PlayerCardPanel.Clear();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace cna.poo {
@@ -55,6 +56,33 @@ namespace cna.poo {
             provoked = m.provoked;
             location = m.location.Clone();
             structure = m.structure;
+        }
+
+
+        public override string Serialize() {
+            string data = CNASerialize.Sz(uniqueid) + "%"
+                + CNASerialize.Sz(dead) + "%"
+                + CNASerialize.Sz(blocked) + "%"
+                + CNASerialize.Sz(assigned) + "%"
+                + CNASerialize.Sz(summoned) + "%"
+                + CNASerialize.Sz(summoner) + "%"
+                + CNASerialize.Sz(provoked) + "%"
+                + CNASerialize.Sz(location) + "%"
+                + CNASerialize.Sz(structure);
+            return "[" + data + "]";
+        }
+
+        public override void Deserialize(string data) {
+            List<string> d = CNASerialize.DeserizlizeSplit(data.Substring(1, data.Length - 2));
+            CNASerialize.Dz(d[0], out uniqueid);
+            CNASerialize.Dz(d[1], out dead);
+            CNASerialize.Dz(d[2], out blocked);
+            CNASerialize.Dz(d[3], out assigned);
+            CNASerialize.Dz(d[4], out summoned);
+            CNASerialize.Dz(d[5], out summoner);
+            CNASerialize.Dz(d[6], out provoked);
+            CNASerialize.Dz(d[7], out location);
+            CNASerialize.Dz(d[8], out structure);
         }
     }
 }

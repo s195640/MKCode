@@ -50,5 +50,16 @@ namespace cna.ui {
             SettingsCanvas.gameObject.SetActive(D.ScreenState == ScreenState_Enum.Settings);
             FinalScoreCanvas.gameObject.SetActive(D.ScreenState == ScreenState_Enum.FinalScore);
         }
+
+        public override void Clear() {
+            base.Clear();
+            PlayersDetailCanvas.Clear();
+            LegendMonsterCanvas.Clear();
+            LegendRuinsCanvas.Clear();
+            LegendIconsCanvas.Clear();
+            ScoreBoardCanvas.Clear();
+            SettingsCanvas.Clear();
+            FinalScoreCanvas.Clear();
+        }
     }
 }

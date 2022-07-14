@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
-
 
 namespace cna.poo {
     [Serializable]
@@ -178,6 +178,38 @@ namespace cna.poo {
             spentWhite = c.spentWhite;
             spentGold = c.spentGold;
             spentBlack = c.spentBlack;
+        }
+
+        public override string Serialize() {
+            string data = CNASerialize.Sz(blue) + "%"
+                + CNASerialize.Sz(red) + "%"
+                + CNASerialize.Sz(green) + "%"
+                + CNASerialize.Sz(white) + "%"
+                + CNASerialize.Sz(gold) + "%"
+                + CNASerialize.Sz(black) + "%"
+                + CNASerialize.Sz(spentBlue) + "%"
+                + CNASerialize.Sz(spentRed) + "%"
+                + CNASerialize.Sz(spentGreen) + "%"
+                + CNASerialize.Sz(spentWhite) + "%"
+                + CNASerialize.Sz(spentGold) + "%"
+                + CNASerialize.Sz(spentBlack);
+            return "[" + data + "]";
+        }
+
+        public override void Deserialize(string data) {
+            List<string> d = CNASerialize.DeserizlizeSplit(data.Substring(1, data.Length - 2));
+            CNASerialize.Dz(d[0], out blue);
+            CNASerialize.Dz(d[1], out red);
+            CNASerialize.Dz(d[2], out green);
+            CNASerialize.Dz(d[3], out white);
+            CNASerialize.Dz(d[4], out gold);
+            CNASerialize.Dz(d[5], out black);
+            CNASerialize.Dz(d[6], out spentBlue);
+            CNASerialize.Dz(d[7], out spentRed);
+            CNASerialize.Dz(d[8], out spentGreen);
+            CNASerialize.Dz(d[9], out spentWhite);
+            CNASerialize.Dz(d[9], out spentGold);
+            CNASerialize.Dz(d[9], out spentBlack);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace cna.ui {
         }
 
         public override void Clear() {
+            base.Clear();
             PlayerDisplay.Clear();
             GameDisplay.Clear();
             PlayerWorld.Clear();

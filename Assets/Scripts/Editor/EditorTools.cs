@@ -23,6 +23,84 @@ namespace cna.editor {
             }
         }
 
+        [MenuItem("Tools/JSON")]
+        static void TryJSON() {
+            string json = D.G.ToDataStr();
+            Debug.Log(json.Length);
+            Debug.Log(json);
+        }
+        [MenuItem("Tools/Serialize")]
+        static void TrySerialize() {
+            string data = D.G.Serialize();
+            Debug.Log(data.Length);
+            Debug.Log(data);
+        }
+        [MenuItem("Tools/Zip")]
+        static void TryZip() {
+            string data = CNASerialize.Sz(D.G);
+            string json = D.G.ToDataStr();
+            string zipData = CNASerialize.Zip(data);
+            string zipJson = CNASerialize.Zip(json);
+            Debug.Log("DATA :: " + data.Length + " : " + zipData.Length);
+            Debug.Log("JSON :: " + json.Length + " : " + zipJson.Length);
+
+        }
+
+        [MenuItem("Tools/SerializeTest")]
+        static void TrySerialTest() {
+            string data01 = CNASerialize.Sz(D.G);
+            Data d;
+            CNASerialize.Dz(data01, out d);
+            string data02 = CNASerialize.Sz(d);
+            CNASerialize.Dz(data02, out d);
+
+            string json01 = D.G.ToDataStr();
+            string json02 = d.ToDataStr();
+            Debug.Log(json01.Equals(json02));
+            Debug.Log(json01);
+            Debug.Log(json02);
+        }
+        [MenuItem("Tools/StopWatch")]
+        static void TryStopWatch() {
+            Data _obj01;
+            Data _obj02;
+
+            var timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            string json = D.G.ToDataStr();
+            string z01 = CNASerialize.Zip(json);
+            string z02 = CNASerialize.Unzip(z01);
+            _obj01 = JsonUtility.FromJson<Data>(z02);
+            timer.Stop();
+            TimeSpan timeTaken = timer.Elapsed;
+            Debug.Log("JSON = " + timeTaken.ToString(@"m\:ss\.fff"));
+            timer.Reset();
+            timer.Start();
+            string data = D.G.Serialize();
+            string z03 = CNASerialize.Zip(json);
+            string z04 = CNASerialize.Unzip(z03);
+            CNASerialize.Dz(data, out _obj02);
+            timer.Stop();
+            timeTaken = timer.Elapsed;
+            Debug.Log("DATA = " + timeTaken.ToString(@"m\:ss\.fff"));
+        }
+
+
+        [MenuItem("Tools/TEST01")]
+        static void TryTest01() {
+            string data = D.G.Board.Serialize();
+            Debug.Log(data.Length);
+            Debug.Log(data);
+        }
+        [MenuItem("Tools/TEST02")]
+        static void TryTest02() {
+            string data = D.G.Board.MonsterData.Serialize();
+            Debug.Log(data.Length);
+            Debug.Log(data);
+        }
+
+
+
         [MenuItem("Tools/ButtonsImages")]
         static void Fix_CNA_Buttons() {
             Fix_CNA_Buttons_ToWork();

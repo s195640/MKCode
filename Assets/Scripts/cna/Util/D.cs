@@ -26,6 +26,7 @@ namespace cna {
         public static Data G { get => A.masterGameData; set => A.masterGameData = value; }
         public static BattleEngine B { get { if (battleEngine == null) { battleEngine = Resources.FindObjectsOfTypeAll<BattleEngine>()[0]; } return battleEngine; } }
         public static int LocalPlayerKey { get => Connector.Player.Key; }
+        public static int HostPlayerKey { get => GLD.HostKey; }
         public static PlayerData LocalPlayer { get { return G.Players.Find(p => p.Key.Equals(LocalPlayerKey)); } }
         public static PlayerData CurrentTurn { get { return G.Players.Find(p => p.Key == G.Board.PlayerTurnOrder[G.Board.PlayerTurnIndex]); } }
         public static PlayerData DummyPlayer { get { return GetPlayerByKey(-999); } }
@@ -75,7 +76,7 @@ namespace cna {
         public static Queue<LogData> LogQueue { get => C.logQueue; set => C.logQueue = value; }
         public static ScreenState_Enum ScreenState { get => A.screenState; set => A.screenState = value; }
         public static void Send(wsMsg msg) {
-            Connector.sendMsg(msg.ToJson());
+            Connector.sendMsg(msg.ToDataStr());
         }
         public static Dictionary<MapHexId_Enum, MapHexVO> HexMap {
             get {

@@ -19,7 +19,7 @@ namespace cna.ui {
         }
 
         private void UpdateUI_GameEffects() {
-            CNAMap<GameEffect_Enum, WrapList<int>> gameEffects = D.LocalPlayer.GameEffects;
+            CNAMap<GameEffect_Enum, CNAList<int>> gameEffects = D.LocalPlayer.GameEffects;
             List<GameEffect_Enum> data = new List<GameEffect_Enum>();
             gameEffects.Keys.ForEach(ge => {
                 CardVO geCard = D.GetGameEffectCard(ge);

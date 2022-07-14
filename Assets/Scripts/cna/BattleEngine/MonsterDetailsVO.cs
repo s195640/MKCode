@@ -5,7 +5,7 @@ namespace cna {
     public class MonsterDetailsVO {
 
         public CardVO monsterCard;
-        public CNAMap<GameEffect_Enum, WrapList<int>> gameEffects;
+        public CNAMap<GameEffect_Enum, CNAList<int>> gameEffects;
 
         private int armor;
         private int damage;
@@ -86,13 +86,13 @@ namespace cna {
         }
         public MonsterDetailsVO() { }
 
-        public MonsterDetailsVO(CardVO monsterCard, CNAMap<GameEffect_Enum, WrapList<int>> gameEffects) {
+        public MonsterDetailsVO(CardVO monsterCard, CNAMap<GameEffect_Enum, CNAList<int>> gameEffects) {
             this.monsterCard = monsterCard;
             this.gameEffects = gameEffects;
             Calculate();
         }
 
-        public void UpdateBattleEffects(CNAMap<GameEffect_Enum, WrapList<int>> gameEffects) {
+        public void UpdateBattleEffects(CNAMap<GameEffect_Enum, CNAList<int>> gameEffects) {
             this.gameEffects = gameEffects;
             Calculate();
         }

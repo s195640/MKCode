@@ -164,7 +164,7 @@ namespace cna.ui {
         private bool UpdateCardState(PlayerData pd) {
             bool forReturn = false;
             List<CardState_Enum> currentCardState = new List<CardState_Enum>();
-            CNAMap<int, WrapList<CardState_Enum>> states = pd.Deck.State;
+            CNAMap<int, CNAList<CardState_Enum>> states = pd.Deck.State;
             if (states.ContainsKey(UniqueCardId)) {
                 currentCardState = states[UniqueCardId].Values;
             }

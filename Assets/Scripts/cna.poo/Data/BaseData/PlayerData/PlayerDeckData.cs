@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 namespace cna.poo {
     [Serializable]
     public class PlayerDeckData : BaseData {
 
-        [SerializeField] private CNAMap<int, WrapList<CardState_Enum>> state;
+        [SerializeField] private CNAMap<int, CNAList<CardState_Enum>> state;
         [SerializeField] private CNAMap<int, int> banners;
         [SerializeField] private List<int> hand;
         [SerializeField] private List<int> deck;
@@ -18,7 +19,7 @@ namespace cna.poo {
         [SerializeField] private int tacticsCardId;
 
         public PlayerDeckData() {
-            state = new CNAMap<int, WrapList<CardState_Enum>>();
+            state = new CNAMap<int, CNAList<CardState_Enum>>();
             banners = new CNAMap<int, int>();
             hand = new List<int>();
             deck = new List<int>();
@@ -29,7 +30,7 @@ namespace cna.poo {
             unitHandLimit = 1;
             tacticsCardId = 0;
         }
-        public CNAMap<int, WrapList<CardState_Enum>> State { get => state; set => state = value; }
+        public CNAMap<int, CNAList<CardState_Enum>> State { get => state; set => state = value; }
         public List<int> Hand { get => hand; set => hand = value; }
         public List<int> Deck { get => deck; set => deck = value; }
         public List<int> Discard { get => discard; set => discard = value; }
@@ -45,7 +46,7 @@ namespace cna.poo {
             if (State.ContainsKey(cardId)) {
                 State[cardId].Add(state);
             } else {
-                WrapList<CardState_Enum> l = new WrapList<CardState_Enum>();
+                CNAList<CardState_Enum> l = new CNAList<CardState_Enum>();
                 l.Add(state);
                 State.Add(cardId, l);
             }
@@ -110,7 +111,7 @@ namespace cna.poo {
         public void UpdateData(PlayerDeckData pdd) {
             state.Clear();
             pdd.state.Keys.ForEach(key => {
-                WrapList<CardState_Enum> value = new WrapList<CardState_Enum>();
+                CNAList<CardState_Enum> value = new CNAList<CardState_Enum>();
                 pdd.state[key].Values.ForEach(v => value.Add(v));
                 state.Add(key, value);
             });
@@ -129,6 +130,33 @@ namespace cna.poo {
             handSize = pdd.handSize.Clone();
             unitHandLimit = pdd.unitHandLimit;
             tacticsCardId = pdd.tacticsCardId;
+        }
+
+        public override string Serialize() {
+            string data = CNASerialize.Sz(state) + "%"
+                + CNASerialize.Sz(banners) + "%"
+                + CNASerialize.Sz(hand) + "%"
+                + CNASerialize.Sz(deck) + "%"
+                + CNASerialize.Sz(discard) + "%"
+                + CNASerialize.Sz(unit) + "%"
+                + CNASerialize.Sz(skill) + "%"
+                + CNASerialize.Sz(handSize) + "%"
+                + CNASerialize.Sz(unitHandLimit) + "%"
+                + CNASerialize.Sz(tacticsCardId);
+            return "[" + data + "]";
+        }
+        public override void Deserialize(string data) {
+            List<string> d = CNASerialize.DeserizlizeSplit(data.Substring(1, data.Length - 2));
+            CNASerialize.Dz(d[0], out state);
+            CNASerialize.Dz(d[1], out banners);
+            CNASerialize.Dz(d[2], out hand);
+            CNASerialize.Dz(d[3], out deck);
+            CNASerialize.Dz(d[4], out discard);
+            CNASerialize.Dz(d[5], out unit);
+            CNASerialize.Dz(d[6], out skill);
+            CNASerialize.Dz(d[7], out handSize);
+            CNASerialize.Dz(d[8], out unitHandLimit);
+            CNASerialize.Dz(d[9], out tacticsCardId);
         }
     }
 }

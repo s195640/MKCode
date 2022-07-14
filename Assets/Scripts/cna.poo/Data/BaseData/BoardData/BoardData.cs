@@ -8,8 +8,6 @@ namespace cna.poo {
         public BoardData() { }
 
         [SerializeField] public int mapDeckIndex = 0;
-        [SerializeField] private List<MapHexId_Enum> currentMap = new List<MapHexId_Enum>();
-        [SerializeField] private CNAMap<V2IntVO, WrapList<int>> monsterData = new CNAMap<V2IntVO, WrapList<int>>();
         [SerializeField] private int greenIndex = 0;
         [SerializeField] private int greyIndex = 0;
         [SerializeField] private int brownIndex = 0;
@@ -17,15 +15,17 @@ namespace cna.poo {
         [SerializeField] private int whiteIndex = 0;
         [SerializeField] private int redIndex = 0;
         [SerializeField] private int ruinIndex = 0;
-        [SerializeField] private List<int> playerTurnOrder = new List<int>();
         [SerializeField] private int playerTurnIndex = 0;
         [SerializeField] private bool endOfRound = false;
         [SerializeField] private int gameRoundCounter;
         [SerializeField] private int turnCounter;
+        [SerializeField] private List<int> playerTurnOrder = new List<int>();
+        [SerializeField] private List<MapHexId_Enum> currentMap = new List<MapHexId_Enum>();
+        [SerializeField] private CNAMap<V2IntVO, CNAList<int>> monsterData = new CNAMap<V2IntVO, CNAList<int>>();
 
         public int MapDeckIndex { get => mapDeckIndex; set => mapDeckIndex = value; }
         public List<MapHexId_Enum> CurrentMap { get => currentMap; set => currentMap = value; }
-        public CNAMap<V2IntVO, WrapList<int>> MonsterData { get => monsterData; set => monsterData = value; }
+        public CNAMap<V2IntVO, CNAList<int>> MonsterData { get => monsterData; set => monsterData = value; }
         public int GreenIndex { get => greenIndex; set => greenIndex = value; }
         public int GreyIndex { get => greyIndex; set => greyIndex = value; }
         public int BrownIndex { get => brownIndex; set => brownIndex = value; }
@@ -45,7 +45,7 @@ namespace cna.poo {
             monsterData.Clear();
             monsterData.Keys.ForEach(k => {
                 V2IntVO key = new V2IntVO(k.X, k.Y);
-                WrapList<int> value = new WrapList<int>();
+                CNAList<int> value = new CNAList<int>();
                 b.monsterData[k].Values.ForEach(v => value.Add(v));
                 monsterData.Add(key, value);
             });
@@ -80,6 +80,45 @@ namespace cna.poo {
             endOfRound = false;
             gameRoundCounter = 0;
             turnCounter = 0;
+        }
+
+        public override string Serialize() {
+            string delimiter = "%";
+            string data = CNASerialize.Sz(mapDeckIndex) + delimiter
+                + CNASerialize.Sz(greenIndex) + delimiter
+                + CNASerialize.Sz(greyIndex) + delimiter
+                + CNASerialize.Sz(brownIndex) + delimiter
+                + CNASerialize.Sz(violetIndex) + delimiter
+                + CNASerialize.Sz(whiteIndex) + delimiter
+                + CNASerialize.Sz(redIndex) + delimiter
+                + CNASerialize.Sz(ruinIndex) + delimiter
+                + CNASerialize.Sz(playerTurnIndex) + delimiter
+                + CNASerialize.Sz(endOfRound) + delimiter
+                + CNASerialize.Sz(gameRoundCounter) + delimiter
+                + CNASerialize.Sz(turnCounter) + delimiter
+                + CNASerialize.Sz(playerTurnOrder) + delimiter
+                + CNASerialize.Sz(currentMap) + delimiter
+                + CNASerialize.Sz(monsterData);
+            return "[" + data + "]";
+        }
+
+        public override void Deserialize(string data) {
+            List<string> d = CNASerialize.DeserizlizeSplit(data.Substring(1, data.Length - 2));
+            CNASerialize.Dz(d[0], out mapDeckIndex);
+            CNASerialize.Dz(d[1], out greenIndex);
+            CNASerialize.Dz(d[2], out greyIndex);
+            CNASerialize.Dz(d[3], out brownIndex);
+            CNASerialize.Dz(d[4], out violetIndex);
+            CNASerialize.Dz(d[5], out whiteIndex);
+            CNASerialize.Dz(d[6], out redIndex);
+            CNASerialize.Dz(d[7], out ruinIndex);
+            CNASerialize.Dz(d[8], out playerTurnIndex);
+            CNASerialize.Dz(d[9], out endOfRound);
+            CNASerialize.Dz(d[10], out gameRoundCounter);
+            CNASerialize.Dz(d[11], out turnCounter);
+            CNASerialize.Dz(d[12], out playerTurnOrder);
+            CNASerialize.Dz(d[13], out currentMap);
+            CNASerialize.Dz(d[14], out monsterData);
         }
     }
 }

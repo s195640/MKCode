@@ -52,5 +52,27 @@ namespace cna.poo {
             shield.UpdateData(b.shield);
             attack.UpdateData(b.attack);
         }
+
+        public override string Serialize() {
+            string data = CNASerialize.Sz(battlePhase) + "%"
+                + CNASerialize.Sz(monsters) + "%"
+                + CNASerialize.Sz(selectedMonsters) + "%"
+                + CNASerialize.Sz(siege) + "%"
+                + CNASerialize.Sz(range) + "%"
+                + CNASerialize.Sz(shield) + "%"
+                + CNASerialize.Sz(attack);
+            return "[" + data + "]";
+        }
+
+        public override void Deserialize(string data) {
+            List<string> d = CNASerialize.DeserizlizeSplit(data.Substring(1, data.Length - 2));
+            CNASerialize.Dz(d[0], out battlePhase);
+            CNASerialize.Dz(d[1], out monsters);
+            CNASerialize.Dz(d[2], out selectedMonsters);
+            CNASerialize.Dz(d[3], out siege);
+            CNASerialize.Dz(d[4], out range);
+            CNASerialize.Dz(d[5], out shield);
+            CNASerialize.Dz(d[6], out attack);
+        }
     }
 }

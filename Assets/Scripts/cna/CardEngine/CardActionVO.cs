@@ -32,7 +32,7 @@ namespace cna {
             List<BattlePhase_Enum> actionAllowedBattlePhase = new List<BattlePhase_Enum>();
             actionAllowedBattlePhase.AddRange(c.BattleAllowed[ar.ActionIndex]);
             TurnPhase_Enum playerPhase = ar.P.PlayerTurnPhase;
-            CNAMap<GameEffect_Enum, WrapList<int>> GameEffects = ar.P.GameEffects;
+            CNAMap<GameEffect_Enum, CNAList<int>> GameEffects = ar.P.GameEffects;
             GameEffects.Keys.ForEach(ge => {
                 switch (ge) {
                     case GameEffect_Enum.AC_Agility01: {

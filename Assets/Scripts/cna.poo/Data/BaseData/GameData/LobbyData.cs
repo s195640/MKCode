@@ -29,5 +29,17 @@ namespace cna.poo {
         public override int GetHashCode() {
             return HashCode.Combine(gameId);
         }
+
+        public override string Serialize() {
+            string data = CNASerialize.Sz(gameId) + "%"
+                + CNASerialize.Sz(hostPlayer) + "%"
+                + CNASerialize.Sz(gameStarted);
+            return "[" + data + "]";
+        }
+        public override void Deserialize(string data) {
+            List<string> d = CNASerialize.DeserizlizeSplit(data.Substring(1, data.Length - 2));
+            CNASerialize.Dz(d[0], out gameId);
+            CNASerialize.Dz(d[1], out hostPlayer);
+        }
     }
 }

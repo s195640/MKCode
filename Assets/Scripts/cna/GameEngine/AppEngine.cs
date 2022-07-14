@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using cna.connector;
 using cna.poo;
 using UnityEngine;
 
@@ -193,7 +194,7 @@ namespace cna {
             hostPlayerData.Board.MonsterData.Clear();
             g.Board.MonsterData.Keys.ForEach(k => {
                 V2IntVO key = new V2IntVO(k.X, k.Y);
-                WrapList<int> value = new WrapList<int>();
+                CNAList<int> value = new CNAList<int>();
                 g.Board.MonsterData[k].Values.ForEach(v => value.Add(v));
                 hostPlayerData.Board.MonsterData.Add(key, value);
             });
@@ -220,7 +221,7 @@ namespace cna {
                     ar.P.Board.MonsterData.Clear();
                     hostPlayerData.Board.MonsterData.Keys.ForEach(k => {
                         V2IntVO key = new V2IntVO(k.X, k.Y);
-                        WrapList<int> value = new WrapList<int>();
+                        CNAList<int> value = new CNAList<int>();
                         g.Board.MonsterData[k].Values.ForEach(v => value.Add(v));
                         ar.P.Board.MonsterData.Add(key, value);
                     });
@@ -308,7 +309,7 @@ namespace cna {
             if (D.isHost) {
                 g.GameStatus = Game_Enum.Player_Turn;
                 g.Players.ForEach(p => { if (p.PlayerTurnPhase != TurnPhase_Enum.EndOfRound) { p.PlayerTurnPhase = TurnPhase_Enum.SetupTurn; p.SetTime(); } });
-                BasicUtil.SaveGameToFile(D.G);
+                SaveLoadUtil.SaveGameToFile(D.G);
                 D.C.Send_GameData();
             }
         }
@@ -335,7 +336,7 @@ namespace cna {
                     pts.Add(centerPos);
                     pts.ForEach(pos => {
                         if (g.Board.MonsterData.ContainsKey(pos)) {
-                            WrapList<int> value = new WrapList<int>();
+                            CNAList<int> value = new CNAList<int>();
                             g.Board.MonsterData[pos].Values.ForEach(v => value.Add(v));
                             ar.P.Board.MonsterData.Add(pos, value);
                         }
@@ -510,7 +511,7 @@ namespace cna {
                                         pts.Add(centerPos);
                                         pts.ForEach(pos => {
                                             if (g.Board.MonsterData.ContainsKey(pos)) {
-                                                WrapList<int> value = new WrapList<int>();
+                                                CNAList<int> value = new CNAList<int>();
                                                 g.Board.MonsterData[pos].Values.ForEach(v => value.Add(v));
                                                 ar.P.Board.MonsterData.Add(pos, value);
                                             }
@@ -574,9 +575,14 @@ namespace cna {
                     }
                 }
             }
+
+
             PlayerData localPlayer = D.LocalPlayer;
             switch (localPlayer.PlayerTurnPhase) {
-                case TurnPhase_Enum.SetupTurn: { PlayerTurn_SetupTurn(g, localPlayer); break; }
+                case TurnPhase_Enum.SetupTurn: {
+                    PlayerTurn_SetupTurn(g, localPlayer);
+                    break;
+                }
                 case TurnPhase_Enum.Move: {
                     if (localPlayer.UndoLock) {
                         localPlayer.UndoLock = false;
@@ -596,7 +602,6 @@ namespace cna {
         }
 
         public void PlayerTurn_SetupTurn(Data g, PlayerData l) {
-            Clear();
             GameAPI ar = new GameAPI(g, l);
             ar.StartOfTurnPanel(PlayerTurn_SetupTurnCallback);
         }
@@ -633,7 +638,6 @@ namespace cna {
             D.C.LogMessage("[Undo]");
             int localPlayerKey = D.LocalPlayerKey;
             masterGameData.Players.Find(p => p.Key == localPlayerKey).UpdateData(pd_StartOfTurn.Clone());
-            Clear();
             D.C.Send_PlayerData();
         }
     }

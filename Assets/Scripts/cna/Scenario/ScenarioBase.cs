@@ -343,7 +343,7 @@ namespace cna {
         public void AddMonster(Data g, List<MonsterType_Enum> monsterTypes, V2IntVO pos) {
             List<int> monsterCards = new List<int>();
             if (!g.Board.MonsterData.ContainsKey(pos)) {
-                g.Board.MonsterData.Add(pos, new WrapList<int>());
+                g.Board.MonsterData.Add(pos, new CNAList<int>());
             }
             foreach (MonsterType_Enum monsterType in monsterTypes) {
                 monsterCards.Add(DrawMonster(monsterType));

@@ -53,6 +53,7 @@ namespace cna.ui {
             disableScreen.SetActive(true);
             D.ClientState = ClientState_Enum.CONNECTED_JOINING_GAME;
             D.GLD.GameId = lgd.GameId;
+            D.GLD.HostKey = lgd.HostPlayer.Key;
             D.C.Send_JoinGame(lgd.HostPlayer.Key, lgd.GameId);
         }
 

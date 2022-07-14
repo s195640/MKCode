@@ -6,7 +6,7 @@ namespace cna {
         }
 
         public void acceptCallback_00(GameAPI ar) {
-            CNAMap<int, WrapList<CardState_Enum>> state = ar.P.Deck.State;
+            CNAMap<int, CNAList<CardState_Enum>> state = ar.P.Deck.State;
             bool exhausted = state[ar.SelectedUniqueCardId].ContainsAny(CardState_Enum.Unit_Exhausted);
             bool wounded = state[ar.SelectedUniqueCardId].ContainsAny(CardState_Enum.Unit_Wounded);
             bool poisoned = state[ar.SelectedUniqueCardId].ContainsAny(CardState_Enum.Unit_Poisoned);

@@ -16,10 +16,10 @@ namespace cna.poo {
             gameData = new GameData(gameId, host.Key);
         }
 
-        [SerializeField] private GameData gameData = new GameData();
-        [SerializeField] private List<PlayerData> players = new List<PlayerData>();
-        [SerializeField] private BoardData boardGameData = new BoardData();
         [SerializeField] private Game_Enum gameStatus = Game_Enum.NA;
+        [SerializeField] private GameData gameData = new GameData();
+        [SerializeField] private BoardData boardGameData = new BoardData();
+        [SerializeField] private List<PlayerData> players = new List<PlayerData>();
 
 
 
@@ -63,6 +63,21 @@ namespace cna.poo {
             players.ForEach(p => p.Clear());
             boardGameData.Clear();
             GameStatus = Game_Enum.NA;
+        }
+
+        public override string Serialize() {
+            return CNASerialize.Sz(gameStatus) + "%"
+                + CNASerialize.Sz(boardGameData) + "%"
+                + CNASerialize.Sz(gameData) + "%"
+                + CNASerialize.Sz(players);
+        }
+
+        public override void Deserialize(string data) {
+            List<string> d = CNASerialize.DeserizlizeSplit(data);
+            CNASerialize.Dz(d[0], out gameStatus);
+            CNASerialize.Dz(d[1], out boardGameData);
+            CNASerialize.Dz(d[2], out gameData);
+            CNASerialize.Dz(d[3], out players);
         }
     }
 }

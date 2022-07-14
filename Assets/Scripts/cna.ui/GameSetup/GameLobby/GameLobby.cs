@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using cna.connector;
 using cna.poo;
 using TMPro;
 using UnityEngine;
@@ -10,6 +12,7 @@ namespace cna.ui {
         [Header("GameObjects")]
         [SerializeField] private Button exitButton;
         [SerializeField] private Button startGameButton;
+        [SerializeField] private Button loadGameButton;
         [SerializeField] private Transform playerListContent;
         [SerializeField] private Transform avatarListContent;
         [SerializeField] private TMP_Dropdown gameLayoutDropdown;
@@ -20,6 +23,8 @@ namespace cna.ui {
         [SerializeField] private CNA_Slider cityTiles;
         [SerializeField] private CNA_Slider cityLevel;
         [SerializeField] private Toggle dummyPlayerToggle;
+        [SerializeField] private GameObject startbutton;
+        [SerializeField] private GameObject loadMenu;
 
         [Header("Prefab")]
         [SerializeField] private GameLobbyAvatar gameLobbyAvatar_Pref;
@@ -27,6 +32,48 @@ namespace cna.ui {
 
         [SerializeField] private List<GameLobbyPlayer> gameLobbyPlayers;
         [SerializeField] private List<GameLobbyAvatar> gameLobbyAvatars;
+
+
+        [Header("Load Games")]
+        private SortedDictionary<long, List<LoadGameVO>> games = new SortedDictionary<long, List<LoadGameVO>>();
+
+        [SerializeField] private Transform savedGameContent;
+        [SerializeField] private SavedGamePrefab prefab;
+        private List<SavedGamePrefab> savedGameList = new List<SavedGamePrefab>();
+        private SavedGamePrefab selectedGame;
+        [SerializeField] private Transform bookMarkContent;
+        [SerializeField] private BookmarkGamePrefab prefab2;
+        private List<BookmarkGamePrefab> bookmarkList = new List<BookmarkGamePrefab>();
+        private BookmarkGamePrefab selectedBookmark;
+        [SerializeField] private CNA_Button loadSelectedGameButton;
+
+        public SavedGamePrefab SelectedGame {
+            get => selectedGame; set {
+                if (SelectedGame != null) {
+                    SelectedGame.Selected(false);
+                }
+                selectedGame = value;
+                if (SelectedGame != null) {
+                    SelectedGame.Selected(true);
+                }
+                SelectedBookmark = null;
+            }
+        }
+
+        public BookmarkGamePrefab SelectedBookmark {
+            get => selectedBookmark; set {
+                if (selectedBookmark != null) {
+                    selectedBookmark.Selected(false);
+                }
+                selectedBookmark = value;
+                if (selectedBookmark != null) {
+                    loadSelectedGameButton.Active = true;
+                    selectedBookmark.Selected(true);
+                } else {
+                    loadSelectedGameButton.Active = false;
+                }
+            }
+        }
 
         public GameLobby() : base() {
             gameLobbyPlayers = new List<GameLobbyPlayer>();
@@ -36,6 +83,7 @@ namespace cna.ui {
         void Start() {
             exitButton.onClick.AddListener(ExitButtonCallback);
             startGameButton.onClick.AddListener(StartGameButtonCallback);
+            loadGameButton.onClick.AddListener(LoadGameButtonCallback);
             gameLayoutDropdown.onValueChanged.AddListener(delegate { GameLayoutDropdownCallback(gameLayoutDropdown.value); });
             easyStartToggle.onValueChanged.AddListener(delegate { EasyStartToggleCallback(easyStartToggle.isOn); });
             basicTiles.Setup(0, 8, D.G.GameData.BasicTiles, BasicTileSliderCallback);
@@ -44,6 +92,8 @@ namespace cna.ui {
             cityLevel.Setup(1, 11, D.G.GameData.Level, CityLevelSliderCallback);
             rounds.Setup(1, 10, D.G.GameData.Rounds, RoundSliderCallback);
             dummyPlayerToggle.onValueChanged.AddListener(delegate { DummyPlayerToggleCallback(dummyPlayerToggle.isOn); });
+            startbutton.SetActive(D.isHost);
+            loadMenu.SetActive(false);
         }
 
         public void UpdateUI() {
@@ -148,6 +198,8 @@ namespace cna.ui {
             }
         }
 
+
+
         private void GameLayoutDropdownCallback(int value) {
             if (D.G.GameData.GameMapLayout != (GameMapLayout_Enum)(value + 2)) {
                 D.G.GameData.GameMapLayout = (GameMapLayout_Enum)(value + 2);
@@ -198,6 +250,63 @@ namespace cna.ui {
                 D.G.GameData.Rounds = (int)value;
                 D.C.Send_GameData();
             }
+        }
+
+        private void LoadGameButtonCallback() {
+            loadMenu.SetActive(true);
+            savedGameList.ForEach(s => Destroy(s.gameObject));
+            savedGameList.Clear();
+            bookmarkList.ForEach(s => Destroy(s.gameObject));
+            bookmarkList.Clear();
+            SelectedGame = null;
+            SelectedBookmark = null;
+            games.Clear();
+            List<string> fileNames = SaveLoadUtil.LoadGameNames();
+            fileNames.ForEach(fileName => {
+                LoadGameVO lg = new LoadGameVO(fileName);
+                if (lg.verison.Equals(Application.version)) {
+                    if (!games.ContainsKey(lg.time)) {
+                        games.Add(lg.time, new List<LoadGameVO>());
+                    }
+                    games[lg.time].Add(lg);
+                }
+            });
+
+            foreach (var x in games.Reverse()) {
+                SavedGamePrefab p = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+                p.transform.SetParent(savedGameContent);
+                p.transform.localScale = Vector3.one;
+                p.SetupUI(x.Key, x.Value[0], OnClick_SelectGame);
+                savedGameList.Add(p);
+            }
+        }
+
+        public void OnClick_LoadGame() {
+            loadMenu.SetActive(false);
+            D.G = SaveLoadUtil.LoadGame(selectedBookmark.FileName);
+            SelectedGame = null;
+            D.C.Send_GameData();
+        }
+        public void OnClick_Cancel() {
+            loadMenu.SetActive(false);
+        }
+
+        public void OnClick_SelectGame(SavedGamePrefab savedGame) {
+            SelectedGame = savedGame;
+            bookmarkList.ForEach(s => Destroy(s.gameObject));
+            bookmarkList.Clear();
+            SelectedBookmark = null;
+            games[savedGame.Time].OrderByDescending(lg => lg.turn).ToList().ForEach(lg => {
+                BookmarkGamePrefab p = Instantiate(prefab2, Vector3.zero, Quaternion.identity);
+                p.transform.SetParent(bookMarkContent);
+                p.transform.localScale = Vector3.one;
+                p.SetupUI(lg, OnClick_SelectBookmark);
+                bookmarkList.Add(p);
+            });
+        }
+
+        public void OnClick_SelectBookmark(BookmarkGamePrefab bookmark) {
+            SelectedBookmark = bookmark;
         }
     }
 }

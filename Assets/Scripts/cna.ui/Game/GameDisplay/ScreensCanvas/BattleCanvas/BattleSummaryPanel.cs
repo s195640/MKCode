@@ -61,7 +61,7 @@ namespace cna.ui {
         }
 
         public void ExitBattle(GameAPI ar) {
-            CNAMap<V2IntVO, WrapList<int>> monsterData = ar.P.Board.MonsterData;
+            CNAMap<V2IntVO, CNAList<int>> monsterData = ar.P.Board.MonsterData;
             //  determine the Conflict Structure Site
             Image_Enum structure = Image_Enum.NA;
             ar.P.Battle.Monsters.Values.ForEach(md => {

@@ -46,7 +46,7 @@ namespace cna.ui {
 
         private bool UpdateCardState() {
             bool update = false;
-            CNAMap<int, WrapList<CardState_Enum>> states = D.LocalPlayer.Deck.State;
+            CNAMap<int, CNAList<CardState_Enum>> states = D.LocalPlayer.Deck.State;
             if (states.ContainsKey(UniqueCardId) && states[UniqueCardId].Values.Count > 0) {
                 if (states[UniqueCardId].Values[0] != cardState) {
                     cardState = states[UniqueCardId].Values[0];
