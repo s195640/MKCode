@@ -13,15 +13,15 @@ namespace cna.editor {
     public class EditorTools {
 
         static EditorTools() {
-            EditorApplication.playModeStateChanged += PlayModeStateChanged;
+            //EditorApplication.playModeStateChanged += PlayModeStateChanged;
         }
 
-        static void PlayModeStateChanged(PlayModeStateChange state) {
-            if (state.Equals(PlayModeStateChange.EnteredEditMode)) {
-                //AppEngineHelper.UpdateSpriteMap();
-                DisplayAllImages_ToWork();
-            }
-        }
+        //static void PlayModeStateChanged(PlayModeStateChange state) {
+        //    if (state.Equals(PlayModeStateChange.EnteredEditMode)) {
+        //        //AppEngineHelper.UpdateSpriteMap();
+        //        DisplayAllImages_ToWork();
+        //    }
+        //}
 
         [MenuItem("Tools/JSON")]
         static void TryJSON() {

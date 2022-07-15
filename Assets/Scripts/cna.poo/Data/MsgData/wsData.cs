@@ -9,7 +9,6 @@ namespace cna.poo {
         public mType_Enum type;
         public byte[] byteMsg;
         public string textMsg_01;
-        //public string textMsg_02;
         public int gameHostKey;
         public int intMsg;
         public int sender;
@@ -33,6 +32,10 @@ namespace cna.poo {
         public wsData(mType_Enum type, int msg, int sender) : this(type, sender) {
             intMsg = msg;
         }
+        public wsData(mType_Enum type, int gameHostKey, int msg, int sender) : this(type, sender) {
+            intMsg = msg;
+            this.gameHostKey = gameHostKey;
+        }
 
         public wsData(mType_Enum type, string msg, int sender) : this(type, sender) {
             textMsg_01 = msg;
@@ -42,11 +45,7 @@ namespace cna.poo {
             this.msg = data;
             textMsg_01 = data.ToDataStr();
         }
-        //public wsData(mType_Enum type, string msg, BaseData data, int sender) : this(type, sender) {
-        //    this.msg = data;
-        //    textMsg_01 = data.ToDataStr();
-        //    //textMsg_02 = msg;
-        //}
+
         public wsData(mType_Enum type, int gameHostKey, BaseData data, int sender) : this(type, sender) {
             this.msg = data;
             textMsg_01 = data.ToDataStr();
@@ -61,7 +60,6 @@ namespace cna.poo {
             string data = CNASerialize.Sz(type) + "%"
                 + CNASerialize.Sz(byteMsg) + "%"
                 + CNASerialize.Sz(textMsg_01) + "%"
-                //+ CNASerialize.Sz(textMsg_02) + "%"
                 + CNASerialize.Sz(gameHostKey) + "%"
                 + CNASerialize.Sz(intMsg) + "%"
                 + CNASerialize.Sz(sender) + "%";
@@ -73,7 +71,6 @@ namespace cna.poo {
             CNASerialize.Dz(d[0], out type);
             CNASerialize.Dz(d[1], out byteMsg);
             CNASerialize.Dz(d[2], out textMsg_01);
-            //CNASerialize.Dz(d[3], out textMsg_02);
             CNASerialize.Dz(d[2], out gameHostKey);
             CNASerialize.Dz(d[4], out intMsg);
             CNASerialize.Dz(d[5], out sender);

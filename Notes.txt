@@ -35,5 +35,7 @@ https://s195640.github.io/MageKnight/
 
 //////// HOSTING LOCAL SERVER
 1) START SERVER (yarn start)
-2) Tunnel (lt --port 8080)
+2) Tunnel
+   (localtunnel) lt --port 8080
+   (ngrok) ngrok http 8080
 3) edit git https://github.com/s195640/MKCode/edit/master/README.md 

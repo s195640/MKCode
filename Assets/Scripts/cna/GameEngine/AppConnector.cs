@@ -145,11 +145,12 @@ namespace cna {
                             }
                             break;
                         }
-                        case mType_Enum.GameData_Request: {
+                        case mType_Enum.GameLobby_RequestAvatarByClient: {
                             if (D.ClientState == ClientState_Enum.CONNECTED_HOST && m.gameHostKey.Equals(D.HostPlayerKey)) {
-                                //  TODO - Check Request
-                                UpdateGameData(m.getData<Data>());
-                                Send_HostSendsGameDataToClients();
+                                Image_Enum newAvatar = (Image_Enum)m.intMsg;
+                                PlayerData p = D.GetPlayerByKey(m.sender);
+                                p.Avatar = D.G.Players.TrueForAll(p => p.Avatar != newAvatar) ? newAvatar : Image_Enum.A_MEEPLE_RANDOM;
+                                Send_HostSendsPlayerDataToClients(p);
                                 D.A.UpdateUI();
                             }
                             break;
@@ -303,7 +304,6 @@ namespace cna {
         public void Send_JoinGame(int gameHostKey, string gameid) {
             wsMsg msg = new wsMsg();
             msg.u.Add(gameHostKey);
-            //msg.d = new wsData(mType_Enum.RequestJoinGame, gameid, D.Connector.Player, D.Connector.Player.Key);
             msg.d = new wsData(mType_Enum.RequestJoinGame, gameHostKey, D.Connector.Player, D.Connector.Player.Key);
             Send(msg);
         }
@@ -313,26 +313,28 @@ namespace cna {
             msg.d = new wsData(mType_Enum.RequestJoinGameRejected, gameid, D.LocalPlayerKey);
             Send(msg);
         }
-        public void Send_GameDataRequest(Data gdClone, string gameid) {
+        public void Send_GameLobbyCharSelect(Image_Enum newAvatar) {
+            PlayerData pd = D.LocalPlayer;
             if (D.isHost) {
-                UpdateGameData(gdClone);
-                Send_HostSendsGameDataToClients();
+                pd.Avatar = newAvatar;
+                Send_HostSendsPlayerDataToClients(pd);
                 D.A.UpdateUI();
             } else {
                 wsMsg msg = new wsMsg();
-                msg.u.Add(gdClone.GameData.HostKey);
-                //msg.d = new wsData(mType_Enum.GameData_Request, gameid, gdClone, D.LocalPlayerKey);
-                msg.d = new wsData(mType_Enum.GameData_Request, gdClone.GameData.HostKey, gdClone, D.LocalPlayerKey);
+                msg.u.Add(D.HostPlayerKey);
+                msg.d = new wsData(mType_Enum.GameLobby_RequestAvatarByClient, D.HostPlayerKey, (int)newAvatar, pd.Key);
                 Send(msg);
             }
         }
+
+
+
         public void Send_GameData() {
             if (D.isHost) {
                 Send_HostSendsGameDataToClients();
             } else {
                 wsMsg msg = new wsMsg();
                 msg.u.Add(D.HostPlayer.Key);
-                //msg.d = new wsData(mType_Enum.GameData_Demand, D.G.GameId, D.G, D.LocalPlayerKey);
                 msg.d = new wsData(mType_Enum.GameData_Demand, D.HostPlayer.Key, D.G, D.LocalPlayerKey);
                 Send(msg);
             }
@@ -345,7 +347,6 @@ namespace cna {
                     msg.u.Add(p.Key);
                 }
             });
-            //msg.d = new wsData(mType_Enum.GameData_Host, D.G.GameId, D.G, D.LocalPlayerKey);
             msg.d = new wsData(mType_Enum.GameData_Host, D.HostPlayer.Key, D.G, D.LocalPlayerKey);
             Send(msg);
         }
@@ -382,7 +383,6 @@ namespace cna {
             } else {
                 wsMsg msg = new wsMsg();
                 msg.u.Add(D.HostPlayer.Key);
-                //msg.d = new wsData(mType_Enum.PlayerData_ToHost, D.G.GameId, playerData, playerData.Key);
                 msg.d = new wsData(mType_Enum.PlayerData_ToHost, D.HostPlayer.Key, playerData, playerData.Key);
                 Send(msg);
             }
@@ -395,7 +395,6 @@ namespace cna {
                     msg.u.Add(p.Key);
                 }
             });
-            //msg.d = new wsData(mType_Enum.PlayerData_FromHost, D.G.GameId, playerData, D.LocalPlayerKey);
             msg.d = new wsData(mType_Enum.PlayerData_FromHost, D.HostPlayer.Key, playerData, D.LocalPlayerKey);
             Send(msg);
         }

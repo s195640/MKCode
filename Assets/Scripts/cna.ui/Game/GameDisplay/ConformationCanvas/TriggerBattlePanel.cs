@@ -24,21 +24,22 @@ namespace cna.ui {
             SetupUI(hex, callback, STANDARD_BATTLE);
         }
 
-        public void SetupUI(HexItemDetail hex, Action<HexItemDetail> callback, string msg, bool lockUndo = false) {
+        public void SetupUI(HexItemDetail hex, Action<HexItemDetail> callback, string msg) {
+            PlayerData pd = D.LocalPlayer;
             gameObject.SetActive(true);
             bodyText.text = msg;
             Yes_Callback = callback;
             HexItemDetail = hex;
             cardSlots.ForEach(c => { Destroy(c.gameObject); });
             cardSlots.Clear();
-            hex.Monsters.ForEach(m => add(m));
+            hex.Monsters.ForEach(m => add(m, pd));
         }
 
-        private void add(MonsterMetaData m) {
+        private void add(MonsterMetaData m, PlayerData pd) {
             MonsterCardSlot c = Instantiate(prefab, Vector3.zero, Quaternion.identity);
             c.transform.SetParent(content);
             c.transform.localScale = Vector3.one;
-            c.SetupUI(D.LocalPlayer, m.Uniqueid);
+            c.SetupUI(pd, m.Uniqueid);
             c.IsButtonInteractable(false);
             cardSlots.Add(c);
         }

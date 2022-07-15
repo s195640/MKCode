@@ -25,6 +25,7 @@ namespace cna.ui {
         [SerializeField] private Toggle dummyPlayerToggle;
         [SerializeField] private GameObject startbutton;
         [SerializeField] private GameObject loadMenu;
+        [SerializeField] private GameObject disableForNonHost;
 
         [Header("Prefab")]
         [SerializeField] private GameLobbyAvatar gameLobbyAvatar_Pref;
@@ -93,6 +94,7 @@ namespace cna.ui {
             rounds.Setup(1, 10, D.G.GameData.Rounds, RoundSliderCallback);
             dummyPlayerToggle.onValueChanged.AddListener(delegate { DummyPlayerToggleCallback(dummyPlayerToggle.isOn); });
             startbutton.SetActive(D.isHost);
+            disableForNonHost.SetActive(!D.isHost);
             loadMenu.SetActive(false);
         }
 
@@ -172,9 +174,7 @@ namespace cna.ui {
 
 
         private void AvatarButtonCallback(Image_Enum avatar_Enum) {
-            Data gdClone = D.G.Clone();
-            gdClone.Players.Find(p => p.Equals(D.LocalPlayer)).Avatar = avatar_Enum;
-            D.C.Send_GameDataRequest(gdClone, gdClone.GameId);
+            D.C.Send_GameLobbyCharSelect(avatar_Enum);
         }
 
         private void AvatarRandomButtonCallback(Image_Enum avatar_Enum) {

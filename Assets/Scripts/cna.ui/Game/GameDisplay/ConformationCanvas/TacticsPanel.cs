@@ -24,6 +24,7 @@ namespace cna.ui {
                 } else {
                     UpdateUI_Tactics();
                 }
+                accept.Active = D.LocalPlayer.Equals(D.CurrentTurn) && D.LocalPlayer.PlayerTurnPhase == TurnPhase_Enum.TacticsSelect;
             }
         }
 

@@ -19,7 +19,6 @@ namespace cna.ui {
                     gameSetup.gameObject.SetActive(true);
                     playerWorld.gameObject.SetActive(false);
                     game.gameObject.SetActive(false);
-                    Clear();
                     gameSetup.UpdateUI();
                     break;
                 }

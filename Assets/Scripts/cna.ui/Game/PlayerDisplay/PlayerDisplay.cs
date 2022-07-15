@@ -13,7 +13,7 @@ namespace cna.ui {
         [SerializeField] PlayerCardPanel PlayerCardPanel;
 
         public override void SetupUI() {
-            Clear();
+            _Clear();
         }
 
         public void UpdateUI() {
@@ -28,6 +28,10 @@ namespace cna.ui {
 
         public override void Clear() {
             base.Clear();
+            _Clear();
+        }
+
+        private void _Clear() {
             TopBar.Clear();
             GameRoundPanel.Clear();
             GameEffectPanel.Clear();

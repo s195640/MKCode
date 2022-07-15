@@ -10,12 +10,12 @@ namespace cna.poo {
         RequestJoinGame,
         RequestJoinGameRejected,
         GameData_Host,
-        GameData_Request,
         GameData_Demand,
         GameData_Destroy,
         Chat,
         GameLog,
         PlayerData_ToHost,
         PlayerData_FromHost,
+        GameLobby_RequestAvatarByClient,
     }
 }
