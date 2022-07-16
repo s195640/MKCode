@@ -4,30 +4,45 @@ using TMPro;
 using UnityEngine;
 
 namespace cna.ui {
-    public class ServerMessage : UnityEngine.MonoBehaviour {
-        [SerializeField] private TextMeshProUGUI systemText;
-        [SerializeField] private GameObject disableScreen;
+    public class ServerMessage : MonoBehaviour {
+        [SerializeField] private TextMeshProUGUI headText;
+        [SerializeField] private TextMeshProUGUI bodyText;
+        [SerializeField] private AddressableImage image;
+        [SerializeField] private TextMeshProUGUI buttonText;
 
+        Action callback;
 
-
-        public void DisplaySystemMessage(int code) {
-            disableScreen.SetActive(false);
+        public void LoginFailed(Action callback) {
+            headText.text = "Connection Failed";
+            bodyText.text = "Check UserName name and password.";
+            buttonText.text = "OK";
+            image.ImageEnum = Image_Enum.I_warning;
+            this.callback = callback;
             gameObject.SetActive(true);
-            string usrMsg = "";
-            //if (code == 1002) {
-            //    usrMsg = "username/password may be incorrect";
-            //} else if (code == 1006) {
-            //    usrMsg = "the server may be down or invalid";
-            //}
-            systemText.text = string.Format("Code : {0} Message : {1}{2}", code, Environment.NewLine, usrMsg);
         }
 
+        public void JoinGame(Action callback) {
+            headText.text = "Joining Game";
+            bodyText.text = "";
+            buttonText.text = "Cancel";
+            image.ImageEnum = Image_Enum.I_info;
+            this.callback = callback;
+            gameObject.SetActive(true);
+        }
+
+        public void CreateGame(Action callback) {
+            headText.text = "Creating Game";
+            bodyText.text = "";
+            buttonText.text = "Cancel";
+            image.ImageEnum = Image_Enum.I_info;
+            this.callback = callback;
+            gameObject.SetActive(true);
+        }
+
+
         public void OK_OnClick() {
-            D.ClientState = ClientState_Enum.NOT_CONNECTED;
-            D.A.UpdateUI();
-            //gameObject.SetActive(false);
-            //GE.Clean();
-            //GE.UpdateUI();
+            gameObject.SetActive(false);
+            callback();
         }
     }
 }

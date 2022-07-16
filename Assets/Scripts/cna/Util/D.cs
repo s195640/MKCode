@@ -53,7 +53,7 @@ namespace cna {
                 }
             }
         }
-        public static bool isHost { get { return LocalPlayerKey == G.HostPlayerKey; } }
+        public static bool isHost { get { return LocalPlayerKey == G.HostPlayerKey || ClientState == ClientState_Enum.SINGLE_PLAYER; } }
         public static bool isTurn {
             get {
                 PlayerData l = LocalPlayer;

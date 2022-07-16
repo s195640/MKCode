@@ -91,6 +91,20 @@ namespace cna {
             return id;
         }
 
+        public static int GetPlayerTotalFame(V2IntVO fame, int levelMod) {
+            return _getPlayerTotalFame(fame.X, fame.X + fame.Y, levelMod);
+        }
+
+        private static int _getPlayerTotalFame(int o, int n, int mod) {
+            int currentLevel = GetPlayerLevel(o);
+            int newLevel = GetPlayerLevel(n);
+            if (currentLevel == newLevel) {
+                return n;
+            } else {
+                return _getPlayerTotalFame(n, n + (mod * (newLevel - currentLevel)), mod);
+            }
+        }
+
         public static int GetPlayerLevel(int fame) {
             int lvl = 0;
             if (fame < 3)

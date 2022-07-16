@@ -13,6 +13,7 @@ namespace cna.ui {
         private int[] playerFameVal;
         private int[] playerRepVal;
         private List<int> playerKeys = new List<int>();
+        [SerializeField] private GameObject[] blockFame;
 
         public override void SetupUI() {
             playerFameVal = new int[] { -1, -1, -1, -1 };
@@ -32,13 +33,18 @@ namespace cna.ui {
                     playerKeys.Add(p.Key);
                 }
             });
+            blockFame[0].SetActive(D.G.GameData.FamePerLevel > 0);
+            blockFame[1].SetActive(D.G.GameData.FamePerLevel > 1);
         }
 
         public void UpdateUI() {
             CheckSetupUI();
             for (int i = 0; i < playerKeys.Count; i++) {
                 PlayerData p = D.GetPlayerByKey(playerKeys[i]);
-                int fame = p.TotalFame;
+                int fame = BasicUtil.GetPlayerTotalFame(p.Fame, D.G.GameData.FamePerLevel);
+                if (fame > 119) {
+                    fame = 119;
+                }
                 int rep = p.RepLevel + 7;
                 if (playerFameVal[i] != fame) {
                     playerFameVal[i] = fame;

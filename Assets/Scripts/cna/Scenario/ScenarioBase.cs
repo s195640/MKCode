@@ -799,7 +799,7 @@ namespace cna {
         #region NewRound Setup
         public void BuildUnitOfferingDeck(Data g, PlayerData pd) {
             pd.Board.UnitOffering.Clear();
-            int totalCards = g.Players.Count + 2 - (g.GameData.DummyPlayer ? 1 : 0);
+            int totalCards = g.GameData.UnitOffer;
             for (int i = 0; i < totalCards; i++) {
                 if (i % 2 == 0) {
                     pd.Board.UnitOffering.Add(UnitRegularDeck[pd.Board.UnitRegularIndex]);
@@ -838,7 +838,7 @@ namespace cna {
 
         public void BuildManaOfferingDeck(Data g, PlayerData pd) {
             pd.ManaPoolFull.Clear();
-            int totalDie = g.Players.Count + 2 - (g.GameData.DummyPlayer ? 1 : 0);
+            int totalDie = g.GameData.ManaDie;
             for (int i = 0; i < totalDie / 2; i++) {
                 Crystal_Enum crystal_Enum = (Crystal_Enum)BasicUtil.RandomRange(1, 7);
                 pd.ManaPoolFull.Add(new ManaPoolData(crystal_Enum));

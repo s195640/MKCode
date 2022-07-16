@@ -202,4 +202,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cursor: {fileID: 2800000, guid: dda2207dd99d71f458b86e8d8af83716, type: 3}
-  hotspot: {x: 16, y: 16}
+  hotspot: {x: 10, y: 0}

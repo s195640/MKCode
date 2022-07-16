@@ -82,9 +82,10 @@ namespace cna {
         }
 
         public void LevelToken(GameAPI ar) {
-            int newArmor = BasicUtil.GetArmorFromFame(ar.P.TotalFame);
-            int newHandLimit = BasicUtil.GetHandLimitFromFame(ar.P.TotalFame);
-            int newUnitLimit = BasicUtil.GetUnitHandLimitFromFame(ar.P.TotalFame);
+            int totalFame = BasicUtil.GetPlayerTotalFame(ar.P.Fame, ar.G.GameData.FamePerLevel);
+            int newArmor = BasicUtil.GetArmorFromFame(totalFame);
+            int newHandLimit = BasicUtil.GetHandLimitFromFame(totalFame);
+            int newUnitLimit = BasicUtil.GetUnitHandLimitFromFame(totalFame);
             if (newArmor > ar.P.Armor) {
                 ar.change();
                 ar.P.Armor = newArmor;
@@ -299,7 +300,7 @@ namespace cna {
         public void CalcLevelSkill(GameAPI ar) {
             totalLevelSkillRewards = 0;
             int oldLevel = BasicUtil.GetPlayerLevel(ar.P.Fame.X);
-            int newLevel = BasicUtil.GetPlayerLevel(ar.P.TotalFame);
+            int newLevel = BasicUtil.GetPlayerLevel(BasicUtil.GetPlayerTotalFame(ar.P.Fame, ar.G.GameData.FamePerLevel));
             if (newLevel > oldLevel) {
                 if (oldLevel % 2 == 1) {
                     totalLevelSkillRewards = (int)Math.Ceiling((newLevel - oldLevel) / 2.0);

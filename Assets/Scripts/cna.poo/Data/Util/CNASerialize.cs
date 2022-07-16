@@ -76,6 +76,12 @@ namespace cna.poo {
         public static string Sz(ManaPool_Enum item) {
             return "" + (int)item;
         }
+        public static string Sz(Difficulty_Enum item) {
+            return "" + (int)item;
+        }
+        public static string Sz(Scenario_Enum item) {
+            return "" + (int)item;
+        }
         public static string Sz(int item) {
             return "" + item;
         }
@@ -160,6 +166,12 @@ namespace cna.poo {
         }
         public static void Dz(string data, out ManaPool_Enum item) {
             item = (ManaPool_Enum)Convert.ToInt32(data);
+        }
+        public static void Dz(string data, out Difficulty_Enum item) {
+            item = (Difficulty_Enum)Convert.ToInt32(data);
+        }
+        public static void Dz(string data, out Scenario_Enum item) {
+            item = (Scenario_Enum)Convert.ToInt32(data);
         }
         public static void Dz(string data, out byte[] item) {
             item = Encoding.ASCII.GetBytes(data);

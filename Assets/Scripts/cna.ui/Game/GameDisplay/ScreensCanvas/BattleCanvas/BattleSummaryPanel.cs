@@ -206,7 +206,7 @@ namespace cna.ui {
             //  Fame
             ar.Fame(fame);
             int oldLevel = BasicUtil.GetPlayerLevel(ar.P.Fame.X);
-            int newLevel = BasicUtil.GetPlayerLevel(ar.P.TotalFame);
+            int newLevel = BasicUtil.GetPlayerLevel(BasicUtil.GetPlayerTotalFame(ar.P.Fame, ar.G.GameData.FamePerLevel));
             if (newLevel > oldLevel) {
                 Reward_LevelUp(1);
             }

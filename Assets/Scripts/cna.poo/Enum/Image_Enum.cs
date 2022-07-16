@@ -134,6 +134,7 @@ namespace cna.poo {
         I_trophy,
         I_info,
         I_check,
+        I_warning,
 
         //CARD MISC
         C_deed_back = 400,

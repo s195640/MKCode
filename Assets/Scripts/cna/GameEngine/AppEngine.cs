@@ -33,7 +33,11 @@ namespace cna {
         private void NewGame(Data g) {
             if (D.isHost) {
                 g.Clear();
-                g.Players.ForEach(p => p.Clear());
+                g.Players.ForEach(p => {
+                    p.Clear();
+                    p.RepLevel += g.GameData.StartRep;
+                    p.Fame.X += g.GameData.FamePerLevel;
+                });
                 NewGame_BoardSetup(g);
                 NewGame_PlayerSetup(g);
             }

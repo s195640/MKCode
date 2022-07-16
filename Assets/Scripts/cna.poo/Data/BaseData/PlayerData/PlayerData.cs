@@ -46,7 +46,11 @@ namespace cna.poo {
         public V2IntVO CurrentGridLoc { get { return gridLocationHistory[0]; } }
         public List<int> VisableMonsters { get => visableMonsters; set => visableMonsters = value; }
         public BattleData Battle { get => battle; set => battle = value; }
-        public int TotalFame { get => fame.X + fame.Y; }
+        //public int TotalFame {
+        //    get {
+        //        return fame.X + fame.Y;
+        //    }
+        //}
         public V2IntVO Fame { get => fame; set => fame = value; }
         public int RepLevel { get => repLevel; set { repLevel = value > 7 ? 7 : value < -7 ? -7 : value; } }
         public bool ActionTaken { get => actionTaken; set => actionTaken = value; }
@@ -133,8 +137,6 @@ namespace cna.poo {
             Influence = 0;
             ActionTaken = false;
             Healpoints = 0;
-            Fame.X += Fame.Y;
-            Fame.Y = 0;
             Battle.Clear();
             Crystal.ClearSpent();
             Crystal.RemoveExtraCrystals(3);

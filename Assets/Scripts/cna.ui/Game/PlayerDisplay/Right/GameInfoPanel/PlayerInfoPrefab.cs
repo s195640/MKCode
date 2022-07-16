@@ -27,7 +27,6 @@ namespace cna.ui {
         [SerializeField] private TextMeshProUGUI PlayerName;
 
         [SerializeField] private TextMeshProUGUI FameVal;
-        [SerializeField] private TextMeshProUGUI FameNextLevelVal;
 
         [SerializeField] private TextMeshProUGUI RepVal;
         [SerializeField] private Transform RepImage_Good;
@@ -155,12 +154,8 @@ namespace cna.ui {
                 WhiteManaVal.text = "" + Player.Mana.White;
                 BlackManaVal.text = "" + Player.Mana.Black;
 
-
-                FameVal.text = "" + Player.TotalFame;
-                int currentLevel = BasicUtil.GetPlayerLevel(Player.TotalFame);
-                int fameForNextLevel = BasicUtil.GetFameForLevel(currentLevel + 1);
-                int fameNeededForNextLevel = fameForNextLevel - Player.TotalFame;
-                FameNextLevelVal.text = "[" + fameNeededForNextLevel + "]";
+                int totalFame = BasicUtil.GetPlayerTotalFame(Player.Fame, D.G.GameData.FamePerLevel);
+                FameVal.text = "" + totalFame;
 
                 if (Player.RepLevel >= 0) {
                     RepImage_Good.gameObject.SetActive(true);

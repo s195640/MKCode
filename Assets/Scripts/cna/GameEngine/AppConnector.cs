@@ -119,20 +119,37 @@ namespace cna {
                         }
                         case mType_Enum.RequestJoinGame: {
                             if (D.ClientState == ClientState_Enum.CONNECTED_HOST && m.gameHostKey.Equals(D.HostPlayerKey)) {
-                                if (D.G.GameStatus == Game_Enum.New_Game) {
+                                if (D.G.GameStatus >= Game_Enum.New_Game) {
                                     PlayerData playerToAdd = m.getData<PlayerData>();
                                     if (!D.G.Players.Exists(p => p.Key == playerToAdd.Key)) {
                                         Send_JoinGameRejected(m.sender, D.G.GameId);
                                     } else {
-                                        Send_HostSendsGameDataToClients();
+                                        Send_HostSendsGameDataToClient(playerToAdd.Key);
                                     }
                                 } else {
                                     PlayerData playerToAdd = m.getData<PlayerData>();
                                     if (!D.G.Players.Exists(p => p.Key == playerToAdd.Key)) {
                                         D.G.Players.Add(playerToAdd);
+                                        D.G.GameData.CharCreateUpdate(D.G.Players.Count);
+                                        D.A.UpdateUI();
+                                        Send_HostSendsGameDataToClients();
+                                    } else {
+                                        Send_HostSendsGameDataToClient(playerToAdd.Key);
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        case mType_Enum.ClientLeavesGame: {
+                            if (D.ClientState == ClientState_Enum.CONNECTED_HOST && m.gameHostKey.Equals(D.HostPlayerKey)) {
+                                if (D.G.GameStatus == Game_Enum.CHAR_CREATION) {
+                                    int playerKey = m.sender;
+                                    if (D.G.Players.Exists(p => p.Key == playerKey)) {
+                                        D.G.Players.Remove(D.GetPlayerByKey(playerKey));
+                                        D.G.GameData.CharCreateUpdate(D.G.Players.Count);
+                                        Send_HostSendsGameDataToClients();
                                         D.A.UpdateUI();
                                     }
-                                    Send_HostSendsGameDataToClients();
                                 }
                             }
                             break;
@@ -253,14 +270,19 @@ namespace cna {
                     D.C.Send_RequestGameList();
                     break;
                 }
+                case ClientState_Enum.CONNECTED_JOINING_GAME:
                 case ClientState_Enum.CONNECTED_PLAYER: {
                     D.ClientState = ClientState_Enum.CONNECTED;
-                    D.G.Players.RemoveAll(p => p.Key == D.LocalPlayerKey);
-                    D.C.Send_GameData();
+                    D.C.Send_ClientLeaveGame();
                     D.C.Send_RequestGameList();
                     break;
                 }
+                default: {
+                    D.ClientState = ClientState_Enum.NOT_CONNECTED;
+                    break;
+                }
             }
+            Clean();
             D.A.UpdateUI();
         }
         public void Clean() {
@@ -313,6 +335,13 @@ namespace cna {
             msg.d = new wsData(mType_Enum.RequestJoinGameRejected, gameid, D.LocalPlayerKey);
             Send(msg);
         }
+        public void Send_ClientLeaveGame() {
+            wsMsg msg = new wsMsg();
+            msg.u.Add(D.HostPlayerKey);
+            msg.d = new wsData(mType_Enum.ClientLeavesGame, D.HostPlayerKey, 0, D.Connector.Player.Key);
+            Send(msg);
+        }
+
         public void Send_GameLobbyCharSelect(Image_Enum newAvatar) {
             PlayerData pd = D.LocalPlayer;
             if (D.isHost) {
@@ -347,6 +376,12 @@ namespace cna {
                     msg.u.Add(p.Key);
                 }
             });
+            msg.d = new wsData(mType_Enum.GameData_Host, D.HostPlayer.Key, D.G, D.LocalPlayerKey);
+            Send(msg);
+        }
+        private void Send_HostSendsGameDataToClient(int key) {
+            wsMsg msg = new wsMsg();
+            msg.u.Add(key);
             msg.d = new wsData(mType_Enum.GameData_Host, D.HostPlayer.Key, D.G, D.LocalPlayerKey);
             Send(msg);
         }

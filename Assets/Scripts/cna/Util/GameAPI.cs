@@ -275,7 +275,7 @@ namespace cna {
             P.Fame.Y += val;
             log.Add((val > 0 ? "+" : "") + val + " Fame");
             int oldLevel = BasicUtil.GetPlayerLevel(P.Fame.X);
-            int newLevel = BasicUtil.GetPlayerLevel(P.TotalFame);
+            int newLevel = BasicUtil.GetPlayerLevel(BasicUtil.GetPlayerTotalFame(P.Fame, G.GameData.FamePerLevel));
             if (newLevel > oldLevel) {
                 Reward_LevelUp(1);
             }
@@ -894,42 +894,42 @@ namespace cna {
         #region Dummy
         public void Dummy() {
             string msg;
-            if (P.Deck.Deck.Count == 0) {
-                msg = "Dummy Player Declared End of Round";
-                TurnPhase(TurnPhase_Enum.EndOfRound);
-            } else {
-                TurnPhase(TurnPhase_Enum.EndTurn);
-                CardColor_Enum cardColor = CardColor_Enum.NA;
-                int totalCards = 0;
-                int cardId = 0;
-                for (int i = 0; i < 3; i++) {
+            CardColor_Enum cardColor = CardColor_Enum.NA;
+            int totalCards = 0;
+            int cardId = 0;
+            for (int i = 0; i < 3; i++) {
+                if (P.Deck.Deck.Count > 0) {
+                    cardId = BasicUtil.DrawCard(P.Deck.Deck);
+                    P.Deck.Discard.Add(cardId);
+                    totalCards++;
+                }
+            }
+            if (P.Deck.Deck.Count > 0) {
+                int extra = 0;
+                cardColor = D.Cards[cardId].CardColor;
+                switch (cardColor) {
+                    case CardColor_Enum.Blue: { extra = P.Crystal.Blue; break; }
+                    case CardColor_Enum.Red: { extra = P.Crystal.Red; break; }
+                    case CardColor_Enum.Green: { extra = P.Crystal.Green; break; }
+                    case CardColor_Enum.White: { extra = P.Crystal.White; break; }
+                }
+                for (int i = 0; i < extra; i++) {
                     if (P.Deck.Deck.Count > 0) {
                         cardId = BasicUtil.DrawCard(P.Deck.Deck);
                         P.Deck.Discard.Add(cardId);
                         totalCards++;
                     }
                 }
-                if (P.Deck.Deck.Count > 0) {
-                    int extra = 0;
-                    cardColor = D.Cards[cardId].CardColor;
-                    switch (cardColor) {
-                        case CardColor_Enum.Blue: { extra = P.Crystal.Blue; break; }
-                        case CardColor_Enum.Red: { extra = P.Crystal.Red; break; }
-                        case CardColor_Enum.Green: { extra = P.Crystal.Green; break; }
-                        case CardColor_Enum.White: { extra = P.Crystal.White; break; }
-                    }
-                    for (int i = 0; i < extra; i++) {
-                        if (P.Deck.Deck.Count > 0) {
-                            cardId = BasicUtil.DrawCard(P.Deck.Deck);
-                            P.Deck.Discard.Add(cardId);
-                            totalCards++;
-                        }
-                    }
-                }
-                msg = "Total Cards " + totalCards;
-                if (cardColor != CardColor_Enum.NA) {
-                    msg += " (" + cardColor + ")";
-                }
+            }
+            msg = "Total Cards " + totalCards;
+            if (cardColor != CardColor_Enum.NA) {
+                msg += " (" + cardColor + ")";
+            }
+            if (P.Deck.Deck.Count <= 0) {
+                msg += "Dummy Player Declared End of Round";
+                TurnPhase(TurnPhase_Enum.EndOfRound);
+            } else {
+                TurnPhase(TurnPhase_Enum.EndTurn);
             }
             D.C.LogMessageDummy(msg);
             D.C.Send_HostSendsPlayerDataToClients(P);
@@ -950,6 +950,8 @@ namespace cna {
             P.Deck.Deck.ShuffleDeck();
             if (!P.DummyPlayer) {
                 P.ClearEndTurn();
+                P.Fame.X = BasicUtil.GetPlayerTotalFame(P.Fame, D.GLD.FamePerLevel);
+                P.Fame.Y = 0;
                 P.AddGameEffect(D.Scenario.isDay ? GameEffect_Enum.Day : GameEffect_Enum.Night);
                 drawHand(P.Deck);
             }
@@ -1071,6 +1073,8 @@ namespace cna {
                     }
                     SendLogs();
                     P.ClearEndTurn();
+                    P.Fame.X = BasicUtil.GetPlayerTotalFame(P.Fame, D.GLD.FamePerLevel);
+                    P.Fame.Y = 0;
                 }
             }
         }

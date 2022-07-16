@@ -4,10 +4,10 @@ namespace cna {
     public partial class GREEN_MotivationVO : CardSkillVO {
         private Crystal_Enum addMana = Crystal_Enum.Green;
         public override void ActionPaymentComplete_00(GameAPI ar) {
-            int currentPlayerFame = ar.P.TotalFame;
+            int currentPlayerFame = BasicUtil.GetPlayerTotalFame(ar.P.Fame, ar.G.GameData.FamePerLevel);
             bool lowest = true;
             ar.G.Players.ForEach(p => {
-                if (!p.DummyPlayer && p.Key != ar.P.Key && p.TotalFame <= currentPlayerFame) {
+                if (!p.DummyPlayer && p.Key != ar.P.Key && p.Fame.X <= currentPlayerFame) {
                     lowest = lowest && false;
                 }
             });

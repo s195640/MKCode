@@ -15,17 +15,30 @@ namespace cna.ui {
         [SerializeField] private Button loadGameButton;
         [SerializeField] private Transform playerListContent;
         [SerializeField] private Transform avatarListContent;
-        [SerializeField] private TMP_Dropdown gameLayoutDropdown;
+        [SerializeField] private GameObject startbutton;
+        [SerializeField] private GameObject loadMenu;
+        [SerializeField] private GameObject[] disableForNonHost;
+
+
+        [Header("Global Settings")]
+        [SerializeField] private TMP_Dropdown scenarioDropdown;
+        [SerializeField] private TMP_Dropdown difficultyDropdown;
+        [SerializeField] private GameObject difficultyObj;
+
+
+        [Header("Custom Settings")]
+        [SerializeField] private TMP_Dropdown mapLayoutDropdown;
+        [SerializeField] private Toggle dummyPlayerToggle;
         [SerializeField] private Toggle easyStartToggle;
         [SerializeField] private CNA_Slider rounds;
         [SerializeField] private CNA_Slider basicTiles;
         [SerializeField] private CNA_Slider coreTiles;
         [SerializeField] private CNA_Slider cityTiles;
         [SerializeField] private CNA_Slider cityLevel;
-        [SerializeField] private Toggle dummyPlayerToggle;
-        [SerializeField] private GameObject startbutton;
-        [SerializeField] private GameObject loadMenu;
-        [SerializeField] private GameObject disableForNonHost;
+        [SerializeField] private CNA_Slider famePerLevel;
+        [SerializeField] private CNA_Slider rep;
+        [SerializeField] private CNA_Slider manadie;
+        [SerializeField] private CNA_Slider unitOffer;
 
         [Header("Prefab")]
         [SerializeField] private GameLobbyAvatar gameLobbyAvatar_Pref;
@@ -80,12 +93,23 @@ namespace cna.ui {
             gameLobbyPlayers = new List<GameLobbyPlayer>();
             gameLobbyAvatars = new List<GameLobbyAvatar>();
         }
+        private void OnEnable() {
+            startbutton.SetActive(D.isHost);
+            foreach (GameObject go in disableForNonHost) {
+                go.SetActive(!D.isHost);
+            }
+            loadMenu.SetActive(false);
+        }
 
         void Start() {
             exitButton.onClick.AddListener(ExitButtonCallback);
             startGameButton.onClick.AddListener(StartGameButtonCallback);
             loadGameButton.onClick.AddListener(LoadGameButtonCallback);
-            gameLayoutDropdown.onValueChanged.AddListener(delegate { GameLayoutDropdownCallback(gameLayoutDropdown.value); });
+
+            scenarioDropdown.onValueChanged.AddListener(delegate { ScenarioDropdownCallback(scenarioDropdown.value); });
+            difficultyDropdown.onValueChanged.AddListener(delegate { DifficultyDropdownCallback(difficultyDropdown.value); });
+
+            mapLayoutDropdown.onValueChanged.AddListener(delegate { MapLayoutDropdownCallback(mapLayoutDropdown.value); });
             easyStartToggle.onValueChanged.AddListener(delegate { EasyStartToggleCallback(easyStartToggle.isOn); });
             basicTiles.Setup(0, 8, D.G.GameData.BasicTiles, BasicTileSliderCallback);
             coreTiles.Setup(0, 4, D.G.GameData.CoreTiles, CoreTileSliderCallback);
@@ -93,9 +117,12 @@ namespace cna.ui {
             cityLevel.Setup(1, 11, D.G.GameData.Level, CityLevelSliderCallback);
             rounds.Setup(1, 10, D.G.GameData.Rounds, RoundSliderCallback);
             dummyPlayerToggle.onValueChanged.AddListener(delegate { DummyPlayerToggleCallback(dummyPlayerToggle.isOn); });
-            startbutton.SetActive(D.isHost);
-            disableForNonHost.SetActive(!D.isHost);
-            loadMenu.SetActive(false);
+
+            famePerLevel.Setup(0, 2, D.G.GameData.FamePerLevel, FamePerLevelSliderCallback);
+            rep.Setup(-7, 7, D.G.GameData.StartRep, RepSliderCallback);
+            manadie.Setup(1, 8, D.G.GameData.ManaDie, ManaDieSliderCallback);
+            unitOffer.Setup(0, 8, D.G.GameData.UnitOffer, UnitOfferSliderCallback);
+            difficultyObj.SetActive(true);
         }
 
         public void UpdateUI() {
@@ -146,8 +173,15 @@ namespace cna.ui {
         }
 
         private void updateGameMenu() {
-            if (gameLayoutDropdown.value != (int)D.G.GameData.GameMapLayout - 2) {
-                gameLayoutDropdown.value = (int)D.G.GameData.GameMapLayout - 2;
+            if (scenarioDropdown.value != (int)D.G.GameData.Scenario - 1) {
+                scenarioDropdown.value = (int)D.G.GameData.Scenario - 1;
+            }
+            difficultyObj.SetActive(D.G.GameData.Scenario != Scenario_Enum.Custom);
+            if (difficultyDropdown.value != (int)D.G.GameData.Difficulty - 1) {
+                difficultyDropdown.value = (int)D.G.GameData.Difficulty - 1;
+            }
+            if (mapLayoutDropdown.value != (int)D.G.GameData.GameMapLayout - 2) {
+                mapLayoutDropdown.value = (int)D.G.GameData.GameMapLayout - 2;
             }
             if (D.G.GameData.EasyStart != easyStartToggle.isOn) {
                 easyStartToggle.isOn = D.G.GameData.EasyStart;
@@ -170,6 +204,20 @@ namespace cna.ui {
             if (D.G.GameData.DummyPlayer != dummyPlayerToggle.isOn) {
                 dummyPlayerToggle.isOn = D.G.GameData.DummyPlayer;
             }
+
+            if (D.G.GameData.FamePerLevel != (int)famePerLevel.Value) {
+                famePerLevel.Value = D.G.GameData.FamePerLevel;
+            }
+            if (D.G.GameData.StartRep != (int)rep.Value) {
+                rep.Value = D.G.GameData.StartRep;
+            }
+            if (D.G.GameData.ManaDie != (int)manadie.Value) {
+                manadie.Value = D.G.GameData.ManaDie;
+            }
+            if (D.G.GameData.UnitOffer != (int)unitOffer.Value) {
+                unitOffer.Value = D.G.GameData.UnitOffer;
+            }
+
         }
 
 
@@ -198,16 +246,37 @@ namespace cna.ui {
             }
         }
 
+        private void ScenarioDropdownCallback(int value) {
+            if (D.G.GameData.Scenario != (Scenario_Enum)(value + 1)) {
+                GameData g = D.G.GameData;
+                g.Scenario = (Scenario_Enum)(value + 1);
+                updateScenario(g);
+            }
+        }
 
+        private void DifficultyDropdownCallback(int value) {
+            if (D.G.GameData.Difficulty != (Difficulty_Enum)(value + 1)) {
+                GameData g = D.G.GameData;
+                g.Difficulty = (Difficulty_Enum)(value + 1);
+                updateScenario(g);
+            }
+        }
 
-        private void GameLayoutDropdownCallback(int value) {
+        private void updateScenario(GameData g) {
+            g.CharCreateUpdate(D.G.Players.Count);
+            D.C.Send_GameData();
+        }
+
+        private void MapLayoutDropdownCallback(int value) {
             if (D.G.GameData.GameMapLayout != (GameMapLayout_Enum)(value + 2)) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
                 D.G.GameData.GameMapLayout = (GameMapLayout_Enum)(value + 2);
                 D.C.Send_GameData();
             }
         }
         private void EasyStartToggleCallback(bool value) {
             if (D.G.GameData.EasyStart != value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
                 D.G.GameData.EasyStart = value;
                 D.C.Send_GameData();
             }
@@ -215,18 +284,21 @@ namespace cna.ui {
 
         private void BasicTileSliderCallback(float value) {
             if (D.G.GameData.BasicTiles != (int)value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
                 D.G.GameData.BasicTiles = (int)value;
                 D.C.Send_GameData();
             }
         }
         private void CoreTileSliderCallback(float value) {
             if (D.G.GameData.CoreTiles != (int)value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
                 D.G.GameData.CoreTiles = (int)value;
                 D.C.Send_GameData();
             }
         }
         private void CityTileSliderCallback(float value) {
             if (D.G.GameData.CityTiles != (int)value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
                 D.G.GameData.CityTiles = (int)value;
                 D.C.Send_GameData();
             }
@@ -234,6 +306,7 @@ namespace cna.ui {
 
         private void CityLevelSliderCallback(float value) {
             if (D.G.GameData.Level != (int)value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
                 D.G.GameData.Level = (int)value;
                 D.C.Send_GameData();
             }
@@ -241,16 +314,50 @@ namespace cna.ui {
 
         private void DummyPlayerToggleCallback(bool value) {
             if (D.G.GameData.DummyPlayer != value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
                 D.G.GameData.DummyPlayer = value;
                 D.C.Send_GameData();
             }
         }
         private void RoundSliderCallback(float value) {
             if (D.G.GameData.Rounds != (int)value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
                 D.G.GameData.Rounds = (int)value;
                 D.C.Send_GameData();
             }
         }
+
+        private void FamePerLevelSliderCallback(float value) {
+            if (D.G.GameData.FamePerLevel != (int)value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
+                D.G.GameData.FamePerLevel = (int)value;
+                D.C.Send_GameData();
+            }
+        }
+        private void RepSliderCallback(float value) {
+            if (D.G.GameData.StartRep != (int)value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
+                D.G.GameData.StartRep = (int)value;
+                D.C.Send_GameData();
+            }
+        }
+        private void ManaDieSliderCallback(float value) {
+            if (D.G.GameData.ManaDie != (int)value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
+                D.G.GameData.ManaDie = (int)value;
+                D.C.Send_GameData();
+            }
+        }
+        private void UnitOfferSliderCallback(float value) {
+            if (D.G.GameData.UnitOffer != (int)value) {
+                D.G.GameData.Scenario = Scenario_Enum.Custom;
+                D.G.GameData.UnitOffer = (int)value;
+                D.C.Send_GameData();
+            }
+        }
+
+
+
 
         private void LoadGameButtonCallback() {
             loadMenu.SetActive(true);

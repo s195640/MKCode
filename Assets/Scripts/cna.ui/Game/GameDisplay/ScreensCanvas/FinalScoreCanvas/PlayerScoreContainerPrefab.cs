@@ -202,7 +202,7 @@ namespace cna.ui {
             D.G.Players.ForEach(p => {
                 if (!p.DummyPlayer) {
                     int[] x = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-                    x[1] = p.TotalFame;
+                    x[1] = BasicUtil.GetPlayerTotalFame(p.Fame, D.G.GameData.FamePerLevel);
                     p.Deck.Deck.ForEach(c => { addCards(c, ref x, p); });
                     p.Deck.Discard.ForEach(c => { addCards(c, ref x, p); });
                     p.Deck.Hand.ForEach(c => { addCards(c, ref x, p); });

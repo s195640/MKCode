@@ -9,6 +9,7 @@ namespace cna.poo {
         LobbyGame,
         RequestJoinGame,
         RequestJoinGameRejected,
+        ClientLeavesGame,
         GameData_Host,
         GameData_Demand,
         GameData_Destroy,

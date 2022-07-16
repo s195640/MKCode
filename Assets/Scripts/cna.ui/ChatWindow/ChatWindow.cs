@@ -39,7 +39,7 @@ namespace cna.ui {
             string msg = sendTextInput.text;
             sendTextInput.text = "";
             sendTextInput.ActivateInputField();
-            ChatItemData cid = new ChatItemData(D.LocalPlayer.Name, msg, t);
+            ChatItemData cid = new ChatItemData(D.Connector.Player.Name, msg, t);
             addNewChatItem(cid);
             D.C.Send_Chat(cid);
         }

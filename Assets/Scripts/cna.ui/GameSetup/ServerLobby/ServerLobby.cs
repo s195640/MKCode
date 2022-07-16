@@ -9,7 +9,7 @@ namespace cna.ui {
         [SerializeField] private Button createButton;
         [SerializeField] private Button exitButton;
         [SerializeField] private Transform gameListContent;
-        [SerializeField] private GameObject disableScreen;
+        [SerializeField] private ServerMessage serverMessage;
 
         [Header("Prefab")]
         [SerializeField] private ServerLobbyGame ServerLobbyGame_Pref;
@@ -18,7 +18,6 @@ namespace cna.ui {
 
 
         public void UpdateUI() {
-            disableScreen.SetActive(D.ClientState == ClientState_Enum.CONNECTED_JOINING_GAME);
             updateGameList();
         }
 
@@ -42,7 +41,9 @@ namespace cna.ui {
         }
 
         public void CreateGame_OnClick() {
-            disableScreen.SetActive(true);
+            serverMessage.CreateGame(() => {
+                D.C.QuitGame();
+            });
             D.ClientState = ClientState_Enum.CONNECTED_HOST;
             D.C.CreateNewGame();
             D.C.Send_CreateNewGame();
@@ -50,7 +51,9 @@ namespace cna.ui {
         }
 
         public void JoinGame_OnClick(LobbyData lgd) {
-            disableScreen.SetActive(true);
+            serverMessage.JoinGame(() => {
+                D.C.QuitGame();
+            });
             D.ClientState = ClientState_Enum.CONNECTED_JOINING_GAME;
             D.GLD.GameId = lgd.GameId;
             D.GLD.HostKey = lgd.HostPlayer.Key;

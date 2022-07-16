@@ -13,7 +13,6 @@ namespace cna.ui {
         [SerializeField] private Button soloGameButton;
         [SerializeField] private Button multiGameButton;
         [SerializeField] private Button exitButton;
-        [SerializeField] private GameObject disableScreen;
 
         private void Start() {
             soloGameButton.onClick.AddListener(SoloGameButtonCallback);
@@ -47,7 +46,6 @@ namespace cna.ui {
         }
 
         IEnumerator getServerURL() {
-            //serverText.InputValue = "ws://localhost:8080/​";
             UnityWebRequest www = new UnityWebRequest("https://raw.githubusercontent.com/s195640/MKCode/master/README.md");
             www.downloadHandler = new DownloadHandlerBuffer();
             yield return www.SendWebRequest();
@@ -57,6 +55,11 @@ namespace cna.ui {
         private void setupUnityEditor() {
             serverText.InputValue = "ws://localhost:8080/​";
             loginText.InputValue = "login";
+        }
+
+        public void OnClick_UseLocalHost() {
+            serverText.InputValue = "ws://localhost:8080/​";
+            loginText.InputValue = "login02";
         }
     }
 }

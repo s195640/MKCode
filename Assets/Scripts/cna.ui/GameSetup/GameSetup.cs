@@ -32,7 +32,7 @@ namespace cna.ui {
                 }
                 case ClientState_Enum.CONNECTING_FAILED: {
                     disableScreen.gameObject.SetActive(false);
-                    serverMessage.gameObject.SetActive(true);
+                    serverMessage.LoginFailed(() => { D.ClientState = ClientState_Enum.NOT_CONNECTED; D.A.UpdateUI(); });
                     break;
                 }
                 case ClientState_Enum.CONNECTED: {
