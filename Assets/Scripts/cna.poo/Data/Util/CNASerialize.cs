@@ -30,6 +30,15 @@ namespace cna.poo {
             }
             return "[" + data + "]";
         }
+        public static string Sz(List<Image_Enum> list, string delimiter = "^") {
+            string data = "";
+            bool flag = false;
+            foreach (Image_Enum i in list) {
+                if (flag) data += delimiter; else flag = true;
+                data += (int)i;
+            }
+            return "[" + data + "]";
+        }
 
         public static string Sz(List<int> list, string delimiter = "^") {
             string data = string.Join(delimiter, list);
@@ -117,6 +126,9 @@ namespace cna.poo {
         }
         public static void Dz(string data, out List<MapHexId_Enum> list, string delimiter = "^") {
             list = Split(data, delimiter).ConvertAll(i => (MapHexId_Enum)Convert.ToInt32(i));
+        }
+        public static void Dz(string data, out List<Image_Enum> list, string delimiter = "^") {
+            list = Split(data, delimiter).ConvertAll(i => (Image_Enum)Convert.ToInt32(i));
         }
 
         public static void Dz<T>(string data, out List<T> list, string delimiter = "^") where T : BaseData, new() {

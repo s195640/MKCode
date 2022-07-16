@@ -18,6 +18,7 @@ namespace cna.ui {
         private List<Action<GameAPI>> callbacks;
 
         public void SetupUI(GameAPI ar, string head, string body, List<Action<GameAPI>> callbacks, List<string> buttonText, List<Color32> buttonColor, Color32 backgroundColor) {
+            Clear();
             this.ar = ar;
             headText.text = head;
             bodyText.text = body;

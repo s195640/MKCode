@@ -8,5 +8,9 @@ namespace cna.ui {
         public virtual void SetupUI(PlayerData pd) { }
 
         public virtual void UpdateUI() { }
+
+        public void Clear() {
+            ConformationCanvas.Clear();
+        }
     }
 }

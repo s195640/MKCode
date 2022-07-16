@@ -270,6 +270,9 @@ namespace cna {
                             }
                             g.GameStatus = Game_Enum.Tactics_WaitingOnPlayers;
                             g.Board.PlayerTurnIndex = 0;
+                            if (g.GameData.DummyPlayer && g.Players.Count == 2) {
+                                g.Players.ForEach(p => D.DummyPlayer.DummyTacticsUsed.Add(D.Cards[p.Deck.TacticsCardId].CardImage));
+                            }
                         } else {
                             g.Board.PlayerTurnIndex++;
                             D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsSelect;
@@ -283,6 +286,13 @@ namespace cna {
                             List<int> cards = new List<int>();
                             cards.AddRange(D.Scenario.isDay ? D.Scenario.TacticsDayDeck : D.Scenario.TacticsNightDeck);
                             g.Players.ForEach(p => cards.Remove(p.Deck.TacticsCardId));
+                            if (g.Players.Count == 2) {
+                                foreach (int i in cards.ToArray()) {
+                                    if (D.DummyPlayer.DummyTacticsUsed.Contains(D.Cards[i].CardImage)) {
+                                        cards.Remove(i);
+                                    }
+                                }
+                            }
                             D.CurrentTurn.Deck.TacticsCardId = cards.Random();
                             D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsEnd;
                             D.C.Send_GameData();

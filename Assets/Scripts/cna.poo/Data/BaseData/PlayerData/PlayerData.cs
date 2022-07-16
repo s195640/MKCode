@@ -33,6 +33,7 @@ namespace cna.poo {
         [SerializeField] private bool undoLock = false;
         [SerializeField] private long time01 = 0;
         [SerializeField] private long time02 = 0;
+        [SerializeField] private List<Image_Enum> dummyTacticsUsed = new List<Image_Enum>();
 
         public string Name { get => playerName; set => playerName = value; }
         public int Key { get => playerKey; set => playerKey = value; }
@@ -46,11 +47,6 @@ namespace cna.poo {
         public V2IntVO CurrentGridLoc { get { return gridLocationHistory[0]; } }
         public List<int> VisableMonsters { get => visableMonsters; set => visableMonsters = value; }
         public BattleData Battle { get => battle; set => battle = value; }
-        //public int TotalFame {
-        //    get {
-        //        return fame.X + fame.Y;
-        //    }
-        //}
         public V2IntVO Fame { get => fame; set => fame = value; }
         public int RepLevel { get => repLevel; set { repLevel = value > 7 ? 7 : value < -7 ? -7 : value; } }
         public bool ActionTaken { get => actionTaken; set => actionTaken = value; }
@@ -69,6 +65,7 @@ namespace cna.poo {
         public bool UndoLock { get => undoLock; set => undoLock = value; }
         public long Time01 { get => time01; set => time01 = value; }
         public long Time02 { get => time02; set => time02 = value; }
+        public List<Image_Enum> DummyTacticsUsed { get => dummyTacticsUsed; set => dummyTacticsUsed = value; }
 
         public void AddGameEffect(GameEffect_Enum ge, params int[] cards) {
             if (cards.Length == 0) cards = new int[] { 0 };
@@ -129,6 +126,7 @@ namespace cna.poo {
             UndoLock = false;
             time01 = 0;
             time02 = 0;
+            dummyTacticsUsed.Clear();
         }
 
         public void ClearEndTurn() {
@@ -186,6 +184,8 @@ namespace cna.poo {
             undoLock = p.undoLock;
             time01 = p.time01;
             time02 = p.time02;
+            dummyTacticsUsed.Clear();
+            p.dummyTacticsUsed.ForEach(i => dummyTacticsUsed.Add(i));
         }
 
         public PlayerData Clone() {
@@ -244,7 +244,8 @@ namespace cna.poo {
                 + CNASerialize.Sz(waitOnServer) + "%"
                 + CNASerialize.Sz(undoLock) + "%"
                 + CNASerialize.Sz(time01) + "%"
-                + CNASerialize.Sz(time02);
+                + CNASerialize.Sz(time02) + "%"
+                + CNASerialize.Sz(dummyTacticsUsed);
             return "[" + data + "]";
         }
 
@@ -278,6 +279,7 @@ namespace cna.poo {
             CNASerialize.Dz(d[25], out undoLock);
             CNASerialize.Dz(d[26], out time01);
             CNASerialize.Dz(d[27], out time02);
+            CNASerialize.Dz(d[28], out dummyTacticsUsed);
 
         }
     }

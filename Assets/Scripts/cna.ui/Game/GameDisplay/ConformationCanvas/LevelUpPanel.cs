@@ -57,12 +57,12 @@ namespace cna.ui {
                 });
                 skillSlotOffering.Add(s);
             });
-            Clear();
+            Clear_data();
             gameObject.SetActive(true);
         }
 
         public void OnClick_Clear() {
-            Clear();
+            Clear_data();
         }
 
         public void OnClick_Accept() {
@@ -106,7 +106,7 @@ namespace cna.ui {
             }
         }
 
-        public void Clear() {
+        public void Clear_data() {
             actionOfferingIndex = -1;
             skillOfferingIndex = -1;
             skillIndex = -1;

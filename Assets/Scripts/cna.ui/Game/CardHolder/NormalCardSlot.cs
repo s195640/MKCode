@@ -238,6 +238,14 @@ namespace cna.ui {
                         TacticsSelectedAvatarImage.ImageEnum = D.AvatarMetaDataMap[p.Avatar].AvatarShieldId;
                     }
                 });
+                if (D.GLD.DummyPlayer) {
+                    D.DummyPlayer.DummyTacticsUsed.ForEach(i => {
+                        if (TacticsCardImage.ImageEnum == i) {
+                            TacticsSelectedContainer.SetActive(true);
+                            TacticsSelectedAvatarImage.ImageEnum = D.AvatarMetaDataMap[D.DummyPlayer.Avatar].AvatarShieldId;
+                        }
+                    });
+                }
             }
         }
 
