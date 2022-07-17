@@ -12,7 +12,6 @@ namespace cna.ui {
 
         public override void UpdateUI() {
             if (D.G.GameStatus == Game_Enum.Tactics) {
-                Clear();
                 if (!gameObject.activeSelf) {
                     index = -1;
                     if (D.LocalPlayer.Deck.TacticsCardId == 0) {
