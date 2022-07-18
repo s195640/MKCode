@@ -537,7 +537,7 @@ namespace cna {
                         });
                         bool allCitiesConquered = BasicUtil.AllCitiesConquered(g);
                         if (g.Board.EndOfRound) {
-                            if (allCitiesConquered || g.Board.GameRoundCounter + 1 >= g.GameData.Rounds) {
+                            if (allCitiesConquered || g.Board.GameRoundCounter >= g.GameData.Rounds) {
                                 g.GameStatus = Game_Enum.End_Of_Game;
                             } else {
                                 g.GameStatus = Game_Enum.New_Round;
