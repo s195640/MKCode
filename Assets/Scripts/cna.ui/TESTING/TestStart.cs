@@ -42,6 +42,8 @@ namespace cna.ui {
 
         public override void Clear() { }
 
+        public override void AddGood(int val, Image_Enum i) { }
+
         //public void LateUpdate() {
         //    if (afterLoad.activeSelf) {
         //        if (Input.GetMouseButton(0)) {

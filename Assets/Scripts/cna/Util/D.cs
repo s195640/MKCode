@@ -21,6 +21,7 @@ namespace cna {
         private static List<CardVO> cards;
         public static CardEngine Action { get { if (cardEngine == null) { cardEngine = Object.FindObjectOfType<CardEngine>(); } return cardEngine; } }
         public static void Msg(string msg) { Action.Msg(msg); }
+        public static void AddGood(int val, Image_Enum i) { A.AddGood(val, i); }
         public static AppEngine A { get { if (appEngine == null) { appEngine = Object.FindObjectOfType<AppEngine>(); } return appEngine; } }
         public static AppConnector C { get { if (appConnector == null) { appConnector = Object.FindObjectOfType<AppConnector>(); } return appConnector; } }
         public static Data G { get => A.masterGameData; set => A.masterGameData = value; }

@@ -11,6 +11,7 @@ namespace cna.ui {
         [SerializeField] GameObject chatWindow;
         [SerializeField] StartOfTurnPanel StartOfTurnPanel;
         [SerializeField] TacticsPanel TacticsPanel;
+        [SerializeField] GoodsCanvas GoodsCanvas;
 
         public override void UpdateUI() {
             switch (D.G.GameStatus) {
@@ -40,6 +41,10 @@ namespace cna.ui {
 
         public override void StartTacticsPanel() {
             TacticsPanel.SetupUI(D.LocalPlayer);
+        }
+
+        public override void AddGood(int val, Image_Enum i) {
+            GoodsCanvas.Add(val, i);
         }
     }
 }

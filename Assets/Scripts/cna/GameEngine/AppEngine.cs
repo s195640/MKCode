@@ -654,5 +654,7 @@ namespace cna {
             masterGameData.Players.Find(p => p.Key == localPlayerKey).UpdateData(pd_StartOfTurn.Clone());
             D.C.Send_PlayerData();
         }
+
+        public abstract void AddGood(int val, Image_Enum i);
     }
 }

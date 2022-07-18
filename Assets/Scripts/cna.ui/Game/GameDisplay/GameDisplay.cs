@@ -9,6 +9,7 @@ namespace cna.ui {
         [SerializeField] private ScreensCanvas ScreensCanvas;
         [SerializeField] private ConformationCanvas ConformationCanvas;
         [SerializeField] private GameObject NotificationCanvas;
+        [SerializeField] private GoodsCanvas GoodsCanvas;
 
         public override void SetupUI() {
             _Clear();
@@ -19,6 +20,7 @@ namespace cna.ui {
             OverlayCanvas.UpdateUI();
             ScreensCanvas.UpdateUI();
             ConformationCanvas.UpdateUI();
+            GoodsCanvas.UpdateUI();
         }
 
         public override void Clear() {
@@ -33,6 +35,7 @@ namespace cna.ui {
             ConformationCanvas.Clear();
             NotificationCanvas.SetActive(true);
             ScreensCanvas.Clear();
+            GoodsCanvas.Clear();
         }
     }
 }

@@ -176,11 +176,13 @@ namespace cna {
             change();
             P.Movement += val;
             log.Add((val > 0 ? "+" : "") + val + " Movement");
+            D.AddGood(val, Image_Enum.I_boots);
         }
         public void ActionInfluence(int val) {
             change();
             P.Influence += val;
             log.Add((val > 0 ? "+" : "") + val + " Influence");
+            D.AddGood(val, Image_Enum.I_influencegrey);
         }
         public void BattleBlock(AttackData i) {
             change();
@@ -189,12 +191,16 @@ namespace cna {
             string msg = "";
             if (i.Physical > 0) {
                 msg = "Block +" + i.Physical;
+                D.AddGood(i.Physical, Image_Enum.I_shield);
             } else if (i.Fire > 0) {
                 msg = "Fire Block +" + i.Fire;
+                D.AddGood(i.Fire, Image_Enum.I_shield);
             } else if (i.Cold > 0) {
                 msg = "Cold Block +" + i.Cold;
-            } else if (i.Fire > 0) {
+                D.AddGood(i.Cold, Image_Enum.I_shield);
+            } else if (i.ColdFire > 0) {
                 msg = "ColdFire Block +" + i.ColdFire;
+                D.AddGood(i.ColdFire, Image_Enum.I_shield);
             }
             log.Add(msg);
         }
@@ -205,12 +211,16 @@ namespace cna {
             string msg = "";
             if (i.Physical > 0) {
                 msg = "Attack +" + i.Physical;
+                D.AddGood(i.Physical, Image_Enum.I_attack);
             } else if (i.Fire > 0) {
                 msg = "Fire Attack +" + i.Fire;
+                D.AddGood(i.Fire, Image_Enum.I_attack);
             } else if (i.Cold > 0) {
                 msg = "Cold Attack +" + i.Cold;
-            } else if (i.Fire > 0) {
+                D.AddGood(i.Cold, Image_Enum.I_attack);
+            } else if (i.ColdFire > 0) {
                 msg = "ColdFire Attack +" + i.ColdFire;
+                D.AddGood(i.ColdFire, Image_Enum.I_attack);
             }
             log.Add(msg);
         }
@@ -221,12 +231,16 @@ namespace cna {
             string msg = "";
             if (i.Physical > 0) {
                 msg = "Range Attack +" + i.Physical;
+                D.AddGood(i.Physical, Image_Enum.I_bow);
             } else if (i.Fire > 0) {
                 msg = "Fire Range Attack +" + i.Fire;
+                D.AddGood(i.Fire, Image_Enum.I_bow);
             } else if (i.Cold > 0) {
                 msg = "Cold Range Attack +" + i.Cold;
-            } else if (i.Fire > 0) {
+                D.AddGood(i.Cold, Image_Enum.I_bow);
+            } else if (i.ColdFire > 0) {
                 msg = "ColdFire Range Attack +" + i.ColdFire;
+                D.AddGood(i.ColdFire, Image_Enum.I_bow);
             }
             log.Add(msg);
         }
@@ -237,12 +251,16 @@ namespace cna {
             string msg = "";
             if (i.Physical > 0) {
                 msg = "Siege Attack +" + i.Physical;
+                D.AddGood(i.Physical, Image_Enum.I_catapult);
             } else if (i.Fire > 0) {
                 msg = "Fire Siege Attack +" + i.Fire;
+                D.AddGood(i.Fire, Image_Enum.I_catapult);
             } else if (i.Cold > 0) {
                 msg = "Cold Siege Attack +" + i.Cold;
-            } else if (i.Fire > 0) {
+                D.AddGood(i.Cold, Image_Enum.I_catapult);
+            } else if (i.ColdFire > 0) {
                 msg = "ColdFire Siege Attack +" + i.ColdFire;
+                D.AddGood(i.ColdFire, Image_Enum.I_catapult);
             }
             log.Add(msg);
         }
@@ -279,6 +297,9 @@ namespace cna {
             if (newLevel > oldLevel) {
                 Reward_LevelUp(1);
             }
+            if (val != 0) {
+                D.AddGood(val, Image_Enum.I_fame);
+            }
         }
 
 
@@ -286,11 +307,17 @@ namespace cna {
             change();
             P.RepLevel += val;
             log.Add((val > 0 ? "+" : "") + val + " Reputation");
+            if (val > 0) {
+                D.AddGood(val, Image_Enum.I_smile);
+            } else if (val < 0) {
+                D.AddGood(val, Image_Enum.I_angry);
+            }
         }
         public void Healing(int val) {
             change();
             P.Healpoints += val;
             log.Add((val > 0 ? "+" : "") + val + " Healing");
+            D.AddGood(val, Image_Enum.I_healHand);
         }
 
         private int cardDraw_LongNight_drawn = 0;
@@ -326,6 +353,7 @@ namespace cna {
                 SelectYesNo("Long Night", "Your deck is empty and you still have cards owed to you. Do you want to use Long Night?", DrawCard_LongNight_Yes, DrawCard_LongNight_No);
             } else {
                 log.Add("+" + cardDrawn + " Card");
+                D.AddGood(val, Image_Enum.I_cardBackRounded);
                 if (lockUndo) {
                     D.A.pd_StartOfTurn = P.Clone();
                 }
@@ -350,11 +378,13 @@ namespace cna {
             }
             log.Add("[Long Night]");
             log.Add("+" + cardDraw_LongNight_drawn + " Card");
+            D.AddGood(cardDraw_LongNight_drawn, Image_Enum.I_cardBackRounded);
             D.A.pd_StartOfTurn = P.Clone();
             cardDraw_LongNight_callback(this);
         }
         public void DrawCard_LongNight_No() {
             log.Add("+" + cardDraw_LongNight_drawn + " Card");
+            D.AddGood(cardDraw_LongNight_drawn, Image_Enum.I_cardBackRounded);
             D.A.pd_StartOfTurn = P.Clone();
             cardDraw_LongNight_callback(this);
         }
@@ -366,6 +396,7 @@ namespace cna {
                 DrawWoundCard();
             }
             log.Add("+" + val + " Wound(s)");
+            D.AddGood(val, Image_Enum.I_blood);
         }
 
         public void AddCardToDiscardDeck(int cardid) {
@@ -425,20 +456,24 @@ namespace cna {
             change();
             P.Crystal.Green += val;
             magicContainerMsg(val, "Green", "Crystal");
+            D.AddGood(val, Image_Enum.I_crystal_green);
         }
         public void CrystalBlue(int val) {
             change();
             P.Crystal.Blue += val;
             magicContainerMsg(val, "Blue", "Crystal");
+            D.AddGood(val, Image_Enum.I_crystal_blue);
         }
         public void CrystalRed(int val) {
             change();
             P.Crystal.Red += val;
             magicContainerMsg(val, "Red", "Crystal");
+            D.AddGood(val, Image_Enum.I_crystal_red);
         }
         public void CrystalWhite(int val) {
             change();
             P.Crystal.White += val;
+            D.AddGood(val, Image_Enum.I_crystal_white);
         }
 
         public void AddGameEffect(GameEffect_Enum ge, params int[] cards) {
@@ -473,31 +508,37 @@ namespace cna {
             change();
             P.Mana.Green += val;
             magicContainerMsg(val, "Green", "Mana");
+            D.AddGood(val, Image_Enum.I_mana_green);
         }
         public void ManaBlue(int val) {
             change();
             P.Mana.Blue += val;
             magicContainerMsg(val, "Blue", "Mana");
+            D.AddGood(val, Image_Enum.I_mana_blue);
         }
         public void ManaRed(int val) {
             change();
             P.Mana.Red += val;
             magicContainerMsg(val, "Red", "Mana");
+            D.AddGood(val, Image_Enum.I_mana_red);
         }
         public void ManaWhite(int val) {
             change();
             P.Mana.White += val;
             magicContainerMsg(val, "White", "Mana");
+            D.AddGood(val, Image_Enum.I_mana_white);
         }
         public void ManaGold(int val) {
             change();
             P.Mana.Gold += val;
             magicContainerMsg(val, "Gold", "Mana");
+            D.AddGood(val, Image_Enum.I_mana_gold);
         }
         public void ManaBlack(int val) {
             change();
             P.Mana.Black += val;
             magicContainerMsg(val, "Black", "Mana");
+            D.AddGood(val, Image_Enum.I_mana_black);
         }
         #endregion
 
@@ -1034,27 +1075,32 @@ namespace cna {
                             }
                             case GameEffect_Enum.SH_CrystalMines_Blue: {
                                 log.Add("[Blue Crystal Mine] +1 Blue Crystal");
+                                D.AddGood(1, Image_Enum.I_crystal_blue);
                                 P.Crystal.Blue++;
                                 break;
                             }
                             case GameEffect_Enum.SH_CrystalMines_Red: {
                                 log.Add("[Red Crystal Mine] +1 Red Crystal");
+                                D.AddGood(1, Image_Enum.I_crystal_red);
                                 P.Crystal.Red++;
                                 break;
                             }
                             case GameEffect_Enum.SH_CrystalMines_Green: {
                                 log.Add("[Green Crystal Mine] +1 Green Crystal");
+                                D.AddGood(1, Image_Enum.I_crystal_green);
                                 P.Crystal.Green++;
                                 break;
                             }
                             case GameEffect_Enum.SH_CrystalMines_White: {
                                 log.Add("[White Crystal Mine] +1 White Crystal");
+                                D.AddGood(1, Image_Enum.I_crystal_white);
                                 P.Crystal.White++;
                                 break;
                             }
                             case GameEffect_Enum.T_Planning: {
                                 if (cardsLeftInHand >= 2) {
                                     log.Add("[Planning] +1 Card");
+                                    D.AddGood(1, Image_Enum.I_cardBackRounded);
                                     if (P.Deck.Deck.Count > 0) {
                                         P.Deck.Hand.Add(BasicUtil.DrawCard(P.Deck.Deck));
                                     }
