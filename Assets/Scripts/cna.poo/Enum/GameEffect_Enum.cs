@@ -110,5 +110,6 @@
         T_ManaSearch02,
         T_SparingPower,
         T_LongNight,
+        CB_CrystalJoy,
     }
 }

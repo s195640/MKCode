@@ -25,72 +25,68 @@ MonoBehaviour:
     m_Address: Assets/Images/card/wound.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: a7eb2a85f4a749440bb162528d79ee9b
-    m_Address: Assets/Images/card/basic/deed_basic_battle_tranquility.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: b69ac55b547fe924f8cb295374eda4ba
-    m_Address: Assets/Images/card/basic/deed_basic_battle_versatility.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: c716b53b4907da74681ff2b9c7164ffe
-    m_Address: Assets/Images/card/basic/deed_basic_cold_toughness.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: f73255e761dd42545840bf2a45e18ea1
-    m_Address: Assets/Images/card/basic/deed_basic_concentration.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: a9d481f1114db3945890eb353b1a6f92
-    m_Address: Assets/Images/card/basic/deed_basic_crystallize.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 3a82e02aab9e21a4f81dd5733bb0c8ae
-    m_Address: Assets/Images/card/basic/deed_basic_determination.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: c030016d9338ead4d87d4fae5a1821e7
-    m_Address: Assets/Images/card/basic/deed_basic_improvisation.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 82c6af34eecb46b4b88e2c8044c3fc32
-    m_Address: Assets/Images/card/basic/deed_basic_mana_draw.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 8826f9fb497599040931f01c37685957
-    m_Address: Assets/Images/card/basic/deed_basic_march.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: a24bf0f347d77db47b54e895b7ca043d
-    m_Address: Assets/Images/card/basic/deed_basic_noble_manners.jpg
+  - m_GUID: ab93a78a6731b5f4ba71693cead441e0
+    m_Address: Assets/Images/card/basic/deed_basic_rage.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 8d1ca978a070f294f8820c7e3200abbe
     m_Address: Assets/Images/card/basic/deed_basic_promise.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: ab93a78a6731b5f4ba71693cead441e0
-    m_Address: Assets/Images/card/basic/deed_basic_rage.jpg
+  - m_GUID: 8f3712bbbdbb78f4dbed36da1e2628e6
+    m_Address: Assets/Images/card/basic/deed_basic_one_with_the_land.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: da9f9338344a0aa458e10c83e8ef230b
-    m_Address: Assets/Images/card/basic/deed_basic_stamina.jpg
+  - m_GUID: a24bf0f347d77db47b54e895b7ca043d
+    m_Address: Assets/Images/card/basic/deed_basic_noble_manners.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 333259f0ea6da1f4aadf063b34a95f49
-    m_Address: Assets/Images/card/basic/deed_basic_swiftness.jpg
+  - m_GUID: 8826f9fb497599040931f01c37685957
+    m_Address: Assets/Images/card/basic/deed_basic_march.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: e22fe18da75d0814289872e1c6066519
-    m_Address: Assets/Images/card/basic/deed_basic_threaten.jpg
+  - m_GUID: f8f67cccd68ca0b4a857d881ae55fb26
+    m_Address: Assets/Images/card/basic/deed_basic_mana_pull.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 2fe25114a5ca43646a92e835b1a399e5
-    m_Address: Assets/Images/card/basic/deed_basic_tranquility.jpg
+  - m_GUID: 82c6af34eecb46b4b88e2c8044c3fc32
+    m_Address: Assets/Images/card/basic/deed_basic_mana_draw.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: e10b15cf988167e47a4821f0ba9857cb
-    m_Address: Assets/Images/card/basic/deed_basic_will_focus.jpg
+  - m_GUID: fef3e9f8f770c5749bed2f0691d640d6
+    m_Address: Assets/Images/card/basic/deed_basic_instinct.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c030016d9338ead4d87d4fae5a1821e7
+    m_Address: Assets/Images/card/basic/deed_basic_improvisation.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 00fd737200c7dcc46a6f95f96e024962
+    m_Address: Assets/Images/card/basic/deed_basic_druidic_paths.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3a82e02aab9e21a4f81dd5733bb0c8ae
+    m_Address: Assets/Images/card/basic/deed_basic_determination.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a9d481f1114db3945890eb353b1a6f92
+    m_Address: Assets/Images/card/basic/deed_basic_crystallize.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7415a826edbb82844a1ec0ccec26c2c9
+    m_Address: Assets/Images/card/basic/deed_basic_crystal_joy.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f73255e761dd42545840bf2a45e18ea1
+    m_Address: Assets/Images/card/basic/deed_basic_concentration.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c716b53b4907da74681ff2b9c7164ffe
+    m_Address: Assets/Images/card/basic/deed_basic_cold_toughness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b69ac55b547fe924f8cb295374eda4ba
+    m_Address: Assets/Images/card/basic/deed_basic_battle_versatility.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 2ce92ab69d6426f4eb74cd7cfa93e376
@@ -347,6 +343,46 @@ MonoBehaviour:
     m_SerializedLabels: []
   - m_GUID: 059cb72859bc9794ea3167511edb2e28
     m_Address: Assets/Images/card/unit/elite_altem_guardians_x3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 83f2a218712b6db4cb9a5d61b029ed3d
+    m_Address: Assets/Images/card/basic/deed_basic_rejuvenate.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4d17949d4e74288488c97bb5f67e7eef
+    m_Address: Assets/Images/card/basic/deed_basic_ruthless_coercion.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 145d639e52786924fbd5a43c375a08d2
+    m_Address: Assets/Images/card/basic/deed_basic_savage_harvesting.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: da9f9338344a0aa458e10c83e8ef230b
+    m_Address: Assets/Images/card/basic/deed_basic_stamina.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b158d556b264739468e6e952f1156393
+    m_Address: Assets/Images/card/basic/deed_basic_swift_reflexes.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 333259f0ea6da1f4aadf063b34a95f49
+    m_Address: Assets/Images/card/basic/deed_basic_swiftness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e22fe18da75d0814289872e1c6066519
+    m_Address: Assets/Images/card/basic/deed_basic_threaten.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 56e17b842d595a147ac8ba08ee22476d
+    m_Address: Assets/Images/card/basic/deed_basic_tirelessness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2fe25114a5ca43646a92e835b1a399e5
+    m_Address: Assets/Images/card/basic/deed_basic_tranquility.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e10b15cf988167e47a4821f0ba9857cb
+    m_Address: Assets/Images/card/basic/deed_basic_will_focus.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

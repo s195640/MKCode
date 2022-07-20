@@ -584,6 +584,10 @@ namespace cna {
             UpdateUI();
             D.Action.SelectSingleCard(this, (ar) => { ar.Rollback(); }, acceptCallback, allowNone);
         }
+        public void SelectSingleCard(Action<GameAPI> acceptCallback, Action<GameAPI> rejectCallback, bool allowNone = false) {
+            UpdateUI();
+            D.Action.SelectSingleCard(this, rejectCallback, acceptCallback, allowNone);
+        }
 
         public void SelectCards(List<int> cards, string title, string description, V2IntVO selectCount, Image_Enum selectionImage, List<string> buttonText, List<Color> buttonColor, List<Action<GameAPI>> buttonCallback, List<bool> buttonForce) {
             UpdateUI();

@@ -161,6 +161,34 @@ MonoBehaviour:
     m_Address: Assets/Images/card/monster/enemy_marauding_orcs_ironclads_x2.png
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 43c4c7d1f0c203a41b674b6eb4a4cb0b
+    m_Address: Assets/Images/card/monster/enemy_marauding_orcs_skeletal_warriors.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1be24275fffc3ca46ad658f866f300a0
+    m_Address: Assets/Images/card/monster/enemy_marauding_orcs_centaur.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 006911d0438848846bf53635665247ac
+    m_Address: Assets/Images/card/monster/enemy_dungeon_fire_elemental.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9d88f82f55827ca4482ebf075b9dc505
+    m_Address: Assets/Images/card/monster/enemy_dungeon_water_elemental.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d5fbbd574cc20c24d9cbee712a7190b8
+    m_Address: Assets/Images/card/monster/enemy_dungeon_mummy.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b15408f979e820f4e944e62202e86e14
+    m_Address: Assets/Images/card/monster/enemy_draconum_savage_dragon.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 47f602dd6518bcf4f8b6ccd54c5673db
+    m_Address: Assets/Images/card/monster/enemy_draconum_lava_dragon.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a0fd70fe9213c024b857918465a3e386, type: 2}
   m_SchemaSet:

@@ -205,15 +205,15 @@ namespace cna.ui {
                         D.Action.SelectOptions(ar, EndOfTurn_MagicGladeReject, EndOfTurn_MagicGladeAccept, new OptionVO(MagicGlade_woundInHand > 0 ? "Wound From Hand" : "Wound From Discard", Image_Enum.I_healHand));
                     }
                 } else {
-                    EndOfTurn_Result();
+                    EOT_CheckCrystalJoy(localPlayer);
                 }
             } else {
-                EndOfTurn_Result();
+                EOT_CheckCrystalJoy(localPlayer);
             }
         }
         public void EndOfTurn_MagicGladeReject(GameAPI ar) {
             D.C.LogMessage("[Magical Glade] - No wound removed, rejected by player!");
-            EndOfTurn_Result();
+            EOT_CheckCrystalJoy(ar.P);
         }
         public void EndOfTurn_MagicGladeAccept(GameAPI ar) {
             switch (ar.SelectedButtonIndex) {
@@ -241,8 +241,19 @@ namespace cna.ui {
                     break;
                 }
             }
-            EndOfTurn_Result();
+            EOT_CheckCrystalJoy(ar.P);
         }
+
+        private void EOT_CheckCrystalJoy(PlayerData localPlayer) {
+            if (localPlayer.GameEffects.ContainsKey(GameEffect_Enum.CB_CrystalJoy)) {
+                GameAPI ar = new GameAPI(D.GetGameEffectCard(GameEffect_Enum.CB_CrystalJoy).UniqueId, CardState_Enum.NA, 0);
+                ar.FinishCallback = (ar) => EndOfTurn_Result();
+                ar.Card.OnClick_ActionButton(ar);
+            } else {
+                EndOfTurn_Result();
+            }
+        }
+
 
         private void EndOfTurn_Result() {
             D.A.Gd_StartOfTurnFlag = false;

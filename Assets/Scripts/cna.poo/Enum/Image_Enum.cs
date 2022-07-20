@@ -141,8 +141,7 @@ namespace cna.poo {
         C_wound,
 
         //CARD BASIC
-        CB_battle_tranquility = 425,
-        CB_battle_versatility,
+        CB_battle_versatility = 425,
         CB_cold_toughness,
         CB_concentration,
         CB_crystallize,
@@ -158,6 +157,16 @@ namespace cna.poo {
         CB_threaten,
         CB_tranquility,
         CB_will_focus,
+        CB_crystal_joy,
+        CB_rejuvenate,
+        CB_instinct,
+        CB_mana_pull,
+        CB_swift_reflexes,
+        CB_tirelessness,
+        CB_savage_harvesting,
+        CB_ruthless_coercion,
+        CB_one_with_the_land,
+        CB_druidic_paths,
 
         //CARD ADVANCED
         CA_agility = 500,
@@ -239,6 +248,8 @@ namespace cna.poo {
         CMG_orc_summoners_x2,
         CMG_prowlers_x2,
         CMG_wolf_riders_x2,
+        CMG_centaur,
+        CMG_skeletal_warriors,
 
         // CARD MONSTER GREY
         CMY_back = 1050,
@@ -254,6 +265,9 @@ namespace cna.poo {
         CMB_medusa_x2,
         CMB_minotaur_x2,
         CMB_werewolf_x2,
+        CMB_fire_elemental,
+        CMB_mummy,
+        CMB_water_elemental,
 
         // CARD MONSTER VIOLET
         CMV_back = 1150,
@@ -278,6 +292,8 @@ namespace cna.poo {
         CMR_high_dragon_x2,
         CMR_ice_dragon_x2,
         CMR_swamp_dragon_x2,
+        CMR_lava_dragon,
+        CMR_savage_dragon,
 
         // SKILLS GREEN GOLDYX
         SKG_back = 1400,
