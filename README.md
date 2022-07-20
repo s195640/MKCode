@@ -1,1 +1,1 @@
-wss://gold-apes-thank-76-73-232-139.loca.lt
+wss://e9bb-76-73-232-139.ngrok.io
