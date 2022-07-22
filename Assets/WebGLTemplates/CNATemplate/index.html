@@ -42,10 +42,10 @@
 
 <body>
 	<div id="gameContainer">
-		<canvas id="unity-canvas" data-pixel-art=""></canvas>
+		<canvas id="unity-container" data-pixel-art=""></canvas>
 		<script src="Build/{{{ LOADER_FILENAME }}}"></script>
 		<script>
-			createUnityInstance(document.querySelector("#unity-canvas"), {
+			createUnityInstance(document.querySelector("#unity-container"), {
 				dataUrl: "Build/{{{ DATA_FILENAME }}}",
 				frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
 				codeUrl: "Build/{{{ CODE_FILENAME }}}",

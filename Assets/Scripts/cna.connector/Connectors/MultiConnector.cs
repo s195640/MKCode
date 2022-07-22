@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 using cna.poo;
+using UnityEngine.Networking;
+using System.Collections;
+using System.Threading.Tasks;
 
 namespace cna.connector {
     public class MultiConnector : BaseConnector {
@@ -32,11 +35,14 @@ namespace cna.connector {
             OnEvent = onEvent;
             player = new PlayerData(un, -1);
             Pw = pw;
-            Url = url;
+            Url = url.Replace("\u200B", "").Trim();
             Connect();
+            //PingThenConnect();
         }
 
-        public async void Connect() {
+
+        public async void Reconnect() {
+            waitingForReconnect = true;
             ws = WebSocketFactory.CreateInstance(Url + "?u=" + player.Name + "&p=" + Pw);
             ws.OnOpen += OnOpen;
             ws.OnMessage += OnMessage;
@@ -44,8 +50,8 @@ namespace cna.connector {
             ws.OnClose += OnClose;
             await ws.Connect();
         }
-        public async void Reconnect() {
-            waitingForReconnect = true;
+
+        public async void Connect() {
             ws = WebSocketFactory.CreateInstance(Url + "?u=" + player.Name + "&p=" + Pw);
             ws.OnOpen += OnOpen;
             ws.OnMessage += OnMessage;
@@ -79,5 +85,22 @@ namespace cna.connector {
             ws.OnClose -= OnClose;
             await ws.Close();
         }
+
+        //public async void PingThenConnect() {
+        //    string url = Url.Replace("ws", "http");
+        //    Debug.Log("ping :: " + url);
+        //    UnityWebRequest www = new UnityWebRequest(url);
+        //    www.SetRequestHeader("ngrok-skip-browser-warning", "true");
+        //    www.downloadHandler = new DownloadHandlerBuffer();
+        //    await www.SendWebRequest();
+        //    string ping = www.downloadHandler.text.Trim();
+        //    Debug.Log(ping);
+        //    if (ping.Equals("PING")) {
+        //        Connect();
+        //    } else {
+        //        OnError("Failed to ping server!");
+        //        OnClose(WebSocketCloseCode.ServerError);
+        //    }
+        //}
     }
 }

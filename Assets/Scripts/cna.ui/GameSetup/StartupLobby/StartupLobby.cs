@@ -61,5 +61,10 @@ namespace cna.ui {
             serverText.InputValue = "ws://localhost:8080/​";
             loginText.InputValue = "login02";
         }
+
+        public void OnClick_Link() {
+            string url = serverText.InputValue.Replace("ws", "http").Replace("\u200B", "").Trim();
+            Application.OpenURL(url);
+        }
     }
 }
