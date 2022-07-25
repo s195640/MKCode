@@ -126,10 +126,8 @@
 		  function onResize() {
 			var w = window.innerWidth;
 			var h = window.innerHeight;
-			<!-- canvas.style.width = w + "px"; -->
-			<!-- canvas.style.height = h + "px"; -->
-			canvas.width = w;//+"px;
-			canvas.height = h;//+"px;
+			container.style.width = canvas.style.width = w + "px";
+			container.style.height = canvas.style.height = h + "px";
 		  }
 		  onResize();
         }).catch((message) => {
