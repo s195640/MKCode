@@ -254,20 +254,21 @@ namespace cna.ui {
                     bool wounded = ar.P.Deck.State[unitIdUsedForCombat].Contains(CardState_Enum.Unit_Wounded);
                     bool paralyzed = ar.P.Deck.State[unitIdUsedForCombat].Contains(CardState_Enum.Unit_Paralyzed);
                     bool usedInBattle = ar.P.Deck.State[unitIdUsedForCombat].Contains(CardState_Enum.Unit_UsedInBattle);
-                    bool intoTheHeat = ar.P.GameEffects.ContainsKeyAny(GameEffect_Enum.AC_IntoTheHeat01, GameEffect_Enum.AC_IntoTheHeat02);
+                    
                     if (wounded) {
                         msg = "Can not assign damage to Wounded units!";
                     } else if (paralyzed) {
                         msg = "Can not assign damage to Paralyzed units!";
                     } else if (usedInBattle) {
                         msg = "This unit has already been used in this combat, you can not assign damage to this unit again!";
-                    } else if (intoTheHeat) {
+                    }
+                } else {
+                    bool intoTheHeat = ar.P.GameEffects.ContainsKeyAny(GameEffect_Enum.AC_IntoTheHeat01, GameEffect_Enum.AC_IntoTheHeat02);
+                    if (intoTheHeat) {
                         msg = "Into The Heat effect is in play, you can not assign damage to any unit!";
                     }
                 }
-
             }
-
             return msg;
         }
     }

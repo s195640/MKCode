@@ -393,7 +393,7 @@ namespace cna {
         public void AddWound(int val) {
             change();
             for (int i = 0; i < val; i++) {
-                DrawWoundCard();
+                P.Deck.Hand.Add(DrawWoundCard());
             }
             log.Add("+" + val + " Wound(s)");
             D.AddGood(val, Image_Enum.I_blood);

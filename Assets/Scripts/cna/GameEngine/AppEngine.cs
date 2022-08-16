@@ -163,7 +163,8 @@ namespace cna {
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
-                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CT_golden_grail).UniqueId);
+                pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CA_blood_rage).UniqueId);
+                pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CA_into_the_heat).UniqueId);
 
                 //WrapList<Image_Enum> shields = new WrapList<Image_Enum>();
                 //shields.Add(Image_Enum.AVATAR_GREEN_SHIELD);
@@ -181,7 +182,9 @@ namespace cna {
                 //D.G.Board.SkillOffering.Add(D.Cards.Find(c => c.CardImage == Image_Enum.SKR_dark_paths).UniqueId);
 
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CS_underground_travel).UniqueId);
-                //pd.Deck.Unit.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CUE_altem_guardians_x3).UniqueId);
+                pd.Deck.Unit.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CUE_altem_guardians_x3).UniqueId);
+                pd.Deck.Unit.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CUE_fire_golems_x2).UniqueId);
+                pd.Deck.Unit.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CUR_foresters_x2).UniqueId);
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CS_fireball).UniqueId);
                 //D.G.Board.ManaPool.Add(Crystal_Enum.Gold);
                 //D.G.Board.ManaPool.Add(Crystal_Enum.Black);
@@ -233,6 +236,9 @@ namespace cna {
                 //  Rebuild VisableMonsters
                 if (!p.DummyPlayer) {
                     ar.PlayerRebuildVisableMonsters();
+                }
+                if (p.DummyPlayer && g.Players.Count == 2 && g.Board.GameRoundCounter == 7) {
+                    D.DummyPlayer.DummyTacticsUsed.Clear();
                 }
             });
             D.CurrentTurn.PlayerTurnPhase = TurnPhase_Enum.TacticsSelect;
