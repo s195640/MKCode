@@ -40,8 +40,10 @@ namespace cna.ui {
                 if (index >= 0) {
                     bool selected = false;
                     D.G.Players.ForEach(p => selected |= p.Deck.TacticsCardId.Equals(cardSlots[index].UniqueCardId));
-                    Image_Enum t = D.Cards[cardSlots[index].UniqueCardId].CardImage;
-                    D.DummyPlayer.DummyTacticsUsed.ForEach(i => selected |= i == t);
+                    if (D.GLD.DummyPlayer) {
+                        Image_Enum t = D.Cards[cardSlots[index].UniqueCardId].CardImage;
+                        D.DummyPlayer.DummyTacticsUsed.ForEach(i => selected |= i == t);
+                    }
                     if (!selected) {
                         gameObject.SetActive(false);
                         D.LocalPlayer.Deck.TacticsCardId = cardSlots[index].UniqueCardId;
