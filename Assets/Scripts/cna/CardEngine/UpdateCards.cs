@@ -8,10 +8,10 @@ namespace cna {
         private string path = @"C:\Users\carmi\Documents\Unity\MageKnight04\Assets\Scripts\cna\CardEngine\";
 
         private void Start() {
-            generateBasicCards();
+            //generateBasicCards();
             //generateUnitCards();
             //generateSkillCards();
-            //generateAdvancedCards();
+            generateAdvancedCards();
             //generateSpellCards();
             //generateArtifactCards();
             //List<List<string>> csv = readFile();

@@ -48,8 +48,13 @@ namespace cna {
             g.GameData.Seed = Guid.NewGuid().GetHashCode();
             D.Scenario.buildStartMap(g);
             g.Board.PlayerTurnOrder = new List<int>();
-            g.Players.ForEach(p => g.Board.PlayerTurnOrder.Add(p.Key));
+            g.Players.ForEach(p => {
+                if (!p.DummyPlayer) g.Board.PlayerTurnOrder.Add(p.Key);
+            });
             g.Board.PlayerTurnOrder.ShuffleDeck();
+            g.Players.ForEach(p => {
+                if (p.DummyPlayer) g.Board.PlayerTurnOrder.Add(p.Key);
+            });
             g.Board.PlayerTurnIndex = 0;
             g.GameStatus = Game_Enum.New_Round;
         }
@@ -134,19 +139,20 @@ namespace cna {
             if (!pd.DummyPlayer) {
                 pd.Movement = 49;
                 pd.Influence = 49;
-                //pd.Battle.Siege.Physical += 49;
+                pd.Battle.Siege.Physical += 99;
 
-                pd.Crystal.Blue += 1;
-                pd.Crystal.Red += 1;
-                pd.Crystal.Green += 1;
-                pd.Crystal.White += 1;
 
-                pd.Mana.Blue += 1;
-                pd.Mana.Red += 1;
-                pd.Mana.Green += 1;
-                pd.Mana.White += 1;
-                pd.Mana.Gold += 1;
-                pd.Mana.Black += 1;
+                pd.Crystal.Blue += 5;
+                pd.Crystal.Red += 5;
+                pd.Crystal.Green += 5;
+                pd.Crystal.White += 5;
+
+                pd.Mana.Blue += 5;
+                pd.Mana.Red += 5;
+                pd.Mana.Green += 5;
+                pd.Mana.White += 5;
+                pd.Mana.Gold += 5;
+                pd.Mana.Black += 5;
 
                 //  Basic Cards
                 //pd.Deck.Deck.Clear();
@@ -163,8 +169,9 @@ namespace cna {
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
                 //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardType == CardType_Enum.Wound && !pd.Deck.Hand.Contains(c.UniqueId)).UniqueId);
-                pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CA_blood_rage).UniqueId);
-                pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CA_into_the_heat).UniqueId);
+                //pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CA_blood_rage).UniqueId);
+                pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CA_steady_tempo).UniqueId);
+                pd.Deck.Hand.Add(D.Cards.Find(c => c.CardImage == Image_Enum.CS_call_to_arms).UniqueId);
 
                 //WrapList<Image_Enum> shields = new WrapList<Image_Enum>();
                 //shields.Add(Image_Enum.AVATAR_GREEN_SHIELD);
@@ -263,6 +270,9 @@ namespace cna {
                             while (swapped) {
                                 swapped = false;
                                 for (int i = 0; i < g.Board.PlayerTurnOrder.Count - 1; i++) {
+                                    if (D.GetPlayerByKey(g.Board.PlayerTurnOrder[i + 1]).DummyPlayer) {
+                                        break;
+                                    }
                                     int a = D.GetPlayerByKey(g.Board.PlayerTurnOrder[i]).Deck.TacticsCardId;
                                     int b = D.GetPlayerByKey(g.Board.PlayerTurnOrder[i + 1]).Deck.TacticsCardId;
                                     if (a > b) {

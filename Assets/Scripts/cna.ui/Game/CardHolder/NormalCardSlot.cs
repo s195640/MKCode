@@ -18,6 +18,7 @@ namespace cna.ui {
         [SerializeField] private TextMeshProUGUI cardTitle;
         [SerializeField] private AddressableImage cardImage;
         [SerializeField] private UnitSlotContainer unitSlot;
+        private HashSet<GameEffect_Enum> gameEffs;
 
 
 
@@ -71,6 +72,7 @@ namespace cna.ui {
             SpecialCardSelection.SetActive(false);
             cardState = new List<CardState_Enum>();
             banner = 0;
+            gameEffs = new HashSet<GameEffect_Enum>();
             if (CardHolder == CardHolder_Enum.NA || UniqueCardId == 0) {
                 cardContainer.gameObject.SetActive(false);
                 EmptyCardContainer.gameObject.SetActive(true);
@@ -163,6 +165,12 @@ namespace cna.ui {
 
         private bool UpdateCardState(PlayerData pd) {
             bool forReturn = false;
+            if (!gameEffs.SetEquals(pd.GameEffects.Keys)) {
+                gameEffs.Clear();
+                gameEffs.UnionWith(pd.GameEffects.Keys);
+                forReturn = true;
+            }
+
             List<CardState_Enum> currentCardState = new List<CardState_Enum>();
             CNAMap<int, CNAList<CardState_Enum>> states = pd.Deck.State;
             if (states.ContainsKey(UniqueCardId)) {

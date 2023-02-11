@@ -91,6 +91,7 @@ namespace cna.ui {
             unitBannerFear.SetActive(fear);
             unitBannerProtection.SetActive(protection);
             unitBannerCourage.SetActive(courage);
+            setUpResistance();
         }
 
         private string getUnitLevel(int level) {
@@ -132,37 +133,46 @@ namespace cna.ui {
             }
         }
 
-        private void setUpResistance() {
-            switch (card.UnitResistance.Count) {
-                case 0: {
-                    unitResit01.gameObject.SetActive(false);
-                    unitResit02.gameObject.SetActive(false);
-                    unitResit03.gameObject.SetActive(false);
-                    break;
-                }
-                case 1: {
-                    unitResit01.gameObject.SetActive(true);
-                    unitResit01.ImageEnum = card.UnitResistance[0];
-                    unitResit02.gameObject.SetActive(false);
-                    unitResit03.gameObject.SetActive(false);
-                    break;
-                }
-                case 2: {
-                    unitResit01.gameObject.SetActive(true);
-                    unitResit01.ImageEnum = card.UnitResistance[0];
-                    unitResit02.gameObject.SetActive(true);
-                    unitResit02.ImageEnum = card.UnitResistance[1];
-                    unitResit03.gameObject.SetActive(false);
-                    break;
-                }
-                case 3: {
-                    unitResit01.gameObject.SetActive(true);
-                    unitResit01.ImageEnum = card.UnitResistance[0];
-                    unitResit02.gameObject.SetActive(true);
-                    unitResit02.ImageEnum = card.UnitResistance[1];
-                    unitResit03.gameObject.SetActive(true);
-                    unitResit03.ImageEnum = card.UnitResistance[2];
-                    break;
+        public void setUpResistance() {
+            if (D.LocalPlayer.GameEffects.ContainsKey(GameEffect_Enum.CUE_AltemGuardians02)) {
+                unitResit01.gameObject.SetActive(true);
+                unitResit01.ImageEnum = Image_Enum.I_resistphysical;
+                unitResit02.gameObject.SetActive(true);
+                unitResit02.ImageEnum = Image_Enum.I_resistfire;
+                unitResit03.gameObject.SetActive(true);
+                unitResit03.ImageEnum = Image_Enum.I_resistice;
+            } else {
+                switch (card.UnitResistance.Count) {
+                    case 0: {
+                        unitResit01.gameObject.SetActive(false);
+                        unitResit02.gameObject.SetActive(false);
+                        unitResit03.gameObject.SetActive(false);
+                        break;
+                    }
+                    case 1: {
+                        unitResit01.gameObject.SetActive(true);
+                        unitResit01.ImageEnum = card.UnitResistance[0];
+                        unitResit02.gameObject.SetActive(false);
+                        unitResit03.gameObject.SetActive(false);
+                        break;
+                    }
+                    case 2: {
+                        unitResit01.gameObject.SetActive(true);
+                        unitResit01.ImageEnum = card.UnitResistance[0];
+                        unitResit02.gameObject.SetActive(true);
+                        unitResit02.ImageEnum = card.UnitResistance[1];
+                        unitResit03.gameObject.SetActive(false);
+                        break;
+                    }
+                    case 3: {
+                        unitResit01.gameObject.SetActive(true);
+                        unitResit01.ImageEnum = card.UnitResistance[0];
+                        unitResit02.gameObject.SetActive(true);
+                        unitResit02.ImageEnum = card.UnitResistance[1];
+                        unitResit03.gameObject.SetActive(true);
+                        unitResit03.ImageEnum = card.UnitResistance[2];
+                        break;
+                    }
                 }
             }
         }

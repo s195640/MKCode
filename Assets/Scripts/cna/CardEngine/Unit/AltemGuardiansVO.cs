@@ -13,6 +13,7 @@ namespace cna {
         }
         public override GameAPI ActionValid_02(GameAPI ar) {
             ar.AddGameEffect(GameEffect_Enum.CUE_AltemGuardians02);
+            D.A.UpdateUI();
             return ar;
         }
     }

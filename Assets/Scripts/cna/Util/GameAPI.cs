@@ -1136,7 +1136,7 @@ namespace cna {
                         if (!p.StateContains(c, CardState_Enum.Trashed)) {
                             bool steadyTempNormal = gameEffects.ContainsKey(GameEffect_Enum.AC_SteadyTempo01);
                             bool steadyTempAdvanced = gameEffects.ContainsKey(GameEffect_Enum.AC_SteadyTempo02);
-                            if (p.Deck.Count > 0 && (steadyTempNormal || steadyTempAdvanced)) {
+                            if (p.Deck.Count > 0 && (steadyTempNormal || steadyTempAdvanced) && D.Cards[c].CardImage == Image_Enum.CA_steady_tempo) {
                                 if (steadyTempNormal) {
                                     p.Deck.Add(c);
                                 } else {

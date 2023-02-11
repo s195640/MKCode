@@ -305,7 +305,7 @@ namespace cna.ui {
                     break;
                 }
                 case BottomButton_Enum.CityGreen_LearnAction: {
-                    text = "Add Unit (6)";
+                    text = "Learn (6)";
                     color = CNAColor.CityGreen_LearnAction;
                     break;
                 }
